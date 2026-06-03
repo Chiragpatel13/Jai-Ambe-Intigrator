@@ -54,117 +54,78 @@ Please let me know if it is available.`;
   const hasMultipleImages = images.length > 1;
 
   return (
-    <div className="group relative flex flex-col bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-900 shadow-sm hover:shadow-xl hover:border-gray-200 dark:hover:border-gray-800 transition-all duration-300 overflow-hidden h-full">
+    <div className="group relative flex flex-col bg-white dark:bg-gray-950 rounded-2xl border border-gray-150 dark:border-gray-900 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 overflow-hidden h-full">
       {/* Product Image Panel */}
-      <div className="relative aspect-square w-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
+      <div className="relative aspect-square w-full bg-gray-50 dark:bg-gray-900 overflow-hidden border-b border-gray-100 dark:border-gray-900/50">
         {images.length > 0 ? (
           <img
             src={images[currentImageIndex]}
             alt={name}
-            className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+            className="h-full w-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-900">
+          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-650 bg-gray-100 dark:bg-gray-900">
             No Image Available
           </div>
         )}
 
-        {/* Condition Badge */}
+        {/* Condition Badge (Orange for New, Blue for Refurbished) */}
         <span
-          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm ${
+          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase shadow-sm ${
             condition === 'new'
-              ? 'bg-emerald-500 text-white'
-              : 'bg-amber-500 text-white'
+              ? 'bg-orange-500 text-white'
+              : 'bg-blue-600 text-white'
           }`}
         >
-          <Award size={12} />
-          {condition === 'new' ? 'NEW' : 'USED / REFURBISHED'}
+          {condition === 'new' ? 'New' : 'Refurbished'}
         </span>
 
         {/* Stock status badge */}
         {!availability || stock === 0 ? (
-          <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500 text-white shadow-sm">
-            <AlertTriangle size={12} />
+          <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-600 text-white shadow-sm">
             SOLD OUT
           </span>
         ) : (
           stock <= 2 && (
-            <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-600 text-white shadow-sm">
+            <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white shadow-sm">
               Only {stock} Left
             </span>
           )
         )}
-
-        {/* Multi-image indicators */}
-        {hasMultipleImages && (
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setCurrentImageIndex(idx);
-                }}
-                className={`w-2 h-2 rounded-full border border-white/50 ${
-                  currentImageIndex === idx ? 'bg-white scale-125' : 'bg-white/40'
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Product Content Details */}
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex justify-between items-start gap-2 mb-2">
+      <div className="flex flex-col flex-1 p-5 space-y-2">
+        <div className="flex justify-between items-center">
           {product.category && (
-            <span className="text-xs font-semibold tracking-wide uppercase text-indigo-500">
+            <span className="text-[10px] font-bold tracking-wider uppercase text-gray-400">
               {product.category.name}
             </span>
           )}
-          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            {formattedPrice}
-          </span>
         </div>
 
         <Link href={`/products/${_id}`} className="hover:underline">
-          <h4 className="text-base font-semibold text-gray-800 dark:text-gray-150 line-clamp-1 mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+          <h4 className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {name}
           </h4>
         </Link>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-1">
+        <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-2 flex-1 leading-relaxed">
           {description}
         </p>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2.5 mt-auto pt-2">
+        <div className="pt-2 flex flex-col gap-3">
+          <p className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400">
+            {formattedPrice}
+          </p>
+
           <Link
             href={`/products/${_id}`}
-            className="flex-1 flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 text-xs font-semibold text-gray-700 dark:text-gray-300 transition-colors"
+            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/10 transition-transform hover:scale-[1.01]"
           >
-            <Eye size={14} />
-            <span>Details</span>
+            <span>Inquire Now</span>
+            <ChevronRight size={14} />
           </Link>
-
-          {availability && stock > 0 ? (
-            <button
-              onClick={handleWhatsAppInquiry}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all hover:scale-[1.01]"
-            >
-              <MessageSquare size={14} />
-              <span>WhatsApp</span>
-            </button>
-          ) : (
-            <button
-              disabled
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600 text-xs font-semibold cursor-not-allowed"
-            >
-              Out of Stock
-            </button>
-          )}
         </div>
       </div>
     </div>
