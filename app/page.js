@@ -35,6 +35,26 @@ export default function HomePage() {
   const [newProducts, setNewProducts] = useState([]);
   const [usedProducts, setUsedProducts] = useState([]);
   const [activeBanner, setActiveBanner] = useState(0);
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    {
+      q: "Do you offer warranties on refurbished laptops?",
+      a: "Yes! Every refurbished laptop purchased from our store comes with a local shop warranty (typically 1 to 3 months) covering hardware diagnostics and repairs."
+    },
+    {
+      q: "Can I inspect the laptop physically before buying?",
+      a: "Absolutely! We encourage customers to visit our Boisar showroom to test keyboard response, battery life, screen quality, and system speed firsthand."
+    },
+    {
+      q: "Do you provide custom configurations (RAM/SSD upgrades)?",
+      a: "Yes. We can customize any laptop or desktop configuration on the spot, including upgrading RAM, installing high-speed SSDs, or installing specific software tools."
+    },
+    {
+      q: "What services do you cover for CCTV and Networking?",
+      a: "We provide complete layout planning, cabling, installation, and mobile-app remote setup for retail shops, offices, warehouses, and homes in Palghar district."
+    }
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -422,6 +442,47 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Frequently Asked Questions Accordion */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-xl mx-auto space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Find answers to common questions about our products, setups, and local support.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, idx) => (
+            <div
+              key={idx}
+              className="rounded-2xl border border-gray-150 dark:border-gray-900 bg-white dark:bg-gray-950/40 overflow-hidden shadow-sm transition-all"
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                className="w-full px-6 py-4.5 text-left flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors"
+              >
+                <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                  {faq.q}
+                </span>
+                <span className="text-indigo-600 dark:text-indigo-400 text-lg font-bold">
+                  {openFaq === idx ? '−' : '+'}
+                </span>
+              </button>
+              
+              {openFaq === idx && (
+                <div className="px-6 pb-5 pt-1 border-t border-gray-100 dark:border-gray-900">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
