@@ -2,25 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
-  Laptop,
-  ShieldCheck,
-  Wrench,
-  ThumbsUp,
-  ChevronRight,
   ArrowRight,
+  BadgeCheck,
+  Boxes,
+  Cpu,
+  Grid,
+  Laptop,
   MapPin,
-  Clock,
-  Layers,
-  Sparkles,
+  Navigation,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Tag,
+  Truck,
+  Headset,
   Camera,
   Printer,
   Network,
-  Cpu,
+  ChevronRight,
 } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
-import Loader, { ProductCardSkeleton } from '@/components/Loader';
+import { ProductCardSkeleton } from '@/components/Loader';
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -29,13 +40,11 @@ export default function HomePage() {
     phone: '',
     whatsapp: '919890254321',
     address: 'Boisar, Palghar, Maharashtra',
-    workingHours: 'Monday - Saturday: 10:00 AM - 8:30 PM',
   });
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
-  const [usedProducts, setNewUsedProducts] = useState([]);
-  const [openFaq, setOpenFaq] = useState(null);
+  const [usedProducts, setUsedProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +81,7 @@ export default function HomePage() {
         const usedRes = await fetch('/api/products?condition=used&limit=4');
         const usedData = await usedRes.json();
         if (usedData.success) {
-          setNewUsedProducts(usedData.products);
+          setUsedProducts(usedData.products);
         }
       } catch (err) {
         console.error('Error fetching home page data:', err);
@@ -87,407 +96,571 @@ export default function HomePage() {
   const getCategoryIcon = (slug) => {
     switch (slug) {
       case 'laptops-computers':
-        return <Laptop className="w-5 h-5 text-blue-600 dark:text-blue-450" />;
+        return <Laptop className="size-6 text-[#2b7fff]" />;
       case 'cctv-security':
-        return <Camera className="w-5 h-5 text-blue-600 dark:text-blue-450" />;
+        return <Camera className="size-6 text-[#2b7fff]" />;
       case 'printers-copiers':
-        return <Printer className="w-5 h-5 text-blue-600 dark:text-blue-450" />;
+        return <Printer className="size-6 text-[#2b7fff]" />;
       case 'networking':
-        return <Network className="w-5 h-5 text-blue-600 dark:text-blue-450" />;
+        return <Network className="size-6 text-[#2b7fff]" />;
       default:
-        return <Cpu className="w-5 h-5 text-blue-600 dark:text-blue-450" />;
+        return <Cpu className="size-6 text-[#2b7fff]" />;
     }
   };
 
-  const statCounters = [
-    { value: '500+', label: 'Happy Customers' },
-    { value: '1,000+', label: 'Products Supplied' },
-    { value: '5+', label: 'Years Experience' },
-    { value: '100%', label: 'Trust & Quality' },
-  ];
-
   const faqs = [
     {
-      q: "Do you offer warranties on refurbished laptops?",
-      a: "Yes! Every refurbished laptop purchased from our store comes with a local shop warranty (typically 1 to 3 months) covering hardware diagnostics and repairs."
+      value: 'item-1',
+      q: 'Do you sell both new and used products?',
+      a: 'Yes, we offer a wide range of both brand-new and quality-checked used products at the best prices.',
     },
     {
-      q: "Can I inspect the laptop physically before buying?",
-      a: "Absolutely! We encourage customers to visit our Boisar showroom to test keyboard response, battery life, screen quality, and system speed firsthand."
+      value: 'item-2',
+      q: 'Where is your shop located?',
+      a: `We are located in Boisar, Palghar, Maharashtra. Visit us at: ${settings.address}`,
     },
     {
-      q: "Do you provide custom configurations (RAM/SSD upgrades)?",
-      a: "Yes. We can customize any laptop or desktop configuration on the spot, including upgrading RAM, installing high-speed SSDs, or installing specific software tools."
+      value: 'item-3',
+      q: 'Do you provide warranty on products?',
+      a: 'New products come with manufacturer warranty, and select used products carry a store warranty.',
     },
     {
-      q: "What services do you cover for CCTV and Networking?",
-      a: "We provide complete layout planning, cabling, installation, and mobile-app remote setup for retail shops, offices, warehouses, and homes in Palghar district."
-    }
+      value: 'item-4',
+      q: 'Can I inquire about a product on WhatsApp?',
+      a: 'Absolutely! Click the WhatsApp button to chat with us directly about any product or price.',
+    },
+    {
+      value: 'item-5',
+      q: 'Do you offer home delivery?',
+      a: 'Yes, we provide fast local delivery across Boisar and surrounding Palghar areas.',
+    },
   ];
 
   return (
-    <div className="bg-slate-50/50 dark:bg-gray-950 transition-colors duration-300 space-y-16 pb-20">
-      
-      {/* 1. HERO SECTION (2-Column Mockup Layout) */}
-      <section className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-900/50 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <div className="bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 w-full min-h-screen overflow-x-hidden transition-colors duration-300">
+      <main className="w-full flex flex-col items-center">
+        
+        {/* 1. HERO SECTION (w-full) */}
+        <section className="w-full relative py-16 sm:py-24 overflow-hidden bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="size-96 blur-3xl rounded-full bg-[#2b7fff]/10 absolute -left-20 top-0 pointer-events-none" />
+          <div className="size-96 blur-3xl rounded-full bg-orange-500/10 absolute -right-10 bottom-0 pointer-events-none" />
           
-          {/* Left Column: Headline, Subtext, Stats */}
-          <div className="lg:col-span-7 space-y-8">
-            <div className="space-y-4">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900">
-                <Sparkles size={12} className="fill-current" />
-                Trusted IT Integration Terminal
+          <div className="w-full px-4 sm:px-10 lg:px-16 relative grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
+            <div className="flex flex-col gap-6">
+              <span className="inline-flex font-semibold rounded-full bg-zinc-105 dark:bg-zinc-900 text-[#71717b] dark:text-zinc-400 text-xs leading-4 border border-zinc-200 dark:border-zinc-800 px-3 py-1 items-center gap-1.5 w-fit">
+                <MapPin className="size-3.5 text-[#2b7fff]" />
+                Boisar, Palghar, Maharashtra
               </span>
-              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-[1.15]">
-                Trusted <span className="text-blue-600 dark:text-blue-400">New &amp; Used</span> Products at Best Prices
+              <h1 className="leading-tight font-extrabold text-4xl sm:text-5xl tracking-tight text-zinc-900 dark:text-white">
+                Trusted <span className="text-[#2b7fff]">New & Used</span> Products at Best Prices
               </h1>
-              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl leading-relaxed">
-                Boisar's premier outlet for brand new and refurbished laptops, office printers, surveillance CCTV cameras, custom desktops, and industrial networking components.
+              <p className="max-w-md text-[#71717b] dark:text-zinc-400 text-base leading-6">
+                Your reliable local store for electronics, appliances and
+                gadgets in Boisar, Palghar, Maharashtra. Quality you can
+                trust, prices you'll love.
               </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/products"
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/10 transition-transform hover:scale-[1.01]"
-              >
-                <span>Browse Products</span>
-                <ArrowRight size={14} />
-              </Link>
-              <Link
-                href="/contact"
-                className="flex items-center justify-center px-6 py-3.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hover:bg-gray-50 text-gray-700 dark:text-gray-300 font-bold text-xs sm:text-sm transition-colors"
-              >
-                <span>Visit Our Outlet</span>
-              </Link>
-            </div>
-
-            {/* Hero Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-              {statCounters.map((stat, i) => (
-                <div key={i} className="space-y-0.5">
-                  <p className="text-2xl font-black text-blue-600 dark:text-blue-400">{stat.value}</p>
-                  <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: Featured Promo Card */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-gray-950 border border-gray-150 dark:border-gray-900 shadow-xl overflow-hidden p-3 group">
-              <div className="aspect-video sm:aspect-square bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600&q=80"
-                  alt="Premium laptops showcase"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-                    Featured Inventory
-                  </span>
-                  <span className="px-2 py-0.5 text-[9px] font-bold bg-amber-500 text-white rounded-full">
-                    Refurbished Stock
-                  </span>
-                </div>
-                <h3 className="font-extrabold text-sm text-gray-900 dark:text-white">
-                  Corporate Grade Laptops
-                </h3>
-                <p className="text-[11px] text-gray-400 leading-normal">
-                  Heavy duty Dell, HP &amp; Lenovo models configured with brand new SSDs.
-                </p>
-                <Link
-                  href="/products?condition=used"
-                  className="w-full py-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-600 dark:text-blue-400 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <span>Explore Catalog</span>
-                  <ChevronRight size={12} />
+              <div className="flex flex-wrap items-center gap-4">
+                <Link href="/products">
+                  <Button
+                    size="lg"
+                    className="shadow-lg shadow-primary/20 transition-all rounded-xl bg-[#2b7fff] text-white hover:bg-[#2b7fff]/90 px-6 gap-2 border-0 cursor-pointer"
+                  >
+                    <ShoppingCart className="size-4" />
+                    Shop Now
+                  </Button>
+                </Link>
+                <Link href="/categories">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="transition-all rounded-xl text-orange-500 border-orange-500 hover:bg-orange-500/10 px-6 gap-2 cursor-pointer"
+                  >
+                    <Grid className="size-4" />
+                    View Categories
+                  </Button>
                 </Link>
               </div>
             </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 2. CATEGORIES SECTION (Shop by Category Horizontal Grid) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <h2 className="text-lg font-extrabold text-gray-950 dark:text-white uppercase tracking-wider">
-          Shop by Category
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          {categories.map((cat) => (
-            <Link
-              key={cat._id}
-              href={`/products?category=${cat.slug}`}
-              className="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-950 border border-gray-150 dark:border-gray-900 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                {getCategoryIcon(cat.slug)}
+            
+            <div className="relative flex justify-center">
+              <div className="bg-gradient-to-br from-[#2b7fff]/20 to-[#f97316]/20 blur-2xl rounded-3xl absolute inset-6" />
+              <div className="relative shadow-2xl backdrop-blur-xl rounded-3xl bg-white/40 dark:bg-zinc-900/40 border border-white/20 dark:border-zinc-800 p-4 w-full max-w-lg overflow-hidden">
+                <div className="rounded-2xl overflow-hidden aspect-[4/3] bg-zinc-105 dark:bg-zinc-900">
+                  <img
+                    src="https://images.unsplash.com/photo-1498049794561-7780e7231661?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBlbGVjdHJvbmljcyUyMGdhZGdldCUyMHByb2R1Y3R8ZW58MXwwfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=800"
+                    alt="Technology on a desk"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="flex mt-4 px-2 justify-between items-center">
+                  <div>
+                    <p className="font-bold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                      Smart Combo Kit
+                    </p>
+                    <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4 mt-0.5">
+                      Best seller this month
+                    </p>
+                  </div>
+                  <span className="font-bold rounded-lg bg-[#2b7fff] text-blue-50 text-sm leading-5 px-3 py-1">
+                    ₹12,999
+                  </span>
+                </div>
               </div>
-              <div className="min-w-0">
-                <h3 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white truncate">
-                  {cat.name}
-                </h3>
-                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
-                  View Items
+              <div className="shadow-lg rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex absolute -left-3 -bottom-3 px-3 py-2 items-center gap-2">
+                <BadgeCheck className="size-5 text-green-600" />
+                <span className="font-semibold text-xs leading-4 text-zinc-900 dark:text-zinc-50">
+                  Verified Seller
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. STATS SECTION (w-full) */}
+        <section className="w-full py-12 bg-zinc-50/50 dark:bg-zinc-950/20 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16 grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">500+</p>
+              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Products</p>
+            </Card>
+            <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">1000+</p>
+              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Happy Customers</p>
+            </Card>
+            <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">5+</p>
+              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Years Experience</p>
+            </Card>
+            <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">100%</p>
+              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Trusted</p>
+            </Card>
+          </div>
+        </section>
+
+        {/* 3. CATEGORY GRID SECTION (w-full) */}
+        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="text-center flex mb-12 flex-col items-center gap-1">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                Shop by Category
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                Find exactly what you need
+              </p>
+            </div>
+            
+            {loading ? (
+              <div className="flex flex-wrap justify-center gap-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="w-[calc(50%-8px)] sm:w-[180px] h-[140px] rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-4">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat._id}
+                    href={`/products?category=${cat.slug}`}
+                    className="flex flex-col items-center justify-center group cursor-pointer shadow-xs transition-all text-center rounded-2xl p-4 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-[#2b7fff] dark:hover:border-[#2b7fff] hover:scale-[1.02] w-[calc(50%-8px)] sm:w-[180px] min-h-[140px]"
+                  >
+                    <div className="size-12 transition-colors rounded-xl bg-zinc-100 dark:bg-zinc-900 text-[#2b7fff] flex justify-center items-center group-hover:bg-[#2b7fff]/10 shrink-0">
+                      {getCategoryIcon(cat.slug)}
+                    </div>
+                    <p className="font-semibold text-xs sm:text-sm leading-snug mt-3 text-zinc-900 dark:text-zinc-50 break-words w-full">
+                      {cat.name}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 4. FEATURED PRODUCTS (w-full) */}
+        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="flex mb-10 justify-between items-end">
+              <div className="flex flex-col gap-1">
+                <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                  Featured Products
+                </h2>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                  Hand-picked deals for you
                 </p>
               </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 3. FEATURED PRODUCTS CATALOG */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex justify-between items-end">
-          <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-black text-gray-905 dark:text-white">
-              Featured Products
-            </h2>
-            <p className="text-xs text-gray-400">Our customer picks backed by our repair workshop verification.</p>
-          </div>
-          <Link
-            href="/products"
-            className="flex items-center gap-0.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            <span>View All</span>
-            <ChevronRight size={14} />
-          </Link>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => <ProductCardSkeleton key={i} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {featuredProducts.slice(0, 8).map((prod) => (
-              <ProductCard key={prod._id} product={prod} whatsappNumber={settings.whatsapp} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 4. NEW ARRIVALS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="space-y-1">
-          <h2 className="text-xl sm:text-2xl font-black text-gray-950 dark:text-white">
-            New Arrivals
-          </h2>
-          <p className="text-xs text-gray-400">Direct distributor brand new components and systems.</p>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => <ProductCardSkeleton key={i} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {newProducts.map((prod) => (
-              <ProductCard key={prod._id} product={prod} whatsappNumber={settings.whatsapp} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 5. USED PRODUCTS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="space-y-1">
-          <h2 className="text-xl sm:text-2xl font-black text-gray-950 dark:text-white">
-            Used &amp; Refurbished Products
-          </h2>
-          <p className="text-xs text-gray-400">Inspected, benchmarked, and warrantied local pre-owned stock.</p>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => <ProductCardSkeleton key={i} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {usedProducts.map((prod) => (
-              <ProductCard key={prod._id} product={prod} whatsappNumber={settings.whatsapp} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 6. WHY CHOOSE US */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white">
-            Why Choose Us?
-          </h2>
-          <p className="text-xs text-gray-500">
-            Boisar's technical integration point for computing and network security.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: '25-Point Diagnostic Check',
-              desc: 'Every refurbished device undergoes structural, software, and hardware diagnostics before sale.',
-              icon: Wrench,
-            },
-            {
-              title: 'Local Shop Warranty',
-              desc: 'No waiting for distant hubs. Any technical issue is handled directly at our Boisar storefront.',
-              icon: ShieldCheck,
-            },
-            {
-              title: 'Highly Competitive Prices',
-              desc: 'Get top-tier tech like Business Series HP, Dell, and Lenovo laptops at a fraction of their launch price.',
-              icon: ThumbsUp,
-            },
-            {
-              title: 'Custom Integrations',
-              desc: 'We do not just sell components; we design CCTV frameworks, office printing terminals, and home networks.',
-              icon: Laptop,
-            },
-          ].map((feature, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-2xl border border-gray-150 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm space-y-4"
-            >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-450">
-                <feature.icon size={22} />
-              </div>
-              <h3 className="font-extrabold text-sm sm:text-base text-gray-900 dark:text-white">
-                {feature.title}
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-450 leading-relaxed">
-                {feature.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 7. CUSTOMER REVIEWS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white">
-            Customer Reviews
-          </h2>
-          <p className="text-xs text-gray-500">Feedback from local retail buyers and office installations.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              quote: 'Purchased a refurbished ThinkPad for my office. The laptop runs as good as new and saved me over 60% of the cost. Outstanding service by Jai Ambe Intigrator!',
-              author: 'Ramesh Patil',
-              role: 'Small Business Owner, Boisar East',
-            },
-            {
-              quote: 'They installed a 6-camera CCTV kit at my retail store. Complete setup done in one day with remote phone viewing. Very professional and helpful staff.',
-              author: 'Sanjay Mishra',
-              role: 'Supermarket Owner, Tarapur Road',
-            },
-            {
-              quote: 'Best place in Boisar for printers and spares. I get all my cartridges and servicing done here. Transparent pricing and genuine feedback on repairs.',
-              author: 'Priya Sharma',
-              role: 'Academy Coordinator, Palghar',
-            },
-          ].map((t, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-2xl bg-white dark:bg-gray-950 border border-gray-150 dark:border-gray-900 shadow-sm text-left flex flex-col justify-between h-48"
-            >
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 italic leading-relaxed">
-                "{t.quote}"
-              </p>
-              <div>
-                <h4 className="font-extrabold text-xs text-gray-900 dark:text-white">
-                  {t.author}
-                </h4>
-                <p className="text-[10px] text-gray-400 font-semibold">{t.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 8. FAQ ACCORDION */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 dark:text-white">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Find answers to common questions about our products, setups, and local support.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl border border-gray-150 dark:border-gray-900 bg-white dark:bg-gray-950/40 overflow-hidden shadow-sm transition-all"
-            >
-              <button
-                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors"
+              <Link
+                href="/products"
+                className="flex items-center gap-1 text-xs font-bold text-[#2b7fff] hover:underline"
               >
-                <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
-                  {faq.q}
-                </span>
-                <span className="text-blue-600 dark:text-blue-400 text-lg font-bold">
-                  {openFaq === idx ? '−' : '+'}
-                </span>
-              </button>
-              
-              {openFaq === idx && (
-                <div className="px-6 pb-5 pt-1 border-t border-gray-100 dark:border-gray-900">
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    {faq.a}
-                  </p>
-                </div>
-              )}
+                <span>View All</span>
+                <ChevronRight className="size-4" />
+              </Link>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* 9. CONTACT CTA SECTION */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 sm:p-12 rounded-3xl bg-blue-600 dark:bg-blue-900 text-white flex flex-col md:flex-row justify-between items-center gap-8 shadow-lg shadow-blue-500/10">
-          <div className="space-y-3 text-center md:text-left max-w-lg">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Looking for a Custom Configuration?
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map((i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                {featuredProducts.slice(0, 8).map((prod) => (
+                  <ProductCard
+                    key={prod._id}
+                    product={prod}
+                    whatsappNumber={settings.whatsapp}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 5. NEW ARRIVALS (w-full) */}
+        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="space-y-1 mb-10">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                New Arrivals
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                Direct distributor brand new components and systems.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {newProducts.slice(0, 3).map((prod) => (
+                  <Card
+                    key={prod._id}
+                    className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
+                  >
+                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer">
+                      <img
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                        alt={prod.name}
+                        className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                      />
+                      <span className="font-bold rounded-full bg-[#2b7fff] text-blue-50 text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
+                        New
+                      </span>
+                    </Link>
+                    <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <Link href={`/products/${prod._id}`} className="hover:underline">
+                            <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-[#2b7fff] transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
+                              {prod.name}
+                            </p>
+                          </Link>
+                          <p className="font-bold text-[#2b7fff] text-base leading-6">
+                            {new Intl.NumberFormat('en-IN', {
+                              style: 'currency',
+                              currency: 'INR',
+                              maximumFractionDigits: 0,
+                            }).format(prod.price)}
+                          </p>
+                        </div>
+                        <Link
+                          href={`/products/${prod._id}`}
+                          className="inline-flex items-center justify-center size-9 rounded-full text-[#2b7fff] border border-[#2b7fff] shrink-0 cursor-pointer hover:bg-[#2b7fff] hover:text-white transition-colors mt-0.5"
+                        >
+                          <ArrowRight className="size-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 6. USED PRODUCTS (w-full) */}
+        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="space-y-1 mb-10">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                Used Products
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                Inspected, benchmarked, and warrantied local pre-owned stock.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {usedProducts.slice(0, 3).map((prod) => (
+                  <Card
+                    key={prod._id}
+                    className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
+                  >
+                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer">
+                      <img
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                        alt={prod.name}
+                        className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                      />
+                      <span className="font-bold rounded-full bg-orange-500 text-white text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
+                        Used
+                      </span>
+                    </Link>
+                    <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <Link href={`/products/${prod._id}`} className="hover:underline">
+                            <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-orange-500 transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
+                              {prod.name}
+                            </p>
+                          </Link>
+                          <p className="font-bold text-[#2b7fff] text-base leading-6">
+                            {new Intl.NumberFormat('en-IN', {
+                              style: 'currency',
+                              currency: 'INR',
+                              maximumFractionDigits: 0,
+                            }).format(prod.price)}
+                          </p>
+                        </div>
+                        <Link
+                          href={`/products/${prod._id}`}
+                          className="inline-flex items-center justify-center size-9 rounded-full text-orange-500 border border-orange-500 shrink-0 cursor-pointer hover:bg-orange-500 hover:text-white transition-colors mt-0.5"
+                        >
+                          <ArrowRight className="size-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* 7. WHY CHOOSE US (w-full) */}
+        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="text-center flex mb-12 flex-col items-center gap-1">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                Why Choose Us
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                Reasons our customers trust us
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <ShieldCheck className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Genuine Products
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  100% authentic and quality-checked items
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Tag className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Best Prices
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Unbeatable deals on new & used goods
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Truck className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Fast Service
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Quick local delivery across Palghar
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Headset className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Friendly Support
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Always here to answer your queries
+                </p>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* 8. CUSTOMER REVIEWS (w-full) */}
+        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="text-center flex mb-12 flex-col items-center gap-1">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                Customer Reviews
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                What our happy customers say
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1625241152315-4a698f74ceb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMG1hbiUyMGluZGlhbiUyMHNtaWxpbmd8ZW58MXwyfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=400"
+                    alt="Rohit"
+                    className="size-11 object-cover rounded-full"
+                  />
+                  <div>
+                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                      Rohit Patil
+                    </p>
+                    <div className="text-orange-500 flex mt-0.5">
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
+                  Bought a laptop here, great price and genuine product. Very
+                  trustworthy shop in Boisar!
+                </p>
+              </Card>
+              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1732888878731-7e52999af144?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHdvbWFuJTIwaW5kaWFuJTIwc21pbGluZ3xlbnwxfDJ8fHwxNzgwNDc2NTI2fDA&ixlib=rb-4.1.0&q=80&w=400"
+                    alt="Sneha"
+                    className="size-11 object-cover rounded-full"
+                  />
+                  <div>
+                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                      Sneha Joshi
+                    </p>
+                    <div className="text-orange-500 flex mt-0.5">
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
+                  Excellent service and friendly staff. Got my home appliance
+                  at the best price. Highly recommend!
+                </p>
+              </Card>
+              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1718209881007-c0ecdfc00f9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHByb2Zlc3Npb25hbCUyMGJ1c2luZXNzbWFufGVufDF8Mnx8fDE3ODQ0NzY1MjZ8MA&ixlib=rb-4.1.0&q=80&w=400"
+                    alt="Amit"
+                    className="size-11 object-cover rounded-full"
+                  />
+                  <div>
+                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                      Amit Sharma
+                    </p>
+                    <div className="text-orange-500 flex mt-0.5">
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                      <Star className="size-3.5 fill-current" />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
+                  Reliable used products at fair prices. The team is honest
+                  and helpful. Will visit again soon.
+                </p>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* 9. FAQs SECTION (w-full) */}
+        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <h2 className="font-bold text-center text-3xl leading-9 tracking-tight mb-10 text-zinc-900 dark:text-white">
+              Frequently Asked Questions
             </h2>
-            <p className="text-xs sm:text-sm text-blue-100 font-medium">
-              We configure computers to order and setup specialized office print &amp; surveillance frameworks. Talk to our technician today!
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 justify-center">
-            <Link
-              href="/contact"
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white text-blue-600 font-bold text-sm shadow-md transition-all hover:scale-[1.02]"
+            <Accordion
+              type="single"
+              collapsible={true}
+              className="max-w-2xl mx-auto w-full"
             >
-              <MapPin size={16} />
-              <span>Contact &amp; Timings</span>
-            </Link>
-            <a
-              href={`https://wa.me/${settings.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-md transition-all hover:scale-[1.02]"
-            >
-              <span>WhatsApp Chat</span>
-            </a>
+              {faqs.map((faq) => (
+                <AccordionItem
+                  key={faq.value}
+                  value={faq.value}
+                  className="rounded-xl border border-zinc-200 dark:border-zinc-800 mb-3 px-4 bg-white dark:bg-zinc-950/40"
+                >
+                  <AccordionTrigger className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50 border-0 hover:no-underline hover:text-[#2b7fff] transition-colors">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* 10. MAPS / DIRECTION SECTION (w-full) */}
+        <section className="w-full py-16 pb-24 bg-zinc-50/30 dark:bg-zinc-900/10">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="relative bg-gradient-to-br from-[#2b7fff] to-[#1e5bb8] shadow-xl text-center rounded-3xl text-blue-50 p-12 overflow-hidden">
+              <div className="size-48 blur-2xl rounded-full bg-white/10 absolute -right-10 -top-10" />
+              <h2 className="relative font-extrabold text-3xl leading-9">
+                Visit Our Shop Today
+              </h2>
+              <p className="relative text-blue-50/90 text-sm leading-5 flex mt-2 justify-center items-center gap-1.5">
+                <MapPin className="size-4" />
+                Boisar, Palghar, Maharashtra
+              </p>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.shopName + ' ' + settings.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-6"
+              >
+                <Button
+                  size="lg"
+                  className="relative shadow-lg rounded-xl bg-orange-500 hover:bg-orange-600 text-white px-6 gap-2 border-0 cursor-pointer transition-all hover:scale-[1.02]"
+                >
+                  <Navigation className="size-4" />
+                  Get Directions
+                </Button>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </main>
     </div>
   );
 }

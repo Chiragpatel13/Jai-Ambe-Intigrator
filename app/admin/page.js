@@ -13,6 +13,7 @@ import {
   Layers,
   ArrowRight,
   TrendingUp,
+  Image,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 
@@ -107,7 +108,7 @@ export default function AdminDashboardPage() {
       {/* Quick Launch Panel */}
       <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-4">
         <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Quick Controls</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <Link
             href="/admin/products?action=new"
             className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
@@ -121,6 +122,13 @@ export default function AdminDashboardPage() {
           >
             <Layers size={16} className="text-blue-600" />
             <span>Manage Categories</span>
+          </Link>
+          <Link
+            href="/admin/gallery"
+            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
+          >
+            <Image size={16} className="text-blue-600" />
+            <span>Manage Gallery</span>
           </Link>
           <Link
             href="/admin/settings"

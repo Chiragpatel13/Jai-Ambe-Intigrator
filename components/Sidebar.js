@@ -10,6 +10,7 @@ import {
   Settings as SettingsIcon,
   LogOut,
   ArrowLeft,
+  Image,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -21,6 +22,7 @@ export default function Sidebar() {
     { name: 'Products', path: '/admin/products', icon: Laptop },
     { name: 'Categories', path: '/admin/categories', icon: FolderTree },
     { name: 'Inquiries', path: '/admin/inquiries', icon: MailWarning },
+    { name: 'Gallery', path: '/admin/gallery', icon: Image },
     { name: 'Settings', path: '/admin/settings', icon: SettingsIcon },
   ];
 

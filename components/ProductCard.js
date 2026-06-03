@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { MessageSquare, Eye, Award, CheckCircle, AlertTriangle, ChevronRight } from 'lucide-react';
+import { MessageSquare, ChevronRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function ProductCard({ product, whatsappNumber = '919890254321' }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   const {
     _id,
     name,
@@ -51,83 +50,77 @@ Please let me know if it is available.`;
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  const hasMultipleImages = images.length > 1;
-
   return (
-    <div className="group relative flex flex-col bg-white dark:bg-gray-950 rounded-2xl border border-gray-150 dark:border-gray-900 shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 overflow-hidden h-full">
-      {/* Product Image Panel */}
-      <div className="relative aspect-square w-full bg-gray-50 dark:bg-gray-900 overflow-hidden border-b border-gray-100 dark:border-gray-900/50">
+    <Card className="shadow-sm hover:shadow-md hover:border-[#2b7fff] transition-all duration-300 rounded-2xl p-0 gap-3 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full">
+      <Link href={`/products/${_id}`} className="relative overflow-hidden aspect-[4/3] w-full bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-900 block cursor-pointer">
         {images.length > 0 ? (
           <img
-            src={images[currentImageIndex]}
+            src={images[0]}
             alt={name}
-            className="h-full w-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
+            className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-650 bg-gray-100 dark:bg-gray-900">
+          <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-650 bg-zinc-100 dark:bg-zinc-900 text-xs">
             No Image Available
           </div>
         )}
 
-        {/* Condition Badge (Orange for New, Blue for Refurbished) */}
+        {/* Condition Badge (Blue for New, Orange for Used) */}
         <span
-          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase shadow-sm ${
+          className={`font-bold rounded-full text-white text-[10px] absolute left-2 top-2 px-2.5 py-0.5 shadow-sm ${
             condition === 'new'
-              ? 'bg-orange-500 text-white'
-              : 'bg-blue-600 text-white'
+              ? 'bg-[#2b7fff]'
+              : 'bg-orange-500'
           }`}
         >
-          {condition === 'new' ? 'New' : 'Refurbished'}
+          {condition === 'new' ? 'New' : 'Used'}
         </span>
 
         {/* Stock status badge */}
         {!availability || stock === 0 ? (
-          <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-600 text-white shadow-sm">
+          <span className="font-bold rounded-full bg-rose-600 text-white text-[10px] absolute right-2 top-2 px-2 py-0.5 shadow-sm">
             SOLD OUT
           </span>
         ) : (
           stock <= 2 && (
-            <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white shadow-sm">
+            <span className="font-bold rounded-full bg-amber-500 text-white text-[10px] absolute right-2 top-2 px-2 py-0.5 shadow-sm">
               Only {stock} Left
             </span>
           )
         )}
-      </div>
+      </Link>
 
-      {/* Product Content Details */}
-      <div className="flex flex-col flex-1 p-5 space-y-2">
-        <div className="flex justify-between items-center">
+      <div className="flex p-6 flex-col gap-3 flex-grow justify-between bg-white dark:bg-zinc-950">
+        <div className="space-y-2">
           {product.category && (
-            <span className="text-[10px] font-bold tracking-wider uppercase text-gray-400">
+            <p className="text-[10px] font-bold tracking-wider uppercase text-zinc-400 dark:text-zinc-500">
               {product.category.name}
-            </span>
+            </p>
           )}
+          <Link href={`/products/${_id}`} className="hover:underline block">
+            <h4 className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 line-clamp-2 hover:text-[#2b7fff] dark:hover:text-[#2b7fff] transition-colors min-h-[40px]">
+              {name}
+            </h4>
+          </Link>
+          <p className="text-xs text-zinc-500 dark:text-zinc-450 line-clamp-2 leading-relaxed">
+            {description}
+          </p>
         </div>
 
-        <Link href={`/products/${_id}`} className="hover:underline">
-          <h4 className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-            {name}
-          </h4>
-        </Link>
-
-        <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-2 flex-1 leading-relaxed">
-          {description}
-        </p>
-
-        <div className="pt-2 flex flex-col gap-3">
-          <p className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400">
+        <div className="pt-2 flex flex-col gap-2.5">
+          <p className="font-bold text-[#2b7fff] text-lg leading-7">
             {formattedPrice}
           </p>
-
-          <Link
-            href={`/products/${_id}`}
-            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/10 transition-transform hover:scale-[1.01]"
+          <Button
+            onClick={handleWhatsAppInquiry}
+            size="sm"
+            className="rounded-lg bg-orange-500 hover:bg-orange-600 text-white gap-1.5 py-2 font-semibold text-xs border-0"
           >
-            <span>Inquire Now</span>
-            <ChevronRight size={14} />
-          </Link>
+            <MessageSquare className="size-3.5" />
+            Inquire Now
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

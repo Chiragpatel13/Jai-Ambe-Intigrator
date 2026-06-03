@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Phone, Mail, MapPin, Clock, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Boxes, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Footer() {
   const [settings, setSettings] = useState({
     shopName: 'Jai Ambe Intigrator',
-    phone: '+91 98902 54321',
+    phone: '+91 98765 43210',
     whatsapp: '919890254321',
-    address: 'Shop No. 12, Ostwal Empire, Near Boisar Railway Station, Boisar East, Palghar, Maharashtra - 401501',
-    workingHours: 'Monday - Saturday: 10:00 AM - 8:30 PM, Sunday: Closed',
+    address: 'Boisar, Palghar, Maharashtra',
   });
   const pathname = usePathname();
 
@@ -31,97 +31,131 @@ export default function Footer() {
 
   if (isAdmin) return null;
 
+  const trackWhatsApp = () => {
+    try {
+      if (typeof window !== 'undefined') {
+        window.gtag?.('event', 'whatsapp_click', {
+          event_category: 'engagement',
+          event_label: 'footer_whatsapp',
+        });
+      }
+    } catch (e) {}
+  };
+
   return (
-    <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-100 dark:border-gray-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-zinc-100 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 transition-colors duration-300 mt-12 w-full">
+      <div className="w-full px-4 sm:px-10 lg:px-16 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand Info */}
-          <div className="md:col-span-2 space-y-4">
-            <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              {settings.shopName}
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm">
-              Trusted New & Refurbished Products at Best Prices. We specialize in Laptops, CCTV Systems, Printers, Networking Setup, and Custom Desktop PC Integration.
-            </p>
-            <div className="pt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-900">
-                Boisar, Palghar, MH
+          
+          {/* Brand Col */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <div className="size-9 rounded-xl bg-[#2b7fff] text-blue-50 flex justify-center items-center">
+                <Boxes className="size-5" />
+              </div>
+              <span className="font-bold text-base leading-6 text-zinc-900 dark:text-white">
+                {settings.shopName}
               </span>
+            </div>
+            <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+              Trusted new & used products at the best prices in Boisar, Palghar.
+            </p>
+            <div className="flex gap-2">
+              <a
+                href="#"
+                className="size-9 transition-colors rounded-full bg-white dark:bg-zinc-900 text-[#71717b] border border-zinc-200 dark:border-zinc-800 flex justify-center items-center hover:bg-zinc-50"
+              >
+                <Globe className="size-4" />
+              </a>
+              <a
+                href="#"
+                className="size-9 transition-colors rounded-full bg-white dark:bg-zinc-900 text-[#71717b] border border-zinc-200 dark:border-zinc-800 flex justify-center items-center hover:bg-zinc-50"
+              >
+                <Globe className="size-4" />
+              </a>
+              {settings.whatsapp && (
+                <a
+                  href={`https://wa.me/${settings.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={trackWhatsApp}
+                  className="size-9 transition-colors rounded-full bg-white dark:bg-zinc-900 text-green-600 border border-zinc-200 dark:border-zinc-800 flex justify-center items-center hover:bg-zinc-50"
+                >
+                  <MessageCircle className="size-4" />
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
-              Quick Links
-            </h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/products" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/categories" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li className="pt-2 border-t border-gray-100 dark:border-gray-900">
-                <Link href="/admin" className="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 transition-colors">
-                  Admin Panel <ExternalLink size={10} />
-                </Link>
-              </li>
-            </ul>
+          {/* Quick Links Col */}
+          <div className="flex flex-col gap-3">
+            <p className="font-bold text-sm leading-5 text-zinc-900 dark:text-white">Quick Links</p>
+            <Link href="/" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              Home
+            </Link>
+            <Link href="/products" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              Products
+            </Link>
+            <Link href="/categories" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              Categories
+            </Link>
+            <Link href="/gallery" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              Gallery
+            </Link>
+            <Link href="/about" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              About
+            </Link>
+            <Link href="/contact" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
+              Contact
+            </Link>
           </div>
 
-          {/* Contact Details */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
-              Store Contact
-            </h4>
-            <ul className="space-y-3">
-              <li className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <MapPin size={18} className="flex-shrink-0 text-blue-500" />
-                <span className="line-clamp-3">{settings.address}</span>
-              </li>
-              {settings.phone && (
-                <li className="flex gap-2 items-center text-sm text-gray-500 dark:text-gray-400">
-                  <Phone size={16} className="text-blue-500" />
-                  <a href={`tel:${settings.phone}`} className="hover:text-blue-600 transition-colors">
-                    {settings.phone}
-                  </a>
-                </li>
-              )}
-              <li className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <Clock size={16} className="flex-shrink-0 text-blue-500 mt-0.5" />
-                <span>{settings.workingHours}</span>
-              </li>
-            </ul>
+          {/* Contact Info Col */}
+          <div className="flex flex-col gap-3">
+            <p className="font-bold text-sm leading-5 text-zinc-900 dark:text-white">Contact Info</p>
+            <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 flex items-start gap-2">
+              <MapPin className="size-4 text-[#2b7fff] mt-0.5 shrink-0" />
+              <span>{settings.address}</span>
+            </p>
+            {settings.phone && (
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 flex items-center gap-2">
+                <Phone className="size-4 text-[#2b7fff] shrink-0" />
+                <a href={`tel:${settings.phone}`} className="hover:underline">{settings.phone}</a>
+              </p>
+            )}
+            {settings.whatsapp && (
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 flex items-center gap-2">
+                <MessageCircle className="size-4 text-green-600 shrink-0" />
+                <span>WhatsApp: {settings.phone || `+${settings.whatsapp}`}</span>
+              </p>
+            )}
           </div>
+
+          {/* Get In Touch Col */}
+          <div className="flex flex-col gap-3">
+            <p className="font-bold text-sm leading-5 text-zinc-900 dark:text-white">Get In Touch</p>
+            <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+              Have a question? Reach out and we'll help you find the perfect product.
+            </p>
+            {settings.whatsapp && (
+              <a
+                href={`https://wa.me/${settings.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={trackWhatsApp}
+                className="inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-lg bg-green-600 hover:bg-green-700 text-white gap-1.5 w-fit px-4 py-2 text-sm h-9 cursor-pointer"
+              >
+                <MessageCircle className="size-4" />
+                Chat Now
+              </a>
+            )}
+          </div>
+
         </div>
 
-        <div className="mt-12 pt-6 border-t border-gray-200 dark:border-gray-900 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-400 dark:text-gray-500">
-            &copy; {new Date().getFullYear()} {settings.shopName}. All rights reserved.
-          </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500">
-            Powered by high-performance integrations.
-          </p>
+        {/* Footer bottom details */}
+        <div className="text-center text-[#71717b] dark:text-zinc-500 text-xs leading-4 border-t border-zinc-200 dark:border-zinc-800 mt-8 pt-6">
+          &copy; {new Date().getFullYear()} {settings.shopName}. All rights reserved.
         </div>
       </div>
     </footer>

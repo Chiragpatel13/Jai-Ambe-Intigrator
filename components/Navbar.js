@@ -4,14 +4,29 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/hooks/useTheme';
-import { Menu, X, Sun, Moon, Phone, MessageSquare, Layers } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Search,
+  MessageCircle,
+  Boxes,
+  Home,
+  ShoppingBag,
+  Grid,
+  Info,
+  Mail,
+  Image,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState({
     shopName: 'Jai Ambe Intigrator',
     phone: '',
-    whatsapp: '',
+    whatsapp: '919890254321',
   });
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
@@ -33,18 +48,18 @@ export default function Navbar() {
   if (isAdmin) return null;
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Products', path: '/products' },
-    { name: 'Categories', path: '/categories' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Home', path: '/', icon: Home },
+    { name: 'Products', path: '/products', icon: ShoppingBag },
+    { name: 'Categories', path: '/categories', icon: Grid },
+    { name: 'Gallery', path: '/gallery', icon: Image },
+    { name: 'About', path: '/about', icon: Info },
+    { name: 'Contact', path: '/contact', icon: Mail },
   ];
 
   const handleLinkClick = () => {
     setIsOpen(false);
   };
 
-  // Tracking WhatsApp click
   const trackWhatsApp = () => {
     try {
       if (typeof window !== 'undefined') {
@@ -57,144 +72,158 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo / Title */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-blue-500/10">
-                <Layers size={16} className="stroke-[2.5]" />
-              </div>
-              <span className="font-extrabold text-lg text-gray-905 dark:text-white tracking-tight lowercase">
-                jai ambe <span className="text-blue-600 dark:text-blue-400 font-black">intigrator</span>
-              </span>
-            </Link>
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200 dark:border-zinc-800 w-full transition-colors duration-300">
+      <div className="w-full flex px-4 sm:px-10 lg:px-16 justify-between items-center h-16">
+        
+        {/* Logo Section */}
+        <Link href="/" className="flex items-center gap-2">
+          <div className="size-9 shadow-md rounded-xl bg-[#2b7fff] text-blue-50 flex justify-center items-center">
+            <Boxes className="size-5" />
           </div>
-
-          {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.path;
-              return (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
-                    isActive
-                      ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                      : 'text-gray-600 dark:text-gray-300'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
+          <div className="leading-none flex flex-col">
+            <span className="font-bold text-base leading-6 tracking-tight text-zinc-950 dark:text-white">
+              {settings.shopName}
+            </span>
+            <span className="font-medium text-[#71717b] dark:text-zinc-400 text-[10px]">
+              Boisar, Palghar
+            </span>
           </div>
+        </Link>
 
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {settings.phone && (
-              <a
-                href={`tel:${settings.phone}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.path;
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`transition-colors font-medium rounded-lg text-sm leading-5 flex px-3 py-2 items-center gap-1.5 ${
+                  isActive
+                    ? 'font-semibold text-zinc-950 dark:text-white bg-zinc-100/50 dark:bg-zinc-850'
+                    : 'text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                }`}
               >
-                <Phone size={14} />
-                <span>Call Shop</span>
-              </a>
-            )}
+                <Icon className="size-4" />
+                {link.name}
+              </Link>
+            );
+          })}
+        </nav>
 
-            {settings.whatsapp && (
-              <a
-                href={`https://wa.me/${settings.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={trackWhatsApp}
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/10 transition-all hover:scale-[1.02]"
-              >
-                <MessageSquare size={14} />
-                <span>Inquiry</span>
-              </a>
-            )}
-          </div>
-
-          {/* Mobile menu button and Theme switch */}
-          <div className="flex items-center md:hidden gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-              aria-label="Toggle Theme"
+        {/* Action Buttons */}
+        <div className="hidden md:flex items-center gap-2">
+          <Link href="/products">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
+              aria-label="Search Products"
             >
-              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-950 focus:outline-none"
-              aria-expanded={isOpen}
+              <Search className="size-4" />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+          
+          {settings.whatsapp && (
+            <a
+              href={`https://wa.me/${settings.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={trackWhatsApp}
             >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+              <Button className="shadow-md transition-all rounded-lg bg-green-600 hover:bg-green-700 text-white gap-1.5 border-0">
+                <MessageCircle className="size-4" />
+                WhatsApp
+              </Button>
+            </a>
+          )}
         </div>
+
+        {/* Mobile menu toggle and theme toggle */}
+        <div className="flex items-center md:hidden gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(!isOpen)}
+            className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </Button>
+        </div>
+
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-900">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
+          <div className="px-4 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.path;
+              const Icon = link.icon;
               return (
                 <Link
                   key={link.path}
                   href={link.path}
                   onClick={handleLinkClick}
-                  className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900'
+                      ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-white'
+                      : 'text-[#71717b] dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-950 dark:hover:text-white'
                   }`}
                 >
+                  <Icon className="size-4" />
                   {link.name}
                 </Link>
               );
             })}
           </div>
-          <div className="pt-4 pb-4 border-t border-gray-100 dark:border-gray-900 px-4 flex gap-4">
-            {settings.phone && (
-              <a
-                href={`tel:${settings.phone}`}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg border border-gray-200 dark:border-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900"
+          <div className="pt-2 pb-4 border-t border-zinc-100 dark:border-zinc-900 px-4 flex gap-2">
+            <Link href="/products" className="flex-1" onClick={handleLinkClick}>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800"
               >
-                <Phone size={16} />
-                <span>Call Shop</span>
-              </a>
-            )}
+                <Search className="size-4" />
+                <span>Search Products</span>
+              </Button>
+            </Link>
             {settings.whatsapp && (
               <a
                 href={`https://wa.me/${settings.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={trackWhatsApp}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm"
+                className="flex-1"
               >
-                <MessageSquare size={16} />
-                <span>WhatsApp</span>
+                <Button className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-xs font-semibold border-0">
+                  <MessageCircle className="size-4" />
+                  <span>WhatsApp</span>
+                </Button>
               </a>
             )}
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 }

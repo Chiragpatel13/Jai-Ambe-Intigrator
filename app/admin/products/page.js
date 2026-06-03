@@ -142,23 +142,23 @@ function ProductsAdminContent() {
 
     setUploadingImage(true);
     try {
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
 
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-        const data = await res.json();
-        if (data.success && data.url) {
-          setImages((prev) => [...prev, data.url]);
-        } else {
-          triggerToast(data.error || 'Failed to upload image.', 'error');
-        }
+      const data = await res.json();
+      if (data.success && data.urls) {
+        setImages((prev) => [...prev, ...data.urls]);
+        triggerToast('Images uploaded successfully!', 'success');
+      } else {
+        triggerToast(data.error || 'Failed to upload images.', 'error');
       }
-      triggerToast('Images uploaded successfully!', 'success');
     } catch (err) {
       console.error('File upload error:', err);
       triggerToast('Error uploading files.', 'error');

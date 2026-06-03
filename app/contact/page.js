@@ -190,7 +190,7 @@ Please get back to me. Thank you.`;
 
           <form onSubmit={handleInquirySubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5">
                 Full Name
               </label>
               <input
@@ -199,11 +199,11 @@ Please get back to me. Thank you.`;
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5">
                 Phone Number
               </label>
               <input
@@ -212,11 +212,11 @@ Please get back to me. Thank you.`;
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5">
                 Your Inquiry Message
               </label>
               <textarea
@@ -225,7 +225,7 @@ Please get back to me. Thank you.`;
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
               />
             </div>
 
@@ -259,7 +259,7 @@ Please get back to me. Thank you.`;
             href={`https://wa.me/${settings.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-emerald-50 text-emerald-605 font-bold text-xs sm:text-sm text-center shadow-md transition-all hover:scale-[1.01]"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm text-center shadow-md transition-all hover:scale-[1.01]"
           >
             Chat Now
           </a>
