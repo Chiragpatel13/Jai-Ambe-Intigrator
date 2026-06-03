@@ -80,9 +80,9 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   href={link.path}
-                  className={`text-sm font-medium transition-colors hover:text-indigo-600 dark:hover:text-indigo-400 ${
+                  className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
                     isActive
-                      ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                      ? 'text-blue-600 dark:text-blue-400 font-semibold'
                       : 'text-gray-600 dark:text-gray-300'
                   }`}
                 >
@@ -161,7 +161,7 @@ export default function Navbar() {
                   onClick={handleLinkClick}
                   className={`block px-3 py-2 rounded-lg text-base font-medium ${
                     isActive
-                      ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400'
+                      ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
                       : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900'
                   }`}
                 >

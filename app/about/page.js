@@ -7,7 +7,7 @@ export default function AboutPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 bg-white dark:bg-gray-950 transition-colors duration-300">
       {/* Hero Header */}
       <section className="text-center max-w-2xl mx-auto space-y-4">
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900 uppercase tracking-wide">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-900 uppercase tracking-wide">
           About Jai Ambe Intigrator
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-950 dark:text-white tracking-tight">
@@ -31,7 +31,7 @@ export default function AboutPage() {
             Every refurbished laptop or desktop we sell goes through an intensive hardware inspection—testing battery health, CPU performance, display outputs, and storage speed. By combining affordable pricing with reliable shop warranties, we bring premium corporate-grade computers to the local community of Boisar and Palghar district.
           </p>
           <div className="flex gap-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-3.5 py-2 rounded-xl">
+            <div className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-3.5 py-2 rounded-xl">
               <Landmark size={14} />
               <span>Palghar Local Business</span>
             </div>
@@ -83,7 +83,7 @@ export default function AboutPage() {
               key={idx}
               className="p-6 rounded-2xl bg-white dark:bg-gray-950 border border-gray-150 dark:border-gray-900 shadow-sm space-y-4"
             >
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                 <val.icon size={20} />
               </div>
               <h3 className="font-bold text-base text-gray-900 dark:text-white">{val.title}</h3>
@@ -99,7 +99,7 @@ export default function AboutPage() {
       <section className="p-8 sm:p-12 rounded-3xl bg-gray-50 dark:bg-gray-900/40 border border-gray-150 dark:border-gray-900 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 max-w-lg">
           <h3 className="text-xl font-bold text-gray-950 dark:text-white flex items-center gap-2">
-            <MapPin className="text-indigo-600" size={20} />
+            <MapPin className="text-blue-600" size={20} />
             Located in Boisar, Maharashtra
           </h3>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -109,7 +109,7 @@ export default function AboutPage() {
         <div className="shrink-0 w-full md:w-auto">
           <a
             href="/contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md"
           >
             Get Location & Directions
           </a>

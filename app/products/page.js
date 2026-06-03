@@ -256,7 +256,7 @@ function ProductsContent() {
               </div>
               <button
                 onClick={handleResetFilters}
-                className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
+                className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
               >
                 <RotateCcw size={12} />
                 <span>Reset All Filters</span>

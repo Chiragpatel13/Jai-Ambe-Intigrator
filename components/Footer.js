@@ -37,14 +37,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">
-            <h3 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+            <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
               {settings.shopName}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm">
               Trusted New & Refurbished Products at Best Prices. We specialize in Laptops, CCTV Systems, Printers, Networking Setup, and Custom Desktop PC Integration.
             </p>
             <div className="pt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-100 dark:border-blue-900">
                 Boisar, Palghar, MH
               </span>
             </div>
@@ -57,32 +57,32 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/products" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   All Products
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/categories" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Categories
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/about" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/contact" className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Contact
                 </Link>
               </li>
               <li className="pt-2 border-t border-gray-100 dark:border-gray-900">
-                <Link href="/admin" className="text-xs text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                <Link href="/admin" className="text-xs text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 transition-colors">
                   Admin Panel <ExternalLink size={10} />
                 </Link>
               </li>
@@ -96,19 +96,19 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <MapPin size={18} className="flex-shrink-0 text-indigo-500" />
+                <MapPin size={18} className="flex-shrink-0 text-blue-500" />
                 <span className="line-clamp-3">{settings.address}</span>
               </li>
               {settings.phone && (
                 <li className="flex gap-2 items-center text-sm text-gray-500 dark:text-gray-400">
-                  <Phone size={16} className="text-indigo-500" />
-                  <a href={`tel:${settings.phone}`} className="hover:text-indigo-600 transition-colors">
+                  <Phone size={16} className="text-blue-500" />
+                  <a href={`tel:${settings.phone}`} className="hover:text-blue-600 transition-colors">
                     {settings.phone}
                   </a>
                 </li>
               )}
               <li className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <Clock size={16} className="flex-shrink-0 text-indigo-500 mt-0.5" />
+                <Clock size={16} className="flex-shrink-0 text-blue-500 mt-0.5" />
                 <span>{settings.workingHours}</span>
               </li>
             </ul>

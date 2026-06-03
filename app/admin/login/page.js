@@ -63,12 +63,12 @@ export default function AdminLoginPage() {
       )}
 
       {/* Decorative backdrop glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500/10 blur-3xl w-[400px] h-[400px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-500/10 blur-3xl w-[400px] h-[400px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-md bg-gray-950/80 backdrop-blur-md rounded-3xl border border-gray-800 shadow-2xl p-8 relative z-10 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mb-2">
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center mb-2">
             <Lock size={22} />
           </div>
           <h1 className="text-2xl font-black tracking-tight">Admin Console</h1>
@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full pl-10 pr-4 py-3 text-xs rounded-xl border border-gray-800 bg-gray-900 text-white placeholder-gray-550 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full pl-10 pr-4 py-3 text-xs rounded-xl border border-gray-800 bg-gray-900 text-white placeholder-gray-550 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <User size={14} />
@@ -107,7 +107,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-10 pr-4 py-3 text-xs rounded-xl border border-gray-800 bg-gray-900 text-white placeholder-gray-550 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full pl-10 pr-4 py-3 text-xs rounded-xl border border-gray-800 bg-gray-900 text-white placeholder-gray-550 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <Key size={14} />
@@ -118,7 +118,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 transition-all disabled:opacity-55"
+            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all disabled:opacity-55"
           >
             <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
           </button>

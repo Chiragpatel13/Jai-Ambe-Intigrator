@@ -123,7 +123,7 @@ export default function AdminInquiriesPage() {
                 onClick={() => setStatusFilter(tab.value)}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                   statusFilter === tab.value
-                    ? 'bg-white text-indigo-600 shadow-sm'
+                    ? 'bg-white text-blue-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -200,7 +200,7 @@ export default function AdminInquiriesPage() {
                       <div className="flex justify-end gap-1.5">
                         <button
                           onClick={() => setSelectedInquiry(inq)}
-                          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-150 hover:text-indigo-600 transition-colors"
+                          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-150 hover:text-blue-600 transition-colors"
                           title="View Inquiry details"
                         >
                           <Eye size={16} />
@@ -245,7 +245,7 @@ export default function AdminInquiriesPage() {
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Phone Number
                 </span>
-                <p className="text-sm font-bold text-indigo-650">{selectedInquiry.phone}</p>
+                <p className="text-sm font-bold text-blue-650">{selectedInquiry.phone}</p>
               </div>
             </div>
 

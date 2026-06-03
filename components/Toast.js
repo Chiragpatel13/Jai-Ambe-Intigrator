@@ -14,13 +14,13 @@ export default function Toast({ message, type = 'success', onClose, duration = 3
   const bgStyles = {
     success: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 border-emerald-150 dark:border-emerald-900',
     error: 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border-rose-150 dark:border-rose-900',
-    info: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-300 border-indigo-150 dark:border-indigo-900',
+    info: 'bg-blue-50 dark:bg-blue-950/30 text-blue-800 dark:text-blue-300 border-blue-150 dark:border-blue-900',
   };
 
   const icons = {
     success: <CheckCircle className="text-emerald-500" size={18} />,
     error: <AlertCircle className="text-rose-500" size={18} />,
-    info: <Info className="text-indigo-500" size={18} />,
+    info: <Info className="text-blue-500" size={18} />,
   };
 
   return (

@@ -265,7 +265,7 @@ function ProductsAdminContent() {
               placeholder="Search catalog..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 pr-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-48 sm:w-60"
+              className="pl-8 pr-3 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 w-48 sm:w-60"
             />
             <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-gray-400">
               <Search size={14} />
@@ -274,7 +274,7 @@ function ProductsAdminContent() {
 
           <button
             onClick={handleOpenCreateModal}
-            className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md transition-colors shrink-0"
+            className="flex items-center gap-1.5 px-4.5 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-colors shrink-0"
           >
             <Plus size={14} />
             <span>Add Product</span>
@@ -355,7 +355,7 @@ function ProductsAdminContent() {
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => handleOpenEditModal(prod)}
-                          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-150 hover:text-indigo-600 transition-colors"
+                          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-150 hover:text-blue-600 transition-colors"
                           title="Edit Product"
                         >
                           <Edit size={16} />
@@ -421,7 +421,7 @@ function ProductsAdminContent() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -434,7 +434,7 @@ function ProductsAdminContent() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -445,7 +445,7 @@ function ProductsAdminContent() {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="" disabled>Select Category</option>
                 {categories.map((cat) => (
@@ -460,7 +460,7 @@ function ProductsAdminContent() {
               <select
                 value={condition}
                 onChange={(e) => setCondition(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="new">Brand New</option>
                 <option value="used">Used / Refurbished</option>
@@ -474,7 +474,7 @@ function ProductsAdminContent() {
                 type="number"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -488,7 +488,7 @@ function ProductsAdminContent() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
             />
           </div>
 
@@ -499,7 +499,7 @@ function ProductsAdminContent() {
                 type="checkbox"
                 checked={availability}
                 onChange={(e) => setAvailability(e.target.checked)}
-                className="w-4 h-4 rounded text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500"
               />
               <span>Available in Stock</span>
             </label>
@@ -508,7 +508,7 @@ function ProductsAdminContent() {
                 type="checkbox"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="w-4 h-4 rounded text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                className="w-4 h-4 rounded text-blue-600 border-gray-300 focus:ring-blue-500"
               />
               <span>Featured Product</span>
             </label>
@@ -552,7 +552,7 @@ function ProductsAdminContent() {
                   }`}
                 >
                   {uploadingImage ? (
-                    <Loader2 size={16} className="animate-spin text-indigo-600" />
+                    <Loader2 size={16} className="animate-spin text-blue-600" />
                   ) : (
                     <>
                       <Upload size={16} />
@@ -576,7 +576,7 @@ function ProductsAdminContent() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-colors"
+              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors"
             >
               {submitting ? 'Saving...' : 'Save Product'}
             </button>

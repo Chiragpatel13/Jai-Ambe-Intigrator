@@ -124,7 +124,7 @@ Please get back to me. Thank you.`;
           <div className="space-y-4">
             {/* Address */}
             <div className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
-              <MapPin size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+              <MapPin size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Shop Address</h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
@@ -135,7 +135,7 @@ Please get back to me. Thank you.`;
 
             {/* Timings */}
             <div className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
-              <Clock size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+              <Clock size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Working Hours</h4>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
@@ -149,9 +149,9 @@ Please get back to me. Thank you.`;
               {settings.phone && (
                 <a
                   href={`tel:${settings.phone}`}
-                  className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm hover:border-indigo-500 transition-colors"
+                  className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm hover:border-blue-500 transition-colors"
                 >
-                  <Phone size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+                  <Phone size={20} className="text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Call Outlet</h4>
                     <p className="text-xs sm:text-sm text-gray-500 font-semibold">{settings.phone}</p>
@@ -180,7 +180,7 @@ Please get back to me. Thank you.`;
         <div className="p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-gray-900/40 border border-gray-150 dark:border-gray-900 space-y-6">
           <div className="space-y-1">
             <h2 className="text-xl font-bold text-gray-950 dark:text-white flex items-center gap-2">
-              <Landmark size={18} className="text-indigo-600" />
+              <Landmark size={18} className="text-blue-600" />
               General Inquiry Form
             </h2>
             <p className="text-xs text-gray-500">
@@ -199,7 +199,7 @@ Please get back to me. Thank you.`;
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -212,7 +212,7 @@ Please get back to me. Thank you.`;
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -225,14 +225,14 @@ Please get back to me. Thank you.`;
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-500/10 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
             >
               <Send size={12} />
               <span>{submitting ? 'Submitting...' : 'Submit Form'}</span>
@@ -240,6 +240,31 @@ Please get back to me. Thank you.`;
           </form>
         </div>
       </section>
+
+      {/* WhatsApp Green Banner (Mockup Screen 5 style) */}
+      {settings.whatsapp && (
+        <section className="rounded-3xl bg-emerald-600 dark:bg-emerald-800 text-white p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md shadow-emerald-500/10">
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+              <MessageSquare size={24} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold">Chat with us on WhatsApp</h3>
+              <p className="text-xs text-emerald-100 font-medium">
+                Click below to start an instant discussion regarding product configurations, spares pricing, or installation bookings.
+              </p>
+            </div>
+          </div>
+          <a
+            href={`https://wa.me/${settings.whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-emerald-50 text-emerald-605 font-bold text-xs sm:text-sm text-center shadow-md transition-all hover:scale-[1.01]"
+          >
+            Chat Now
+          </a>
+        </section>
+      )}
 
       {/* Google Maps Embed Section */}
       <section className="space-y-4">

@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
       title: 'Pending Inquiries',
       value: stats?.pendingInquiries || 0,
       icon: Mail,
-      color: 'bg-indigo-500 text-white',
+      color: 'bg-blue-500 text-white',
       link: '/admin/inquiries',
     },
   ];
@@ -112,21 +112,21 @@ export default function AdminDashboardPage() {
             href="/admin/products?action=new"
             className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
           >
-            <PlusCircle size={16} className="text-indigo-600" />
+            <PlusCircle size={16} className="text-blue-600" />
             <span>Add New Product</span>
           </Link>
           <Link
             href="/admin/categories"
             className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
           >
-            <Layers size={16} className="text-indigo-600" />
+            <Layers size={16} className="text-blue-600" />
             <span>Manage Categories</span>
           </Link>
           <Link
             href="/admin/settings"
             className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
           >
-            <Settings size={16} className="text-indigo-600" />
+            <Settings size={16} className="text-blue-600" />
             <span>Update Store Settings</span>
           </Link>
           <a
@@ -135,7 +135,7 @@ export default function AdminDashboardPage() {
             rel="noopener noreferrer"
             className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
           >
-            <ArrowRight size={16} className="text-indigo-600" />
+            <ArrowRight size={16} className="text-blue-600" />
             <span>View Public Site</span>
           </a>
         </div>
@@ -147,12 +147,12 @@ export default function AdminDashboardPage() {
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-extrabold text-gray-900 text-sm flex items-center gap-2">
-              <Mail size={16} className="text-indigo-500" />
+              <Mail size={16} className="text-blue-500" />
               Recent Inquiries
             </h3>
             <Link
               href="/admin/inquiries"
-              className="text-xs font-semibold text-indigo-600 hover:underline flex items-center gap-0.5"
+              className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-0.5"
             >
               <span>View All</span>
               <ArrowRight size={12} />
@@ -179,7 +179,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <p className="text-xs text-gray-500 line-clamp-1 italic">"{inq.message}"</p>
                   {inq.productId && (
-                    <div className="text-[10px] text-indigo-600 font-bold flex items-center gap-1">
+                    <div className="text-[10px] text-blue-600 font-bold flex items-center gap-1">
                       <span>Item:</span>
                       <span className="underline">{inq.productId.name}</span>
                     </div>
@@ -196,12 +196,12 @@ export default function AdminDashboardPage() {
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-extrabold text-gray-900 text-sm flex items-center gap-2">
-              <Laptop size={16} className="text-indigo-500" />
+              <Laptop size={16} className="text-blue-500" />
               Recently Added Products
             </h3>
             <Link
               href="/admin/products"
-              className="text-xs font-semibold text-indigo-600 hover:underline flex items-center gap-0.5"
+              className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-0.5"
             >
               <span>View All</span>
               <ArrowRight size={12} />

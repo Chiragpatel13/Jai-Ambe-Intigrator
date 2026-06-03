@@ -43,7 +43,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-gray-900 text-white flex flex-col h-screen fixed left-0 top-0 z-30">
       {/* Sidebar Header */}
       <div className="h-16 flex items-center px-6 border-b border-gray-800">
-        <span className="font-bold text-lg bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+        <span className="font-bold text-lg bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
           Ambe Admin
         </span>
       </div>
@@ -59,7 +59,7 @@ export default function Sidebar() {
               href={item.path}
               className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl transition-colors ${
                 isActive
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'text-gray-450 hover:bg-gray-800 hover:text-white'
               }`}
             >

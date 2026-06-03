@@ -183,7 +183,7 @@ Please let me know how to proceed.`;
         <p className="text-sm text-gray-500 mt-2">The product you are looking for does not exist or has been removed.</p>
         <Link
           href="/products"
-          className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-md"
+          className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-md"
         >
           <ArrowLeft size={16} />
           <span>Back to Catalogue</span>
@@ -213,7 +213,7 @@ Please let me know how to proceed.`;
       <div>
         <Link
           href="/products"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-550 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-550 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
         >
           <ArrowLeft size={14} />
           <span>Back to Catalogue</span>
@@ -259,7 +259,7 @@ Please let me know how to proceed.`;
                   onClick={() => setActiveImageIdx(idx)}
                   className={`w-20 h-20 rounded-2xl overflow-hidden border-2 shrink-0 bg-gray-50 dark:bg-gray-900 transition-colors ${
                     activeImageIdx === idx
-                      ? 'border-indigo-600 dark:border-indigo-400'
+                      ? 'border-blue-600 dark:border-blue-400'
                       : 'border-transparent hover:border-gray-300 dark:hover:border-gray-800'
                   }`}
                 >
@@ -274,7 +274,7 @@ Please let me know how to proceed.`;
         <div className="space-y-6">
           <div className="space-y-2">
             {product.category && (
-              <span className="text-xs font-bold text-indigo-500 tracking-wider uppercase">
+              <span className="text-xs font-bold text-blue-500 tracking-wider uppercase">
                 {product.category.name}
               </span>
             )}
@@ -282,7 +282,7 @@ Please let me know how to proceed.`;
               {product.name}
             </h1>
             <div className="flex items-center gap-4 py-2">
-              <span className="text-2xl sm:text-3xl font-black text-indigo-600 dark:text-indigo-400">
+              <span className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">
                 {formattedPrice}
               </span>
 
@@ -311,14 +311,14 @@ Please let me know how to proceed.`;
           {/* Quick specs section */}
           <div className="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-900 p-4.5 rounded-2xl grid grid-cols-2 gap-4">
             <div className="flex gap-2.5 items-start">
-              <ShieldCheck size={18} className="text-indigo-500 shrink-0 mt-0.5" />
+              <ShieldCheck size={18} className="text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white">Quality Inspection</h4>
                 <p className="text-[10px] text-gray-500">Fully inspected & diagnostics checked</p>
               </div>
             </div>
             <div className="flex gap-2.5 items-start">
-              <Clock size={18} className="text-indigo-500 shrink-0 mt-0.5" />
+              <Clock size={18} className="text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white">Shop Support</h4>
                 <p className="text-[10px] text-gray-500">Local support & warranty options</p>
@@ -340,7 +340,7 @@ Please let me know how to proceed.`;
           {/* Lead Inquiry Form Container */}
           <div className="border border-gray-150 dark:border-gray-900 bg-white dark:bg-gray-950 p-6 rounded-2xl shadow-sm space-y-4">
             <h3 className="text-base font-extrabold text-gray-950 dark:text-white flex items-center gap-2">
-              <MessageSquare size={18} className="text-indigo-500" />
+              <MessageSquare size={18} className="text-blue-500" />
               Send Shop Inquiry
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -355,7 +355,7 @@ Please let me know how to proceed.`;
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -365,7 +365,7 @@ Please let me know how to proceed.`;
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -375,7 +375,7 @@ Please let me know how to proceed.`;
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                 />
               </div>
 
@@ -383,7 +383,7 @@ Please let me know how to proceed.`;
                 <button
                   type="submit"
                   disabled={submittingInquiry}
-                  className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submittingInquiry ? 'Submitting...' : 'Submit Inquiry & Chat on WhatsApp'}
                 </button>

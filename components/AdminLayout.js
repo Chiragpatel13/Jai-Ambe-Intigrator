@@ -57,7 +57,7 @@ export default function AdminLayout({ children }) {
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-20">
           <h2 className="font-bold text-gray-800 text-base">Control Panel</h2>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
               {adminUser?.username?.substring(0, 1).toUpperCase() || 'A'}
             </div>
             <div className="text-left">

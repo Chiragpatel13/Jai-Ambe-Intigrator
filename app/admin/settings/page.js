@@ -156,7 +156,7 @@ export default function AdminSettingsPage() {
         {/* Left Column: Form Details */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-3">
-            <Settings size={16} className="text-indigo-500" />
+            <Settings size={16} className="text-blue-500" />
             General Information
           </h2>
 
@@ -168,7 +168,7 @@ export default function AdminSettingsPage() {
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -177,7 +177,7 @@ export default function AdminSettingsPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -187,7 +187,7 @@ export default function AdminSettingsPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -197,7 +197,7 @@ export default function AdminSettingsPage() {
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function AdminSettingsPage() {
               rows={3}
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
             />
           </div>
 
@@ -218,7 +218,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={workingHours}
               onChange={(e) => setWorkingHours(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -226,7 +226,7 @@ export default function AdminSettingsPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-colors disabled:opacity-50"
+              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
               <Save size={14} />
               <span>{submitting ? 'Saving...' : 'Save Settings'}</span>
@@ -237,7 +237,7 @@ export default function AdminSettingsPage() {
         {/* Right Column: Banners Panel */}
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-3">
-            <ImageIcon size={16} className="text-indigo-500" />
+            <ImageIcon size={16} className="text-blue-500" />
             Homepage Banners
           </h2>
 
@@ -278,7 +278,7 @@ export default function AdminSettingsPage() {
               <button
                 type="button"
                 onClick={handleAddBannerUrl}
-                className="p-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition-colors"
+                className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
                 title="Add URL"
               >
                 <Plus size={16} />
@@ -303,7 +303,7 @@ export default function AdminSettingsPage() {
               >
                 {uploadingImage ? (
                   <>
-                    <Loader2 size={14} className="animate-spin text-indigo-600" />
+                    <Loader2 size={14} className="animate-spin text-blue-600" />
                     <span>Uploading...</span>
                   </>
                 ) : (

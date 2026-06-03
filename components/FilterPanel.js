@@ -47,12 +47,12 @@ export default function FilterPanel({
     <div className="space-y-6 p-5 bg-white dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-900 shadow-sm">
       <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-900">
         <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100">
-          <SlidersHorizontal size={18} className="text-indigo-500" />
+          <SlidersHorizontal size={18} className="text-blue-500" />
           <span>Filters</span>
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+          className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
         >
           <RefreshCw size={12} />
           Reset All
@@ -67,7 +67,7 @@ export default function FilterPanel({
         <select
           value={sort}
           onChange={(e) => handleSelectSort(e.target.value)}
-          className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+          className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="newest">Newest Additions</option>
           <option value="price_asc">Price: Low to High</option>
@@ -92,7 +92,7 @@ export default function FilterPanel({
               onClick={() => handleSelectCondition(item.value)}
               className={`py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 condition === item.value
-                  ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                  ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
             >
@@ -112,7 +112,7 @@ export default function FilterPanel({
             onClick={() => handleSelectCategory('')}
             className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition-colors ${
               category === ''
-                ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
+                ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
                 : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900'
             }`}
           >
@@ -124,7 +124,7 @@ export default function FilterPanel({
               onClick={() => handleSelectCategory(cat.slug)}
               className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition-colors ${
                 category === cat.slug
-                  ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'
+                  ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900'
               }`}
             >
@@ -145,7 +145,7 @@ export default function FilterPanel({
             placeholder="Min"
             value={minPrice}
             onChange={(e) => handlePriceChange('minPrice', e.target.value)}
-            className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
           <span className="text-gray-400 text-xs">to</span>
           <input
@@ -153,7 +153,7 @@ export default function FilterPanel({
             placeholder="Max"
             value={maxPrice}
             onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
-            className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
       </div>

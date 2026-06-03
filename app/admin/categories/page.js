@@ -156,7 +156,7 @@ export default function AdminCategoriesPage() {
         {/* Left Form: Add/Edit */}
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
           <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-            <Layers size={16} className="text-indigo-500" />
+            <Layers size={16} className="text-blue-500" />
             {editingId ? 'Edit Category' : 'Create Category'}
           </h2>
 
@@ -171,7 +171,7 @@ export default function AdminCategoriesPage() {
                 value={name}
                 onChange={handleNameChange}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -185,7 +185,7 @@ export default function AdminCategoriesPage() {
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <p className="text-[10px] text-gray-400 mt-1 font-medium">Used in URL paths for filtering.</p>
             </div>
@@ -194,7 +194,7 @@ export default function AdminCategoriesPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-1"
+                className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-1"
               >
                 {editingId ? <Check size={14} /> : <Plus size={14} />}
                 <span>{editingId ? 'Update' : 'Create'}</span>
@@ -228,14 +228,14 @@ export default function AdminCategoriesPage() {
                 <div key={cat._id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
                   <div>
                     <h3 className="font-bold text-sm text-gray-850">{cat.name}</h3>
-                    <p className="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-md inline-block mt-1">
+                    <p className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md inline-block mt-1">
                       slug: {cat.slug}
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditClick(cat)}
-                      className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors"
+                      className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors"
                       title="Edit Category"
                     >
                       <Edit size={16} />
