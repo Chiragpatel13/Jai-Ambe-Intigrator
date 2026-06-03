@@ -3,8 +3,24 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Inquiry from '@/models/Inquiry';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockProducts } from '@/lib/mockData';
 
 export async function GET() {
+  if (!process.env.MONGODB_URI) {
+    return NextResponse.json({
+      success: true,
+      stats: {
+        totalProducts: mockProducts.length,
+        newProducts: mockProducts.filter((p) => p.condition === 'new').length,
+        usedProducts: mockProducts.filter((p) => p.condition === 'used').length,
+        totalInquiries: 0,
+        pendingInquiries: 0,
+      },
+      recentInquiries: [],
+      recentProducts: mockProducts.slice(0, 5),
+    });
+  }
+
   try {
     const session = await verifyAdminSession();
     if (!session) {

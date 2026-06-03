@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Setting from '@/models/Setting';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockSettings } from '@/lib/mockData';
 
 export async function GET() {
+  if (!process.env.MONGODB_URI) {
+    return NextResponse.json({ success: true, settings: mockSettings });
+  }
   try {
     await connectDB();
     let settings = await Setting.findOne({});

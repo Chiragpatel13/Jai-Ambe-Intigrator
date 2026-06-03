@@ -2,8 +2,17 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockProducts } from '@/lib/mockData';
 
 export async function GET(req, { params }) {
+  if (!process.env.MONGODB_URI) {
+    const { id } = await params;
+    const product = mockProducts.find((p) => p._id === id);
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, product });
+  }
   try {
     const { id } = await params;
     await connectDB();

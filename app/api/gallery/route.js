@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import WorkGallery from '@/models/WorkGallery';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockGallery } from '@/lib/mockData';
 
 export async function GET() {
+  if (!process.env.MONGODB_URI) {
+    return NextResponse.json({ success: true, items: mockGallery });
+  }
   try {
     await connectDB();
     const items = await WorkGallery.find({}).sort({ createdAt: -1 });

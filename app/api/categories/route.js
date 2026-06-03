@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Category from '@/models/Category';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockCategories } from '@/lib/mockData';
 
 const generateSlug = (text) => {
   return text
@@ -14,6 +15,9 @@ const generateSlug = (text) => {
 };
 
 export async function GET() {
+  if (!process.env.MONGODB_URI) {
+    return NextResponse.json({ success: true, categories: mockCategories });
+  }
   try {
     await connectDB();
     const categories = await Category.find({}).sort({ name: 1 });

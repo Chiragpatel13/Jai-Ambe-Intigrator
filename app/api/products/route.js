@@ -3,8 +3,72 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
 import { verifyAdminSession } from '@/utils/auth';
+import { mockProducts } from '@/lib/mockData';
 
 export async function GET(req) {
+  if (!process.env.MONGODB_URI) {
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get('search') || '';
+    const categorySlug = searchParams.get('category') || '';
+    const condition = searchParams.get('condition') || '';
+    const featured = searchParams.get('featured') || '';
+    const minPrice = searchParams.get('minPrice') || '';
+    const maxPrice = searchParams.get('maxPrice') || '';
+    const sort = searchParams.get('sort') || 'newest';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '12', 10);
+
+    let filtered = [...mockProducts];
+
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+      );
+    }
+
+    if (categorySlug) {
+      filtered = filtered.filter((p) => p.category.slug === categorySlug);
+    }
+
+    if (condition && (condition === 'new' || condition === 'used')) {
+      filtered = filtered.filter((p) => p.condition === condition);
+    }
+
+    if (featured === 'true') {
+      filtered = filtered.filter((p) => p.featured === true);
+    }
+
+    if (minPrice) {
+      filtered = filtered.filter((p) => p.price >= parseFloat(minPrice));
+    }
+    if (maxPrice) {
+      filtered = filtered.filter((p) => p.price <= parseFloat(maxPrice));
+    }
+
+    if (sort === 'price_asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sort === 'price_desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sort === 'oldest') {
+      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    const total = filtered.length;
+    const skip = (page - 1) * limit;
+    const paginated = filtered.slice(skip, skip + limit);
+
+    return NextResponse.json({
+      success: true,
+      products: paginated,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    });
+  }
+
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
