@@ -1,0 +1,262 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Phone, MessageSquare, MapPin, Clock, Send, Landmark } from 'lucide-react';
+import Toast from '@/components/Toast';
+
+export default function ContactPage() {
+  const [settings, setSettings] = useState({
+    phone: '+91 98902 54321',
+    whatsapp: '919890254321',
+    address: 'Shop No. 12, Ostwal Empire, Near Boisar Railway Station, Boisar East, Palghar, Maharashtra - 401501',
+    workingHours: 'Monday - Saturday: 10:00 AM - 8:30 PM, Sunday: Closed',
+  });
+
+  // Form states
+  const [customerName, setCustomerName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  // Toast notifications
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const triggerToast = (msg, type = 'success') => {
+    setToast({ show: true, message: msg, type });
+  };
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.settings) {
+          setSettings(data.settings);
+        }
+      })
+      .catch((err) => console.error('Error loading settings in contact:', err));
+  }, []);
+
+  const handleInquirySubmit = async (e) => {
+    e.preventDefault();
+    if (!customerName || !phone || !message) {
+      triggerToast('Please fill out all fields.', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerName, phone, message }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        triggerToast('Your inquiry has been submitted! We will contact you shortly.', 'success');
+        setCustomerName('');
+        setPhone('');
+        setMessage('');
+
+        // Event tracking
+        try {
+          window.gtag?.('event', 'contact_inquiry_submit', {
+            event_category: 'engagement',
+            event_label: 'contact_page',
+          });
+        } catch (e) {}
+
+        // Optionally trigger WhatsApp redirect after brief timeout
+        setTimeout(() => {
+          const waText = `Hello Jai Ambe Intigrator,
+
+I have sent a general inquiry from your contact page:
+*Name:* ${customerName}
+*Phone:* ${phone}
+*Message:* ${message}
+
+Please get back to me. Thank you.`;
+          window.open(`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(waText)}`, '_blank');
+        }, 2000);
+      } else {
+        triggerToast(data.error || 'Failed to submit inquiry.', 'error');
+      }
+    } catch (err) {
+      console.error('Contact submission error:', err);
+      triggerToast('Something went wrong. Please check your connection.', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 bg-white dark:bg-gray-950 transition-colors duration-300">
+      {/* Toast Alert */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
+
+      {/* Header Info */}
+      <section className="text-center max-w-xl mx-auto space-y-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-950 dark:text-white tracking-tight">
+          Get In Touch
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Have a question about product stock or need custom diagnostics? Reach out to us.
+        </p>
+      </section>
+
+      {/* Grid Layout - Details & Form */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        {/* Left Column - Contact Details */}
+        <div className="space-y-8">
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Store Information</h2>
+            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+              Drop by our physical showroom in Boisar to browse and test laptops, configure printing setups, or consult with our hardware engineers directly.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {/* Address */}
+            <div className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
+              <MapPin size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Shop Address</h4>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
+                  {settings.address}
+                </p>
+              </div>
+            </div>
+
+            {/* Timings */}
+            <div className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm">
+              <Clock size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Working Hours</h4>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
+                  {settings.workingHours}
+                </p>
+              </div>
+            </div>
+
+            {/* Direct Contacts */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {settings.phone && (
+                <a
+                  href={`tel:${settings.phone}`}
+                  className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm hover:border-indigo-500 transition-colors"
+                >
+                  <Phone size={20} className="text-indigo-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Call Outlet</h4>
+                    <p className="text-xs sm:text-sm text-gray-500 font-semibold">{settings.phone}</p>
+                  </div>
+                </a>
+              )}
+              {settings.whatsapp && (
+                <a
+                  href={`https://wa.me/${settings.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm hover:border-emerald-500 transition-colors"
+                >
+                  <MessageSquare size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">WhatsApp Inquiry</h4>
+                    <p className="text-xs sm:text-sm text-gray-500 font-semibold">Start Chat</p>
+                  </div>
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Form */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-gray-900/40 border border-gray-150 dark:border-gray-900 space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold text-gray-950 dark:text-white flex items-center gap-2">
+              <Landmark size={18} className="text-indigo-600" />
+              General Inquiry Form
+            </h2>
+            <p className="text-xs text-gray-500">
+              Submit your request and our representatives will reach back within 24 hours.
+            </p>
+          </div>
+
+          <form onSubmit={handleInquirySubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+                Full Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                required
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                placeholder="Contact number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-650 dark:text-gray-300 mb-1.5">
+                Your Inquiry Message
+              </label>
+              <textarea
+                rows={4}
+                placeholder="What are you looking for?"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-205 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-500/10 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+            >
+              <Send size={12} />
+              <span>{submitting ? 'Submitting...' : 'Submit Form'}</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Google Maps Embed Section */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Shop Location Map</h2>
+        <div className="w-full h-96 rounded-3xl overflow-hidden border border-gray-150 dark:border-gray-900 shadow-sm bg-gray-100">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3749.176461972836!2d72.7601955758509!3d19.790104124317424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be71e626e25dc59%3A0xb3bc87e914041b6c!2sBoisar%20Railway%20Station%20(E)!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Jai Ambe Intigrator Location"
+          />
+        </div>
+      </section>
+    </div>
+  );
+}
