@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MessageSquare, Eye, Award, CheckCircle, AlertTriangle } from 'lucide-react';
+import { MessageSquare, Eye, Award, CheckCircle, AlertTriangle, ChevronRight } from 'lucide-react';
 
 export default function ProductCard({ product, whatsappNumber = '919890254321' }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
