@@ -124,15 +124,7 @@ export default function Navbar() {
               <Search className="size-4" />
             </Button>
           </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
-          </Button>
+
           
           {settings.whatsapp && (
             <a
@@ -151,15 +143,7 @@ export default function Navbar() {
 
         {/* Mobile menu toggle and theme toggle */}
         <div className="flex items-center md:hidden gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="size-9 rounded-lg text-[#71717b] dark:text-zinc-400 border-0"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
-          </Button>
+
           <Button
             variant="ghost"
             size="icon"
