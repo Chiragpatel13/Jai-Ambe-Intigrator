@@ -25,7 +25,7 @@ function ProductsContent() {
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [settings, setSettings] = useState({ whatsapp: '919890254321' });
+  const [settings, setSettings] = useState({ whatsapp: '918879430925' });
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [showMobileFilters, setShowMobileFilters] = useState(false);

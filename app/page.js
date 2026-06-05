@@ -21,6 +21,7 @@ import {
   Printer,
   Network,
   ChevronRight,
+  Zap,
 } from 'lucide-react';
 import {
   Accordion,
@@ -36,10 +37,10 @@ import { ProductCardSkeleton } from '@/components/Loader';
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState({
-    shopName: 'Jai Ambe Intigrator',
-    phone: '',
-    whatsapp: '919890254321',
-    address: 'Boisar, Palghar, Maharashtra',
+    shopName: 'JAYAMBE INTEGRATORS',
+    phone: '+91 8879430925',
+    whatsapp: '918879430925',
+    address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
   });
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -95,14 +96,14 @@ export default function HomePage() {
 
   const getCategoryIcon = (slug) => {
     switch (slug) {
-      case 'laptops-computers':
-        return <Laptop className="size-6 text-[#2b7fff]" />;
-      case 'cctv-security':
+      case 'cctv-intercom':
         return <Camera className="size-6 text-[#2b7fff]" />;
-      case 'printers-copiers':
-        return <Printer className="size-6 text-[#2b7fff]" />;
-      case 'networking':
-        return <Network className="size-6 text-[#2b7fff]" />;
+      case 'microwave-induction':
+        return <Cpu className="size-6 text-[#2b7fff]" />;
+      case 'geyser-stabilizer':
+        return <Zap className="size-6 text-[#2b7fff]" />;
+      case 'vfd-control-panel':
+        return <Boxes className="size-6 text-[#2b7fff]" />;
       default:
         return <Cpu className="size-6 text-[#2b7fff]" />;
     }
@@ -139,12 +140,12 @@ export default function HomePage() {
   return (
     <div className="bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 w-full min-h-screen overflow-x-hidden transition-colors duration-300">
       <main className="w-full flex flex-col items-center">
-        
+
         {/* 1. HERO SECTION (w-full) */}
         <section className="w-full relative py-16 sm:py-24 overflow-hidden bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
           <div className="size-96 blur-3xl rounded-full bg-[#2b7fff]/10 absolute -left-20 top-0 pointer-events-none" />
           <div className="size-96 blur-3xl rounded-full bg-orange-500/10 absolute -right-10 bottom-0 pointer-events-none" />
-          
+
           <div className="w-full px-4 sm:px-10 lg:px-16 relative grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
             <div className="flex flex-col gap-6">
               <span className="inline-flex font-semibold rounded-full bg-zinc-105 dark:bg-zinc-900 text-[#71717b] dark:text-zinc-400 text-xs leading-4 border border-zinc-200 dark:border-zinc-800 px-3 py-1 items-center gap-1.5 w-fit">
@@ -152,12 +153,10 @@ export default function HomePage() {
                 Boisar, Palghar, Maharashtra
               </span>
               <h1 className="leading-tight font-extrabold text-4xl sm:text-5xl tracking-tight text-zinc-900 dark:text-white">
-                Trusted <span className="text-[#2b7fff]">New & Used</span> Products at Best Prices
+                Trusted <span className="text-[#2b7fff]">Electrical, Electronic & CCTV</span> Integrations
               </h1>
               <p className="max-w-md text-[#71717b] dark:text-zinc-400 text-base leading-6">
-                Your reliable local store for electronics, appliances and
-                gadgets in Boisar, Palghar, Maharashtra. Quality you can
-                trust, prices you'll love.
+                Your reliable local partner for CCTV systems, VFD drives, stabilizers, control panels, intercoms, and troubleshooting services in Boisar.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <Link href="/products">
@@ -181,29 +180,26 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            
+
             <div className="relative flex justify-center">
               <div className="bg-gradient-to-br from-[#2b7fff]/20 to-[#f97316]/20 blur-2xl rounded-3xl absolute inset-6" />
               <div className="relative shadow-2xl backdrop-blur-xl rounded-3xl bg-white/40 dark:bg-zinc-900/40 border border-white/20 dark:border-zinc-800 p-4 w-full max-w-lg overflow-hidden">
-                <div className="rounded-2xl overflow-hidden aspect-[4/3] bg-zinc-105 dark:bg-zinc-900">
+                <div className="rounded-2xl overflow-hidden aspect-square bg-zinc-50 dark:bg-zinc-900">
                   <img
-                    src="https://images.unsplash.com/photo-1498049794561-7780e7231661?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBlbGVjdHJvbmljcyUyMGdhZGdldCUyMHByb2R1Y3R8ZW58MXwwfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=800"
-                    alt="Technology on a desk"
-                    className="object-cover w-full h-full"
+                    src="/rebranded_hero_collage.png"
+                    alt="Electrical Integration & Security Systems"
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="flex mt-4 px-2 justify-between items-center">
                   <div>
                     <p className="font-bold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                      Smart Combo Kit
+                      CCTV & Control Systems
                     </p>
                     <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4 mt-0.5">
-                      Best seller this month
+                      Professional installation & diagnostics
                     </p>
                   </div>
-                  <span className="font-bold rounded-lg bg-[#2b7fff] text-blue-50 text-sm leading-5 px-3 py-1">
-                    ₹12,999
-                  </span>
                 </div>
               </div>
               <div className="shadow-lg rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex absolute -left-3 -bottom-3 px-3 py-2 items-center gap-2">
@@ -249,7 +245,7 @@ export default function HomePage() {
                 Find exactly what you need
               </p>
             </div>
-            
+
             {loading ? (
               <div className="flex flex-wrap justify-center gap-4">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -464,48 +460,86 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
                 <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Cpu className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Expert Integration
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Professional VFD Drives and electrical control panel setup
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Zap className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  Advanced Troubleshooting
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Specialized service center for microwaves, cooktops, geysers, and stabilizers
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
+                  <Camera className="size-6" />
+                </div>
+                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                  CCTV & Intercoms
+                </p>
+                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
+                  Full-scale security camera installation and intercom systems setup
+                </p>
+              </Card>
+              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
+                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
                   <ShieldCheck className="size-6" />
                 </div>
                 <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                  Genuine Products
+                  Genuine Spares
                 </p>
                 <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
-                  100% authentic and quality-checked items
+                  Authorized supply of premium electrical and electronic components
                 </p>
               </Card>
-              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
-                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
-                  <Tag className="size-6" />
-                </div>
-                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                  Best Prices
-                </p>
-                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
-                  Unbeatable deals on new & used goods
-                </p>
-              </Card>
-              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
-                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
-                  <Truck className="size-6" />
-                </div>
-                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                  Fast Service
-                </p>
-                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
-                  Quick local delivery across Palghar
-                </p>
-              </Card>
-              <Card className="shadow-xs backdrop-blur-xl text-center rounded-2xl bg-white/40 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-3">
-                <div className="size-12 rounded-xl bg-[#2b7fff]/10 text-[#2b7fff] flex mx-auto justify-center items-center">
-                  <Headset className="size-6" />
-                </div>
-                <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                  Friendly Support
-                </p>
-                <p className="text-[#71717b] dark:text-zinc-400 text-xs leading-4">
-                  Always here to answer your queries
-                </p>
-              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* 7.5 BRANDS SECTION (w-full) */}
+        <section className="w-full py-16 bg-zinc-50/50 dark:bg-zinc-950/20 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="w-full px-4 sm:px-10 lg:px-16">
+            <div className="text-center flex mb-12 flex-col items-center gap-1">
+              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                Authorized & Supported Brands
+              </h2>
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                We service and integrate components from leading manufacturers
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-center">
+              {[
+                { name: 'GELCO ELECTRONICS', desc: 'Voltage Stabilizers & Starters', logo: '/logo_gelco.png' },
+                { name: 'Crompton Greaves', desc: 'Geysers & Home Appliances', logo: '/logo_crompton.png' },
+                { name: 'Altech', desc: 'Industrial Quality Spares', logo: '/logo_altech.png' },
+                { name: 'DELTA', desc: 'VFD Drives & Automation', logo: '/logo_delta.png' },
+                { name: 'KPS', desc: 'Power Instrumentation', logo: '/logo_kps.png' },
+                { name: 'SIGNAL', desc: 'Electronics & Signaling', logo: '/logo_signal.png' }
+              ].map((brand, idx) => (
+                <Card key={idx} className="shadow-xs hover:shadow-md transition-all rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center text-center gap-2 h-36">
+                  <div className="h-14 w-full flex items-center justify-center mb-1 bg-white rounded-xl p-1.5 border border-zinc-100 dark:border-zinc-800 shadow-inner">
+                    <img
+                      src={brand.logo}
+                      alt={brand.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium leading-tight">
+                    {brand.desc}
+                  </span>
+                </Card>
+              ))}
             </div>
           </div>
         </section>

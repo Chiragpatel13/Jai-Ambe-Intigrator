@@ -45,7 +45,7 @@ export default function ProductDetailsPage({ params }) {
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
-  const [settings, setSettings] = useState({ whatsapp: '919890254321' });
+  const [settings, setSettings] = useState({ whatsapp: '918879430925' });
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
 
@@ -132,7 +132,7 @@ export default function ProductDetailsPage({ params }) {
       maximumFractionDigits: 0,
     }).format(product.price);
 
-    const text = `Hello Jai Ambe Intigrator, I am interested in inquiring about:
+    const text = `Hello JAYAMBE INTEGRATORS, I am interested in inquiring about:
 *Product:* ${product.name}
 *Condition:* ${product.condition === 'new' ? 'Brand New' : 'Refurbished / Used'}
 *Price:* ${formattedPrice}
@@ -188,7 +188,7 @@ Please let me know if it is available.`;
             maximumFractionDigits: 0,
           }).format(product.price);
 
-          const waText = `Hello Jai Ambe Intigrator,
+          const waText = `Hello JAYAMBE INTEGRATORS,
 
 I have submitted an inquiry on your website:
 *Name:* ${customerName}
@@ -390,7 +390,7 @@ Please let me know how to proceed.`;
                   <Tag className="size-4 text-[#2b7fff] shrink-0" />
                   <div className="flex flex-col min-w-0">
                     <span className="text-zinc-400 dark:text-zinc-500 text-[10px]">Brand</span>
-                    <span className="font-semibold text-xs text-zinc-900 dark:text-zinc-200 truncate">{product.brand || 'Jai Ambe'}</span>
+                    <span className="font-semibold text-xs text-zinc-900 dark:text-zinc-200 truncate">{product.brand || 'JAYAMBE'}</span>
                   </div>
                 </div>
                 <div className="flex p-2 items-center gap-2 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
@@ -539,7 +539,7 @@ Please let me know how to proceed.`;
                 <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
                   <div className="grid grid-cols-2 bg-zinc-50 dark:bg-zinc-900/50 text-sm border-b border-zinc-200 dark:border-zinc-800 p-3">
                     <span className="font-medium text-zinc-500 dark:text-zinc-400">Brand</span>
-                    <span className="font-semibold text-zinc-900 dark:text-white">{product.brand || 'Jai Ambe'}</span>
+                    <span className="font-semibold text-zinc-900 dark:text-white">{product.brand || 'JAYAMBE'}</span>
                   </div>
                   <div className="grid grid-cols-2 text-sm border-b border-zinc-200 dark:border-zinc-800 p-3">
                     <span className="font-medium text-zinc-500 dark:text-zinc-400">Condition</span>
@@ -672,13 +672,13 @@ Please let me know how to proceed.`;
                 Send us an inquiry about this product and our team in Boisar will get back to you shortly.
               </p>
               <div className="flex pt-2 flex-col gap-3">
-                <a href={`tel:${settings.phone || '+919890254321'}`} className="text-sm flex items-center gap-2 hover:text-[#2b7fff] transition-colors text-zinc-600 dark:text-zinc-300">
+                <a href={`tel:${settings.phone || '+918879430925'}`} className="text-sm flex items-center gap-2 hover:text-[#2b7fff] transition-colors text-zinc-600 dark:text-zinc-300">
                   <Phone className="size-4 text-[#2b7fff]" />
-                  {settings.phone || '+91 98902 54321'}
+                  {settings.phone || '+91 8879430925'}
                 </a>
-                <a href={`mailto:${settings.email || 'sales@jaiambe.com'}`} className="text-sm flex items-center gap-2 hover:text-[#2b7fff] transition-colors text-zinc-600 dark:text-zinc-300">
+                <a href={`mailto:${settings.email || 'anandp4994@gmail.com'}`} className="text-sm flex items-center gap-2 hover:text-[#2b7fff] transition-colors text-zinc-600 dark:text-zinc-300">
                   <Mail className="size-4 text-[#2b7fff]" />
-                  {settings.email || 'sales@jaiambe.com'}
+                  {settings.email || 'anandp4994@gmail.com'}
                 </a>
                 <div className="text-sm flex items-center gap-2 text-zinc-600 dark:text-zinc-300">
                   <MapPin className="size-4 text-[#2b7fff]" />

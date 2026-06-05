@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Phone, MessageSquare, MapPin, Clock, Send, Landmark } from 'lucide-react';
+import { Phone, MessageSquare, MapPin, Clock, Send, Landmark, Mail } from 'lucide-react';
 import Toast from '@/components/Toast';
 
 export default function ContactPage() {
   const [settings, setSettings] = useState({
-    phone: '+91 98902 54321',
-    whatsapp: '919890254321',
-    address: 'Shop No. 12, Ostwal Empire, Near Boisar Railway Station, Boisar East, Palghar, Maharashtra - 401501',
-    workingHours: 'Monday - Saturday: 10:00 AM - 8:30 PM, Sunday: Closed',
+    phone: '+91 8879430925',
+    whatsapp: '918879430925',
+    address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
+    workingHours: 'Monday - Saturday: 9:00 AM - 8:00 PM, Sunday: Closed',
+    email: 'anandp4994@gmail.com',
   });
 
   // Form states
@@ -68,7 +69,7 @@ export default function ContactPage() {
 
         // Optionally trigger WhatsApp redirect after brief timeout
         setTimeout(() => {
-          const waText = `Hello Jai Ambe Intigrator,
+          const waText = `Hello JAYAMBE INTEGRATORS,
 
 I have sent a general inquiry from your contact page:
 *Name:* ${customerName}
@@ -117,7 +118,7 @@ Please get back to me. Thank you.`;
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Store Information</h2>
             <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
-              Drop by our physical showroom in Boisar to browse and test laptops, configure printing setups, or consult with our hardware engineers directly.
+              Drop by our office in Boisar to discuss your CCTV security plans, industrial automation controls, stabilizers, or consult with Er. Anand directly.
             </p>
           </div>
 
@@ -127,7 +128,7 @@ Please get back to me. Thank you.`;
               <MapPin size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Shop Address</h4>
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                   {settings.address}
                 </p>
               </div>
@@ -138,14 +139,14 @@ Please get back to me. Thank you.`;
               <Clock size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Working Hours</h4>
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-405 leading-relaxed">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                   {settings.workingHours}
                 </p>
               </div>
             </div>
 
             {/* Direct Contacts */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {settings.phone && (
                 <a
                   href={`tel:${settings.phone}`}
@@ -167,8 +168,20 @@ Please get back to me. Thank you.`;
                 >
                   <MessageSquare size={20} className="text-emerald-500 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">WhatsApp Inquiry</h4>
+                    <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">WhatsApp Chat</h4>
                     <p className="text-xs sm:text-sm text-gray-500 font-semibold">Start Chat</p>
+                  </div>
+                </a>
+              )}
+              {settings.email && (
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="flex gap-4 p-4 rounded-2xl border border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 shadow-sm hover:border-blue-400 transition-colors"
+                >
+                  <Mail size={20} className="text-[#2b7fff] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Email Us</h4>
+                    <p className="text-xs sm:text-sm text-gray-500 font-semibold truncate max-w-[150px]">{settings.email}</p>
                   </div>
                 </a>
               )}
@@ -271,14 +284,14 @@ Please get back to me. Thank you.`;
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Shop Location Map</h2>
         <div className="w-full h-96 rounded-3xl overflow-hidden border border-gray-150 dark:border-gray-900 shadow-sm bg-gray-100">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3749.176461972836!2d72.7601955758509!3d19.790104124317424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be71e626e25dc59%3A0xb3bc87e914041b6c!2sBoisar%20Railway%20Station%20(E)!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3749.117!2d72.7501!3d19.7925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be71e360f7bc59b%3A0xca8c6ef028681788!2sNavapur%20Rd%2C%20Boisar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen=""
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="Jai Ambe Intigrator Location"
+            title="JAYAMBE INTEGRATORS Location"
           />
         </div>
       </section>

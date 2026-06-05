@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
             <Lock size={22} />
           </div>
           <h1 className="text-2xl font-black tracking-tight">Admin Console</h1>
-          <p className="text-xs text-gray-500 font-semibold">Jai Ambe Intigrator control board</p>
+          <p className="text-xs text-gray-500 font-semibold">JAYAMBE INTEGRATORS Control Board</p>
         </div>
 
         {/* Form */}

@@ -16,12 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'Jai Ambe Intigrator | New & Refurbished Laptops, CCTV & Tech in Boisar',
+  title: 'JAYAMBE INTEGRATORS | Electrical, Electronic & CCTV Systems in Boisar',
   description:
-    'Jai Ambe Intigrator (Boisar, Palghar) provides high-quality brand new and refurbished laptops, computers, CCTV surveillance cameras, printers, and networking solutions at the best prices. Contact us for inquiries.',
+    'JAYAMBE INTEGRATORS (Boisar, Palghar) specializes in CCTV, intercom systems, microwave oven & induction servicing, geyser & stabilizer troubleshooting, VFD drives, and control panel engineering.',
   keywords:
-    'Jai Ambe Intigrator, Boisar, Palghar, refurbished laptops Boisar, CCTV installation Boisar, computer shop Boisar, used laptops, printers Boisar, networking systems Palghar',
-  authors: [{ name: 'Jai Ambe Intigrator' }],
+    'JAYAMBE INTEGRATORS, Er. Anand, Boisar, Palghar, CCTV installation Boisar, intercom system Boisar, electrical services Boisar, VFD drives Boisar, control panels, geyser stabilizer repair, electrical troubleshooting Boisar',
+  authors: [{ name: 'JAYAMBE INTEGRATORS' }],
 };
 
 export const viewport = {

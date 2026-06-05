@@ -79,7 +79,7 @@ export default function GalleryPage() {
             Our Completed Projects
           </h1>
           <p className="text-[#71717b] dark:text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Take a look at our expert integrations in Palghar & Boisar. From complex CCTV security networks to business server rack configurations and computer diagnostics, we bring quality you can rely on.
+            Take a look at our expert integrations in Palghar & Boisar. From complex CCTV security networks and intercom setups to VFD drives, custom electrical panels, and voltage stabilizers, we bring quality you can rely on.
           </p>
         </div>
       </section>
@@ -258,7 +258,7 @@ export default function GalleryPage() {
               {activeMedia.description || 'No project description added.'}
             </p>
             <div className="text-[10px] text-zinc-500 font-bold">
-              PROJECT GALLERY &bull; JAI AMBE INTIGRATOR
+              PROJECT GALLERY &bull; JAYAMBE INTEGRATORS
             </div>
             
             {/* Mobile swipe indicator/controls */}

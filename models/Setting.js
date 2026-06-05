@@ -4,23 +4,35 @@ const SettingSchema = new mongoose.Schema(
   {
     shopName: {
       type: String,
-      default: 'Jai Ambe Intigrator',
+      default: 'JAYAMBE INTEGRATORS',
+    },
+    ownerName: {
+      type: String,
+      default: 'Er. Anand',
+    },
+    designation: {
+      type: String,
+      default: 'EXTC ENGINEER',
+    },
+    email: {
+      type: String,
+      default: 'anandp4994@gmail.com',
     },
     phone: {
       type: String,
-      default: '+91 99999 99999',
+      default: '+91 8879430925',
     },
     whatsapp: {
       type: String,
-      default: '+91 99999 99999',
+      default: '918879430925',
     },
     address: {
       type: String,
-      default: 'Boisar, Palghar, Maharashtra',
+      default: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
     },
     workingHours: {
       type: String,
-      default: 'Monday - Saturday: 9:00 AM - 8:00 PM',
+      default: 'Monday - Saturday: 9:00 AM - 8:00 PM, Sunday: Closed',
     },
     banners: {
       type: [String],

@@ -18,6 +18,8 @@ export default function AdminSettingsPage() {
   const [whatsapp, setWhatsapp] = useState('');
   const [address, setAddress] = useState('');
   const [workingHours, setWorkingHours] = useState('');
+  const [ownerName, setOwnerName] = useState('');
+  const [designation, setDesignation] = useState('');
   const [banners, setBanners] = useState([]);
   const [newBannerUrl, setNewBannerUrl] = useState('');
 
@@ -37,6 +39,8 @@ export default function AdminSettingsPage() {
           setWhatsapp(s.whatsapp || '');
           setAddress(s.address || '');
           setWorkingHours(s.workingHours || '');
+          setOwnerName(s.ownerName || '');
+          setDesignation(s.designation || '');
           setBanners(s.banners || []);
         }
       })
@@ -108,6 +112,8 @@ export default function AdminSettingsPage() {
           address,
           workingHours,
           banners,
+          ownerName,
+          designation,
         }),
       });
 
@@ -197,6 +203,24 @@ export default function AdminSettingsPage() {
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
                 required
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Owner Name</label>
+              <input
+                type="text"
+                value={ownerName}
+                onChange={(e) => setOwnerName(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Designation</label>
+              <input
+                type="text"
+                value={designation}
+                onChange={(e) => setDesignation(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>

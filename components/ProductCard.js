@@ -6,7 +6,7 @@ import { MessageSquare, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-export default function ProductCard({ product, whatsappNumber = '919890254321' }) {
+export default function ProductCard({ product, whatsappNumber = '918879430925' }) {
   const {
     _id,
     name,
@@ -39,7 +39,7 @@ export default function ProductCard({ product, whatsappNumber = '919890254321' }
       }
     } catch (err) {}
 
-    const text = `Hello Jai Ambe Intigrator, I am interested in inquiring about:
+    const text = `Hello JAYAMBE INTEGRATORS, I am interested in inquiring about:
 *Product:* ${name}
 *Condition:* ${condition === 'new' ? 'Brand New' : 'Refurbished / Used'}
 *Price:* ${formattedPrice}

@@ -34,7 +34,7 @@ export default function WhatsAppFloat() {
     } catch (e) {}
   };
 
-  const text = 'Hello Jai Ambe Intigrator, I would like to inquire about your products.';
+  const text = 'Hello JAYAMBE INTEGRATORS, I would like to inquire about your services.';
   const waUrl = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
 
   return (

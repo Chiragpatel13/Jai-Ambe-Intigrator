@@ -14,11 +14,14 @@ export async function GET() {
     if (!settings) {
       // Create defaults if not present
       settings = await Setting.create({
-        shopName: 'Jai Ambe Intigrator',
-        phone: '+91 98902 54321',
-        whatsapp: '919890254321',
-        address: 'Shop No. 12, Ostwal Empire, Near Boisar Railway Station, Boisar East, Palghar, Maharashtra - 401501',
-        workingHours: 'Monday - Saturday: 10:00 AM - 8:30 PM, Sunday: Closed',
+        shopName: 'JAYAMBE INTEGRATORS',
+        ownerName: 'Er. Anand',
+        designation: 'EXTC ENGINEER',
+        email: 'anandp4994@gmail.com',
+        phone: '+91 8879430925',
+        whatsapp: '918879430925',
+        address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
+        workingHours: 'Monday - Saturday: 9:00 AM - 8:00 PM, Sunday: Closed',
         banners: [
           'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1200&q=80',
           'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1200&q=80',
@@ -62,4 +65,8 @@ export async function PUT(req) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req) {
+  return PUT(req);
 }

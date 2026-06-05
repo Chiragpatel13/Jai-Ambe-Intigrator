@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MapPin, Phone, MessageCircle, Boxes, Globe } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Boxes, Globe, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Footer() {
   const [settings, setSettings] = useState({
-    shopName: 'Jai Ambe Intigrator',
-    phone: '+91 98765 43210',
-    whatsapp: '919890254321',
-    address: 'Boisar, Palghar, Maharashtra',
+    shopName: 'JAYAMBE INTEGRATORS',
+    ownerName: 'Er. Anand',
+    designation: 'EXTC ENGINEER',
+    email: 'anandp4994@gmail.com',
+    phone: '+91 8879430925',
+    whatsapp: '918879430925',
+    address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
   });
   const pathname = usePathname();
 
@@ -47,18 +50,23 @@ export default function Footer() {
       <div className="w-full px-4 sm:px-10 lg:px-16 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Brand Col */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <div className="size-9 rounded-xl bg-[#2b7fff] text-blue-50 flex justify-center items-center">
-                <Boxes className="size-5" />
+              <div className="size-9 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex justify-center items-center overflow-hidden p-0.5 shadow-sm">
+                <img src="/logo_jayambe.png" alt="Jayambe Logo" className="size-full object-contain" />
               </div>
               <span className="font-bold text-base leading-6 text-zinc-900 dark:text-white">
                 {settings.shopName}
               </span>
             </div>
+            {settings.ownerName && (
+              <div className="text-xs text-zinc-700 dark:text-zinc-300">
+                <span className="font-semibold">{settings.ownerName}</span>
+                {settings.designation && <span className="text-zinc-500 text-[10px]"> ({settings.designation})</span>}
+              </div>
+            )}
             <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-              Trusted new & used products at the best prices in Boisar, Palghar.
+              Trouble shooting & all type of electrical & electronic works in Boisar.
             </p>
             <div className="flex gap-2">
               <a
@@ -127,6 +135,12 @@ export default function Footer() {
               <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 flex items-center gap-2">
                 <MessageCircle className="size-4 text-green-600 shrink-0" />
                 <span>WhatsApp: {settings.phone || `+${settings.whatsapp}`}</span>
+              </p>
+            )}
+            {settings.email && (
+              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 flex items-center gap-2">
+                <Mail className="size-4 text-[#2b7fff] shrink-0" />
+                <a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a>
               </p>
             )}
           </div>

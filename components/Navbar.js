@@ -24,9 +24,9 @@ import { Button } from '@/components/ui/button';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState({
-    shopName: 'Jai Ambe Intigrator',
-    phone: '',
-    whatsapp: '919890254321',
+    shopName: 'JAYAMBE INTEGRATORS',
+    phone: '+91 8879430925',
+    whatsapp: '918879430925',
   });
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
@@ -77,8 +77,8 @@ export default function Navbar() {
         
         {/* Logo Section */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="size-9 shadow-md rounded-xl bg-[#2b7fff] text-blue-50 flex justify-center items-center">
-            <Boxes className="size-5" />
+          <div className="size-9 shadow-md rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex justify-center items-center overflow-hidden p-0.5">
+            <img src="/logo_jayambe.png" alt="Jayambe Logo" className="size-full object-contain" />
           </div>
           <div className="leading-none flex flex-col">
             <span className="font-bold text-base leading-6 tracking-tight text-zinc-950 dark:text-white">
