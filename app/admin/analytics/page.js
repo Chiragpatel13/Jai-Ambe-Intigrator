@@ -15,6 +15,16 @@ import {
   Download,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
+import {
+  AdminPageHeader,
+  AdminCard,
+  AdminCardHeader,
+  AdminStatCard,
+  AdminBadge,
+  AdminBtnPrimary,
+  AdminBtnSecondary,
+  adminSelectCls,
+} from '@/components/admin/AdminUI';
 
 const REPORT_OPTIONS = [
   { value: '7days', label: 'Last 7 Days' },
@@ -308,102 +318,57 @@ export default function AdminAnalyticsPage() {
   }
 
   const summaryCards = [
-    {
-      title: 'Total Page Views',
-      value: data?.totalPageViews || 0,
-      sub: 'All-time visits',
-      icon: Eye,
-      color: 'from-indigo-500 to-violet-600',
-    },
-    {
-      title: 'Unique Visitors',
-      value: data?.totalUniqueVisitors || 0,
-      sub: 'Distinct people',
-      icon: Users,
-      color: 'from-emerald-500 to-teal-600',
-    },
-    {
-      title: "Today's Views",
-      value: data?.todayPageViews || 0,
-      sub: `${data?.todayUniqueVisitors || 0} unique today`,
-      icon: TrendingUp,
-      color: 'from-sky-500 to-blue-600',
-    },
-    {
-      title: 'Live Now',
-      value: data?.liveVisitors || 0,
-      sub: 'Active last 5 min',
-      icon: Radio,
-      color: 'from-rose-500 to-pink-600',
-      pulse: true,
-    },
+    { title: 'Total Page Views', value: data?.totalPageViews || 0, sub: 'All-time visits', icon: Eye, accent: 'indigo' },
+    { title: 'Unique Visitors', value: data?.totalUniqueVisitors || 0, sub: 'Distinct people', icon: Users, accent: 'emerald' },
+    { title: "Today's Views", value: data?.todayPageViews || 0, sub: `${data?.todayUniqueVisitors || 0} unique today`, icon: TrendingUp, accent: 'sky' },
+    { title: 'Live Now', value: data?.liveVisitors || 0, sub: 'Active last 5 min', icon: Radio, accent: 'rose' },
   ];
 
   const hourlyChart = data?.hourlyStats || [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900">Website Analytics</h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              REAL-TIME
-            </span>
+    <div className="space-y-7">
+      <AdminPageHeader
+        title="Website Analytics"
+        subtitle="Live visitor tracking, page views, product visits, and activity feed."
+        badge={
+          <div className="flex flex-wrap items-center gap-2">
+            <AdminBadge variant="live">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Real-time
+            </AdminBadge>
             {data?.source === 'firestore' && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-[10px] font-bold text-indigo-700">
+              <AdminBadge variant="info">
                 <Activity size={10} />
-                FIRESTORE DB
-              </span>
+                Firestore
+              </AdminBadge>
             )}
           </div>
-          <p className="text-xs text-slate-500 mt-1 font-medium">
-            Live visitor tracking, page views, product visits, and activity feed.
-          </p>
-          {lastFetch && (
-            <p className="text-[10px] text-slate-400 mt-1 font-medium">
-              Last updated: {formatTime(lastFetch.toISOString())}
-              {refreshing && ' · Syncing...'}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => setLive((v) => !v)}
-            className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${
-              live
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                : 'bg-white border-slate-200 text-slate-600'
-            }`}
-          >
-            {live ? 'Live ON' : 'Live OFF'}
-          </button>
-          <button
-            type="button"
-            onClick={() => fetchAnalytics()}
-            disabled={refreshing}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors disabled:opacity-50"
-          >
-            <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
-            Refresh
-          </button>
-        </div>
-      </div>
+        }
+      >
+        <AdminBtnSecondary onClick={() => setLive((v) => !v)}>
+          {live ? 'Live ON' : 'Live OFF'}
+        </AdminBtnSecondary>
+        <AdminBtnSecondary onClick={() => fetchAnalytics()} disabled={refreshing}>
+          <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
+          Refresh
+        </AdminBtnSecondary>
+      </AdminPageHeader>
 
-      {/* Report download */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
-        <div>
-          <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-            <Download size={15} className="text-indigo-500" />
-            Download Report
-          </h2>
-          <p className="text-[10px] text-slate-400 mt-1 font-medium">
-            Choose a preset, pick a year, or set a custom From–To date range. Default is last 7 days.
-          </p>
-        </div>
+      {lastFetch && (
+        <p className="text-[11px] text-slate-400 font-medium -mt-4">
+          Last updated: {formatTime(lastFetch.toISOString())}
+          {refreshing && ' · Syncing…'}
+        </p>
+      )}
+
+      <AdminCard className="space-y-4">
+        <AdminCardHeader
+          icon={Download}
+          title="Download Report"
+          subtitle="Preset, year, or custom From–To range. Default: last 7 days."
+          iconClass="text-amber-600"
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="sm:col-span-2 lg:col-span-1">
@@ -413,7 +378,7 @@ export default function AdminAnalyticsPage() {
             <select
               value={reportPeriod}
               onChange={(e) => setReportPeriod(e.target.value)}
-              className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={adminSelectCls}
             >
               {REPORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -431,7 +396,7 @@ export default function AdminAnalyticsPage() {
               <select
                 value={reportYear}
                 onChange={(e) => setReportYear(e.target.value)}
-                className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={adminSelectCls}
               >
                 {yearOptions().map((y) => (
                   <option key={y} value={String(y)}>
@@ -453,7 +418,7 @@ export default function AdminAnalyticsPage() {
                   value={reportFrom}
                   max={reportTo}
                   onChange={(e) => setReportFrom(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className={adminSelectCls}
                 />
               </div>
               <div>
@@ -466,7 +431,7 @@ export default function AdminAnalyticsPage() {
                   min={reportFrom}
                   max={todayIso()}
                   onChange={(e) => setReportTo(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className={adminSelectCls}
                 />
               </div>
             </>
@@ -486,65 +451,34 @@ export default function AdminAnalyticsPage() {
               <>Preset: <span className="font-bold text-slate-600">{REPORT_OPTIONS.find((o) => o.value === reportPeriod)?.label}</span></>
             )}
           </p>
-          <button
-            type="button"
+          <AdminBtnPrimary
             onClick={handleDownloadReport}
             disabled={downloading}
-            className="flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-md transition-all disabled:opacity-60 w-full sm:w-auto shrink-0"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+            className="w-full sm:w-auto shrink-0"
           >
             <Download size={14} className={downloading ? 'animate-bounce' : ''} />
-            {downloading ? 'Generating...' : 'Download CSV Report'}
-          </button>
+            {downloading ? 'Generating…' : 'Download CSV Report'}
+          </AdminBtnPrimary>
         </div>
-      </div>
+      </AdminCard>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {summaryCards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.title}
-              className="p-3.5 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm"
-            >
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-3`}>
-                <Icon size={16} className="text-white" />
-              </div>
-              <p className="text-2xl sm:text-3xl font-black text-slate-900">{card.value}</p>
-              <p className="text-[11px] sm:text-xs font-bold text-slate-700 mt-1">{card.title}</p>
-              <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
-                {card.pulse && <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />}
-                {card.sub}
-              </p>
-            </div>
-          );
-        })}
+        {summaryCards.map((card) => (
+          <AdminStatCard key={card.title} {...card} />
+        ))}
       </div>
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <BarChart3 size={16} className="text-indigo-500" />
-            <div>
-              <h2 className="text-sm font-bold text-slate-800">7-Day Traffic</h2>
-              <p className="text-[10px] text-slate-400 font-medium">Daily page views with Y-axis scale</p>
-            </div>
-          </div>
+        <AdminCard>
+          <AdminCardHeader icon={BarChart3} title="7-Day Traffic" subtitle="Daily page views with Y-axis scale" iconClass="text-indigo-600" />
           <TrafficLineChart data={data?.dailyStats || []} />
-        </div>
+        </AdminCard>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Clock size={16} className="text-sky-500" />
-            <div>
-              <h2 className="text-sm font-bold text-slate-800">Today by Hour</h2>
-              <p className="text-[10px] text-slate-400 font-medium">24-hour breakdown (00–23)</p>
-            </div>
-          </div>
+        <AdminCard>
+          <AdminCardHeader icon={Clock} title="Today by Hour" subtitle="24-hour breakdown (00–23)" iconClass="text-sky-600" />
           <HourlyBarChart data={hourlyChart} />
-        </div>
+        </AdminCard>
       </div>
 
       {/* Top pages & products */}
