@@ -19,6 +19,7 @@ import {
   LayoutGrid,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
+import { notifyLiveSync } from '@/lib/liveSync';
 import Toast from '@/components/Toast';
 import Modal from '@/components/Modal';
 
@@ -160,11 +161,7 @@ function ProductsAdminContent() {
         triggerToast(editingProduct ? 'Product updated!' : 'Product created!', 'success');
         setIsModalOpen(false);
         fetchProducts();
-        try {
-          const ch = new BroadcastChannel('products_channel');
-          ch.postMessage({ type: 'PRODUCTS_UPDATED' });
-          ch.close();
-        } catch {}
+        notifyLiveSync('products');
       } else {
         triggerToast(data.error || 'Operation failed.', 'error');
       }
@@ -183,11 +180,7 @@ function ProductsAdminContent() {
         triggerToast('Product deleted!', 'success');
         setDeletingProduct(null);
         fetchProducts();
-        try {
-          const ch = new BroadcastChannel('products_channel');
-          ch.postMessage({ type: 'PRODUCTS_UPDATED' });
-          ch.close();
-        } catch {}
+        notifyLiveSync('products');
       } else {
         triggerToast(data.error || 'Delete failed.', 'error');
       }

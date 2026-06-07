@@ -7,6 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import FilterPanel from '@/components/FilterPanel';
 import ProductCard from '@/components/ProductCard';
 import Loader, { ProductCardSkeleton } from '@/components/Loader';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 // Component that handles the core product searching/filtering
 function ProductsContent() {
@@ -30,8 +31,7 @@ function ProductsContent() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // Fetch initial categories and settings
-  useEffect(() => {
+  const fetchMeta = () => {
     fetch('/api/categories', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
@@ -45,6 +45,10 @@ function ProductsContent() {
         if (data.success && data.settings) setSettings(data.settings);
       })
       .catch((err) => console.error('Error fetching settings:', err));
+  };
+
+  useEffect(() => {
+    fetchMeta();
   }, []);
 
   // Fetch products whenever search params change
@@ -81,33 +85,10 @@ function ProductsContent() {
     fetchProducts(true);
   }, [search, category, condition, minPrice, maxPrice, sort, page]);
 
-  // Real-time synchronization across open tabs and periodic polling in background
-  useEffect(() => {
-    // 1. BroadcastChannel for instant cross-tab sync in the same browser session
-    let channel;
-    try {
-      channel = new BroadcastChannel('products_channel');
-      channel.onmessage = (event) => {
-        if (event.data?.type === 'PRODUCTS_UPDATED') {
-          fetchProducts(false); // Fetch silently in background
-        }
-      };
-    } catch (e) {
-      console.warn('BroadcastChannel not supported or failed to initialize:', e);
-    }
-
-    // 2. Poll the API every 10 seconds for multi-device sync
-    const interval = setInterval(() => {
-      fetchProducts(false);
-    }, 10000);
-
-    return () => {
-      if (channel) {
-        channel.close();
-      }
-      clearInterval(interval);
-    };
-  }, [search, category, condition, minPrice, maxPrice, sort, page]);
+  useLiveSync(() => {
+    fetchProducts(false);
+    fetchMeta();
+  }, ['products', 'categories', 'settings'], 12000);
 
   // Update query params in URL
   const updateFilters = (newFilters) => {

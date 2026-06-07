@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
+import { notifyLiveSync } from '@/lib/liveSync';
 
 const inputCls =
   'w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all';
@@ -112,12 +113,7 @@ export default function AdminSettingsPage() {
       if (data.success) {
         triggerToast('Settings saved successfully!', 'success');
         loadSettings();
-        // Broadcast to all open public tabs
-        try {
-          const ch = new BroadcastChannel('settings_channel');
-          ch.postMessage({ type: 'SETTINGS_UPDATED' });
-          ch.close();
-        } catch (e) {}
+        notifyLiveSync('settings');
       } else {
         triggerToast(data.error || 'Save failed.', 'error');
       }

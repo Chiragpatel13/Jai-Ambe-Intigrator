@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, MessageSquare, MapPin, Clock, Send, Landmark, Mail } from 'lucide-react';
 import Toast from '@/components/Toast';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function ContactPage() {
   const [settings, setSettings] = useState({
@@ -39,15 +40,9 @@ export default function ContactPage() {
 
   useEffect(() => {
     fetchSettings();
-    let ch;
-    try {
-      ch = new BroadcastChannel('settings_channel');
-      ch.addEventListener('message', (e) => {
-        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
-      });
-    } catch (e) {}
-    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
+
+  useLiveSync(fetchSettings, ['settings'], 12000);
 
   const handleInquirySubmit = async (e) => {
     e.preventDefault();

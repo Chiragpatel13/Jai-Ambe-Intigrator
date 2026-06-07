@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLiveSync } from '@/hooks/useLiveSync';
 import { MapPin, Phone, MessageCircle, Boxes, Globe, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -34,15 +35,9 @@ export default function Footer() {
 
   useEffect(() => {
     fetchSettings();
-    let ch;
-    try {
-      ch = new BroadcastChannel('settings_channel');
-      ch.addEventListener('message', (e) => {
-        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
-      });
-    } catch (e) {}
-    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
+
+  useLiveSync(fetchSettings, ['settings'], 12000);
 
   if (isAdmin) return null;
 

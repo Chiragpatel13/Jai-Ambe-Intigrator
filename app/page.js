@@ -33,6 +33,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
 import { ProductCardSkeleton } from '@/components/Loader';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -80,57 +81,45 @@ export default function HomePage() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchSettings();
-
-        // Fetch Categories
-        const categoriesRes = await fetch('/api/categories');
-        const categoriesData = await categoriesRes.json();
-        if (categoriesData.success) {
-          setCategories(categoriesData.categories);
-        }
-
-        // Fetch Featured Products
-        const featuredRes = await fetch('/api/products?featured=true&limit=8');
-        const featuredData = await featuredRes.json();
-        if (featuredData.success) {
-          setFeaturedProducts(featuredData.products);
-        }
-
-        // Fetch New Products
-        const newRes = await fetch('/api/products?condition=new&limit=4');
-        const newData = await newRes.json();
-        if (newData.success) {
-          setNewProducts(newData.products);
-        }
-
-        // Fetch Used Products
-        const usedRes = await fetch('/api/products?condition=used&limit=4');
-        const usedData = await usedRes.json();
-        if (usedData.success) {
-          setUsedProducts(usedData.products);
-        }
-      } catch (err) {
-        console.error('Error fetching home page data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Live-update banners when admin saves settings
-    let ch;
+  const fetchHomeData = async (showLoader = true) => {
     try {
-      ch = new BroadcastChannel('settings_channel');
-      ch.addEventListener('message', (e) => {
-        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
-      });
-    } catch (e) {}
-    return () => { try { ch?.close(); } catch (e) {} };
+      await fetchSettings();
+
+      const categoriesRes = await fetch('/api/categories', { cache: 'no-store' });
+      const categoriesData = await categoriesRes.json();
+      if (categoriesData.success) {
+        setCategories(categoriesData.categories);
+      }
+
+      const featuredRes = await fetch('/api/products?featured=true&limit=8', { cache: 'no-store' });
+      const featuredData = await featuredRes.json();
+      if (featuredData.success) {
+        setFeaturedProducts(featuredData.products);
+      }
+
+      const newRes = await fetch('/api/products?condition=new&limit=4', { cache: 'no-store' });
+      const newData = await newRes.json();
+      if (newData.success) {
+        setNewProducts(newData.products);
+      }
+
+      const usedRes = await fetch('/api/products?condition=used&limit=4', { cache: 'no-store' });
+      const usedData = await usedRes.json();
+      if (usedData.success) {
+        setUsedProducts(usedData.products);
+      }
+    } catch (err) {
+      console.error('Error fetching home page data:', err);
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHomeData(true);
   }, []);
+
+  useLiveSync(() => fetchHomeData(false), ['settings', 'products', 'categories'], 12000);
 
   const getCategoryIcon = (slug) => {
     switch (slug) {

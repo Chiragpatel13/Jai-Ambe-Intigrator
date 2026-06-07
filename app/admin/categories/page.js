@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Layers, RefreshCw, X, Check, Tag } from 'lucide-react';
 import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
+import { notifyLiveSync } from '@/lib/liveSync';
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -69,6 +70,7 @@ export default function AdminCategoriesPage() {
         triggerToast(editingId ? 'Category updated!' : 'Category created!', 'success');
         handleResetForm();
         fetchCategories();
+        notifyLiveSync('categories');
       } else {
         triggerToast(data.error || 'Operation failed.', 'error');
       }
@@ -96,6 +98,7 @@ export default function AdminCategoriesPage() {
         if (data.success) {
           triggerToast('Category deleted successfully!', 'success');
           fetchCategories();
+          notifyLiveSync('categories');
         } else {
           triggerToast(data.error || 'Failed to delete category.', 'error');
         }

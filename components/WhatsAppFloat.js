@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function WhatsAppFloat() {
   const [whatsapp, setWhatsapp] = useState('');
@@ -23,15 +24,9 @@ export default function WhatsAppFloat() {
 
   useEffect(() => {
     fetchSettings();
-    let ch;
-    try {
-      ch = new BroadcastChannel('settings_channel');
-      ch.addEventListener('message', (e) => {
-        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
-      });
-    } catch (e) {}
-    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
+
+  useLiveSync(fetchSettings, ['settings'], 12000);
 
   if (isAdmin || !whatsapp) return null;
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Loader from './Loader';
-import { Bell, ChevronRight, Menu, Search, X, Sparkles } from 'lucide-react';
+import { Bell, ChevronRight, Menu, Search, X } from 'lucide-react';
 
 const ROUTE_LABELS = {
   '/admin': 'Dashboard',
@@ -50,13 +50,10 @@ export default function AdminLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="text-center space-y-5">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-            <Sparkles size={24} className="text-white" />
-          </div>
+      <div className="min-h-screen flex items-center justify-center admin-shell">
+        <div className="text-center space-y-3">
           <Loader size="large" />
-          <p className="text-sm font-medium text-slate-400 tracking-wide">Verifying session…</p>
+          <p className="text-sm font-medium text-slate-500">Loading dashboard…</p>
         </div>
       </div>
     );

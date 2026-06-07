@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Layers, ChevronRight, Video, Cpu, Target } from 'lucide-react';
 import Loader from '@/components/Loader';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -27,8 +28,8 @@ export default function CategoriesPage() {
       .catch((err) => console.error('Error fetching settings for categories page:', err));
   };
 
-  useEffect(() => {
-    fetch('/api/categories')
+  const fetchCategories = () => {
+    fetch('/api/categories', { cache: 'no-store' })
       .then((res) => res.json())
       .then((categoriesData) => {
         if (categoriesData.success) {
@@ -37,23 +38,17 @@ export default function CategoriesPage() {
       })
       .catch((err) => console.error('Error fetching categories:', err))
       .finally(() => setLoading(false));
+  };
 
+  useEffect(() => {
+    fetchCategories();
     fetchSettings();
-
-    let ch;
-    try {
-      ch = new BroadcastChannel('settings_channel');
-      ch.addEventListener('message', (e) => {
-        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
-      });
-    } catch (e) {}
-
-    return () => {
-      try {
-        ch?.close();
-      } catch (e) {}
-    };
   }, []);
+
+  useLiveSync(() => {
+    fetchCategories();
+    fetchSettings();
+  }, ['settings', 'categories'], 12000);
 
   const getCategoryIcon = (slug) => {
     const iconSize = 24;

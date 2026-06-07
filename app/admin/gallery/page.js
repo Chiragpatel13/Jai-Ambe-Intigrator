@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
+import { notifyLiveSync } from '@/lib/liveSync';
 import Modal from '@/components/Modal';
 
 export default function AdminGalleryPage() {
@@ -126,6 +127,7 @@ export default function AdminGalleryPage() {
         triggerToast('Showcase item added successfully!', 'success');
         setIsModalOpen(false);
         fetchItems();
+        notifyLiveSync('gallery');
       } else {
         triggerToast(data.error || 'Operation failed.', 'error');
       }
@@ -145,6 +147,7 @@ export default function AdminGalleryPage() {
         if (data.success) {
           triggerToast('Showcase item deleted successfully!', 'success');
           fetchItems();
+          notifyLiveSync('gallery');
         } else {
           triggerToast(data.error || 'Failed to delete.', 'error');
         }

@@ -11,6 +11,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
+import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function GalleryPage() {
   const [items, setItems] = useState([]);
@@ -19,7 +20,7 @@ export default function GalleryPage() {
   const [activeMedia, setActiveMedia] = useState(null); // Active item for lightbox
   const [activeIdx, setActiveIdx] = useState(-1);
 
-  useEffect(() => {
+  const fetchGallery = (showLoader = true) => {
     fetch('/api/gallery', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
@@ -28,8 +29,16 @@ export default function GalleryPage() {
         }
       })
       .catch((err) => console.error('Error fetching gallery items:', err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (showLoader) setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchGallery(true);
   }, []);
+
+  useLiveSync(() => fetchGallery(false), ['gallery'], 12000);
 
   const filteredItems = items.filter((item) => {
     if (filter === 'all') return true;
