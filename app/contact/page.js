@@ -213,7 +213,7 @@ Please get back to me. Thank you.`;
             </p>
           </div>
 
-          <form onSubmit={handleInquirySubmit} className="space-y-4">
+          <form onSubmit={handleInquirySubmit} className="space-y-4" suppressHydrationWarning>
             <div>
               <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5">
                 Full Name
@@ -224,6 +224,7 @@ Please get back to me. Thank you.`;
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
+                suppressHydrationWarning
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -237,6 +238,7 @@ Please get back to me. Thank you.`;
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
+                suppressHydrationWarning
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -250,6 +252,7 @@ Please get back to me. Thank you.`;
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
+                suppressHydrationWarning
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
               />
             </div>
@@ -257,6 +260,7 @@ Please get back to me. Thank you.`;
             <button
               type="submit"
               disabled={submitting}
+              suppressHydrationWarning
               className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
             >
               <Send size={12} />

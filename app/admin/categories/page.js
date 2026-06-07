@@ -132,16 +132,16 @@ export default function AdminCategoriesPage() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Category Management</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Category Management</h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">
             Organize products into distinct groupings.
           </p>
         </div>
         <button
           onClick={fetchCategories}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors shadow-sm"
+          className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors shadow-sm"
         >
           <RefreshCw size={13} />
           Refresh
@@ -246,9 +246,9 @@ export default function AdminCategoriesPage() {
                 return (
                   <div
                     key={cat._id}
-                    className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/70 transition-colors group"
+                    className="px-4 sm:px-5 py-4 flex items-center justify-between gap-3 hover:bg-slate-50/70 transition-colors group"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       {/* Color chip icon */}
                       <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
@@ -256,8 +256,8 @@ export default function AdminCategoriesPage() {
                       >
                         <Layers size={15} style={{ color: chip.text }} />
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-800">{cat.name}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-slate-800 truncate">{cat.name}</p>
                         <p
                           className="text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-0.5 font-mono"
                           style={{ background: chip.bg, color: chip.text }}
@@ -266,7 +266,7 @@ export default function AdminCategoriesPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                       <button
                         onClick={() => handleEditClick(cat)}
                         className="p-2 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"

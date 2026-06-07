@@ -63,7 +63,7 @@ export default function Sidebar({ adminUser, isOpen = false, onClose = () => {} 
       />
 
       {/* Logo */}
-      <div className="h-20 flex items-center gap-3 px-5 border-b border-cyan-900/30 relative z-10">
+      <div className="h-16 sm:h-20 flex items-center gap-2.5 sm:gap-3 px-4 sm:px-5 border-b border-cyan-900/30 relative z-10">
         <button
           type="button"
           onClick={onClose}
@@ -80,7 +80,7 @@ export default function Sidebar({ adminUser, isOpen = false, onClose = () => {} 
           />
         </div>
         <div className="min-w-0">
-          <p className="font-black text-[1.7rem] leading-none truncate text-white">JayAmbe</p>
+          <p className="font-black text-xl sm:text-[1.7rem] leading-none truncate text-white">JayAmbe</p>
           <p className="text-[11px] text-cyan-300/90 font-semibold mt-1 truncate tracking-wide">Integrators Admin</p>
         </div>
       </div>

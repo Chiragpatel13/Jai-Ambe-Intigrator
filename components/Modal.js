@@ -19,7 +19,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Dark overlay backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
@@ -27,10 +27,10 @@ export default function Modal({ isOpen, onClose, title, children }) {
       />
 
       {/* Modal Dialog Content Container */}
-      <div className="relative bg-white dark:bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-100 dark:border-gray-900 z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative bg-white dark:bg-gray-950 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] sm:max-h-none overflow-hidden border border-gray-100 dark:border-gray-900 z-10 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-900">
-          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-lg">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-100 dark:border-gray-900">
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base sm:text-lg pr-4">
             {title}
           </h3>
           <button
@@ -42,7 +42,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
         </div>
 
         {/* Main Body */}
-        <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 max-h-[calc(92vh-4rem)] sm:max-h-[70vh] overflow-y-auto">
           {children}
         </div>
       </div>

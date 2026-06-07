@@ -172,11 +172,11 @@ export default function CategoriesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 justify-center">
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
           {teamMembers.map((member, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-3xl bg-gray-50 dark:bg-gray-900/30 border border-gray-150 dark:border-gray-900 text-center space-y-4 shadow-sm hover:scale-[1.01] transition-transform col-start-2"
+              className="w-full max-w-[280px] p-6 rounded-3xl bg-gray-50 dark:bg-gray-900/30 border border-gray-150 dark:border-gray-900 text-center space-y-4 shadow-sm hover:scale-[1.01] transition-transform"
             >
               <div className="w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-blue-500">
                 <img src={member.img} alt={member.name} className="w-full h-full object-cover" />

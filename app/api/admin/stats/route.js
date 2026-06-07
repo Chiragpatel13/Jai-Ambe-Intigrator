@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { verifyAdminSession } from '@/utils/auth';
 import { getProducts, getInquiries } from '@/lib/dbFirebase';
+import { getAnalytics } from '@/lib/analytics';
 
 export async function GET() {
   try {
@@ -24,6 +25,7 @@ export async function GET() {
 
     const recentInquiries = inquiriesRes.slice(0, 5);
     const recentProducts = productsRes.products.slice(0, 5);
+    const analytics = await getAnalytics();
 
     return NextResponse.json({
       success: true,
@@ -33,6 +35,13 @@ export async function GET() {
         usedProducts,
         totalInquiries,
         pendingInquiries,
+        totalPageViews: analytics.totalPageViews,
+        totalUniqueVisitors: analytics.totalUniqueVisitors,
+        todayPageViews: analytics.todayPageViews,
+        todayUniqueVisitors: analytics.todayUniqueVisitors,
+      },
+      analytics: {
+        dailyStats: analytics.dailyStats,
       },
       recentInquiries,
       recentProducts,

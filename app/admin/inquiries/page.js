@@ -151,7 +151,7 @@ export default function AdminInquiriesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Inquiry Management</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Inquiry Management</h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">
             Review and manage lead queries submitted by visitors.
           </p>
@@ -166,12 +166,12 @@ export default function AdminInquiriesPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border shrink-0 ${
               statusFilter === tab.value
                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200'
                 : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-800'
@@ -197,7 +197,78 @@ export default function AdminInquiriesPage() {
           <Loader size="large" />
         </div>
       ) : inquiries.length > 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <>
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {inquiries.map((inq) => (
+            <div key={inq._id} className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                >
+                  {inq.customerName?.substring(0, 2).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-slate-800 truncate">{inq.customerName}</p>
+                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">{inq.phone}</p>
+                    </div>
+                    <button
+                      onClick={() => handleUpdateStatus(inq._id, inq.status)}
+                      className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold border ${
+                        inq.status === 'pending'
+                          ? 'bg-amber-50 text-amber-700 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      }`}
+                    >
+                      {inq.status === 'pending' ? (
+                        <><Clock size={8} /> PENDING</>
+                      ) : (
+                        <><CheckCircle size={8} /> DONE</>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 italic">"{inq.message}"</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2 text-[10px] text-slate-400 font-medium">
+                    <span>
+                      {new Date(inq.createdAt).toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
+                    {inq.productId && (
+                      <span className="text-indigo-600 font-semibold truncate max-w-[180px]">
+                        · {inq.productId.name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2 pt-1 border-t border-slate-100">
+                <button
+                  onClick={() => setSelectedInquiry(inq)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
+                >
+                  <Eye size={14} />
+                  View
+                </button>
+                <button
+                  onClick={() => handleDelete(inq._id)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-rose-200 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead>
@@ -282,6 +353,7 @@ export default function AdminInquiriesPage() {
             </table>
           </div>
         </div>
+        </>
       ) : (
         <div className="py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white">
           <Search size={28} className="mx-auto text-slate-300 mb-3" />
@@ -353,8 +425,8 @@ export default function AdminInquiriesPage() {
               </p>
             </div>
 
-            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-4 border-t border-slate-100">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => handleUpdateStatus(selectedInquiry._id, selectedInquiry.status)}
                   className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors ${

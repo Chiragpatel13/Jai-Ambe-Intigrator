@@ -143,9 +143,9 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Header with Save */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Shop Settings</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Shop Settings</h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">
             Configure store details and contact information.
           </p>
@@ -153,7 +153,7 @@ export default function AdminSettingsPage() {
         <button
           onClick={handleSave}
           disabled={submitting}
-          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-md transition-all disabled:opacity-60"
+          className="self-start sm:self-auto flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-md transition-all disabled:opacity-60 w-full sm:w-auto"
           style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
         >
           {submitting ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}

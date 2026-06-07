@@ -31,6 +31,7 @@ export function Button({
   return (
     <button
       className={`${baseStyles} ${variantClass} ${sizeClass} ${className}`}
+      suppressHydrationWarning
       {...props}
     >
       {children}

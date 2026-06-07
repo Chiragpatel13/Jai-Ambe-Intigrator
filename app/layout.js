@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/hooks/useTheme';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
+import VisitorTracker from '@/components/VisitorTracker';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,8 +37,12 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-150 transition-colors duration-300">
+      <body
+        className="min-h-full flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-150 transition-colors duration-300"
+        suppressHydrationWarning
+      >
         <ThemeProvider>
+          <VisitorTracker />
           <Navbar />
           <div className="flex-grow">{children}</div>
           <Footer />

@@ -22,6 +22,10 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     const checkSession = async () => {
       try {
         const res = await fetch('/api/auth/me', { cache: 'no-store' });
@@ -86,25 +90,25 @@ export default function AdminLayout({ children }) {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="min-h-screen flex flex-col lg:pl-72 relative z-10">
-        <header className="h-16 md:h-18 bg-white/85 backdrop-blur border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-20 shadow-[0_2px_10px_rgba(15,23,42,0.03)]">
-          <div className="flex items-center gap-3 min-w-0">
+      <div className="min-h-screen flex flex-col lg:pl-72 relative z-10 w-full min-w-0">
+        <header className="h-14 sm:h-16 bg-white/85 backdrop-blur border-b border-slate-200/80 flex items-center justify-between gap-2 px-3 sm:px-6 lg:px-8 sticky top-0 z-20 shadow-[0_2px_10px_rgba(15,23,42,0.03)]">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              className="lg:hidden w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 flex items-center justify-center"
+              className="lg:hidden w-9 h-9 shrink-0 rounded-xl border border-slate-200 bg-white text-slate-600 flex items-center justify-center"
               aria-label="Toggle menu"
             >
               {isSidebarOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
 
-            <div className="flex items-center gap-1.5 text-sm min-w-0">
-              <span className="text-slate-400 font-medium hidden sm:inline">Admin</span>
-              <ChevronRight size={14} className="text-slate-300 hidden sm:inline" />
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm min-w-0">
+              <span className="text-slate-400 font-medium hidden sm:inline shrink-0">Admin</span>
+              <ChevronRight size={14} className="text-slate-300 hidden sm:inline shrink-0" />
               <span className="font-bold text-slate-800 truncate">{currentLabel}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <div className="hidden md:flex items-center gap-2 h-10 px-3 rounded-xl border border-slate-200 bg-white text-slate-400 min-w-60">
               <Search size={14} />
               <span className="text-xs font-medium">Quick search...</span>
@@ -132,8 +136,8 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-grow p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">{children}</div>
+        <main className="flex-grow p-3 sm:p-6 lg:p-8 w-full min-w-0">
+          <div className="max-w-7xl mx-auto w-full">{children}</div>
         </main>
       </div>
     </div>

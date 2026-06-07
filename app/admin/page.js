@@ -17,6 +17,9 @@ import {
   Wifi,
   WifiOff,
   Activity,
+  Users,
+  Eye,
+  BarChart3,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 
@@ -26,6 +29,7 @@ export default function AdminDashboardPage() {
   const [recentProducts, setRecentProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dbStatus, setDbStatus] = useState(null); // null = checking
+  const [dailyStats, setDailyStats] = useState([]);
 
   // Fetch stats
   useEffect(() => {
@@ -36,6 +40,7 @@ export default function AdminDashboardPage() {
           setStats(data.stats);
           setRecentInquiries(data.recentInquiries);
           setRecentProducts(data.recentProducts);
+          setDailyStats(data.analytics?.dailyStats || []);
         }
       })
       .catch((err) => console.error('Error fetching stats:', err))
@@ -95,7 +100,36 @@ export default function AdminDashboardPage() {
       link: '/admin/inquiries',
       sub: 'Awaiting response',
     },
+    {
+      title: 'Total Visits',
+      value: stats?.totalPageViews || 0,
+      icon: Eye,
+      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
+      glow: 'rgba(14,165,233,0.25)',
+      link: '/admin',
+      sub: 'All-time page views',
+    },
+    {
+      title: 'Unique Visitors',
+      value: stats?.totalUniqueVisitors || 0,
+      icon: Users,
+      gradient: 'linear-gradient(135deg, #14b8a6 0%, #0891b2 100%)',
+      glow: 'rgba(20,184,166,0.25)',
+      link: '/admin',
+      sub: 'Distinct people',
+    },
+    {
+      title: "Today's Visits",
+      value: stats?.todayPageViews || 0,
+      icon: BarChart3,
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+      glow: 'rgba(139,92,246,0.25)',
+      link: '/admin',
+      sub: `${stats?.todayUniqueVisitors || 0} unique today`,
+    },
   ];
+
+  const maxDailyViews = Math.max(...dailyStats.map((d) => d.pageViews || 0), 1);
 
   const quickControls = [
     { label: 'Add New Product', icon: PlusCircle, href: '/admin/products?action=new', color: '#6366f1', bg: 'rgba(99,102,241,0.08)', hover: 'rgba(99,102,241,0.15)' },
@@ -108,8 +142,8 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900">Dashboard Overview</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Dashboard Overview</h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">
             Real-time status of your store inventory and visitor inquiries.
           </p>
@@ -118,7 +152,7 @@ export default function AdminDashboardPage() {
 
       {/* Firebase DB Status Banner */}
       <div
-        className={`flex items-center justify-between px-5 py-3.5 rounded-2xl border ${
+        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 sm:px-5 py-3.5 rounded-2xl border ${
           dbStatus === null
             ? 'bg-slate-50 border-slate-200'
             : dbStatus.connected
@@ -165,7 +199,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
           <Database size={14} className={dbStatus?.connected ? 'text-emerald-500' : 'text-amber-400'} />
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
             dbStatus === null
@@ -179,15 +213,15 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* Stat Cards — 2 per row on mobile, 4 on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {statCards.map((card, idx) => {
           const Icon = card.icon;
           return (
             <Link
               key={idx}
               href={card.link}
-              className="group relative p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+              className="group relative p-3.5 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
             >
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -195,32 +229,63 @@ export default function AdminDashboardPage() {
               />
               <div className="relative">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-2.5 sm:mb-4"
                   style={{ background: card.gradient }}
                 >
-                  <Icon size={18} className="text-white" />
+                  <Icon size={16} className="text-white sm:w-[18px] sm:h-[18px]" />
                 </div>
-                <p className="text-3xl font-black text-slate-900">{card.value}</p>
-                <p className="text-xs font-bold text-slate-700 mt-1">{card.title}</p>
-                <p className="text-[10px] text-slate-400 font-medium mt-0.5">{card.sub}</p>
-                <ArrowUpRight size={14} className="absolute top-0 right-0 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                <p className="text-2xl sm:text-3xl font-black text-slate-900">{card.value}</p>
+                <p className="text-[11px] sm:text-xs font-bold text-slate-700 mt-1 leading-tight">{card.title}</p>
+                <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium mt-0.5 hidden sm:block">{card.sub}</p>
+                <ArrowUpRight size={12} className="absolute top-0 right-0 text-slate-300 group-hover:text-slate-500 transition-colors sm:w-3.5 sm:h-3.5" />
               </div>
             </Link>
           );
         })}
       </div>
 
+      {/* Visitor Analytics — last 7 days */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Visitor Analytics</h2>
+            <p className="text-[11px] text-slate-400 mt-1 font-medium">Page views over the last 7 days</p>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="text-lg font-black text-slate-900">{stats?.todayPageViews || 0}</p>
+            <p className="text-[10px] text-slate-400 font-semibold">views today</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-7 gap-1.5 sm:gap-2 items-end h-28 sm:h-32">
+          {dailyStats.map((day) => {
+            const height = Math.max(12, Math.round(((day.pageViews || 0) / maxDailyViews) * 100));
+            const label = new Date(day.date).toLocaleDateString('en-IN', { weekday: 'short' });
+            return (
+              <div key={day.date} className="flex flex-col items-center gap-1.5 min-w-0">
+                <span className="text-[9px] sm:text-[10px] font-bold text-slate-500">{day.pageViews || 0}</span>
+                <div
+                  className="w-full rounded-lg bg-gradient-to-t from-sky-500 to-indigo-400 transition-all"
+                  style={{ height: `${height}%`, minHeight: '12px' }}
+                  title={`${day.pageViews || 0} views · ${day.uniqueVisitors || 0} unique`}
+                />
+                <span className="text-[8px] sm:text-[9px] text-slate-400 font-semibold truncate w-full text-center">{label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Quick Controls */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Quick Controls</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {quickControls.map((ctrl, idx) => {
             const Icon = ctrl.icon;
             return (
               <Link
                 key={idx}
                 href={ctrl.href}
-                className="group flex items-center gap-2.5 p-4 rounded-xl border border-slate-100 transition-all duration-200 hover:border-slate-200 hover:shadow-sm"
+                className="group flex items-center gap-2.5 p-3.5 sm:p-4 rounded-xl border border-slate-100 transition-all duration-200 hover:border-slate-200 hover:shadow-sm"
                 style={{ background: ctrl.bg }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = ctrl.hover; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = ctrl.bg; }}

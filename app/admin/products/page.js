@@ -203,37 +203,39 @@ function ProductsAdminContent() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Product Management</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Product Management</h1>
           <p className="text-xs text-slate-500 mt-1 font-medium">Manage hardware stock, pricing, and conditions.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <form onSubmit={handleSearchSubmit} className="relative">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <form onSubmit={handleSearchSubmit} className="relative flex-1 min-w-0">
             <input
               type="text"
               placeholder="Search catalog..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-48 sm:w-56 transition-all shadow-sm"
+              className="w-full pl-8 pr-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
             />
             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           </form>
-          <button
-            onClick={fetchProducts}
-            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-colors shadow-sm"
-            title="Refresh"
-          >
-            <RefreshCw size={14} />
-          </button>
-          <button
-            onClick={handleOpenCreateModal}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl text-white shadow-md transition-all shrink-0"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-          >
-            <Plus size={14} />
-            Add Product
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={fetchProducts}
+              className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-colors shadow-sm"
+              title="Refresh"
+            >
+              <RefreshCw size={14} />
+            </button>
+            <button
+              onClick={handleOpenCreateModal}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-xl text-white shadow-md transition-all"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+            >
+              <Plus size={14} />
+              Add Product
+            </button>
+          </div>
         </div>
       </div>
 
@@ -241,7 +243,85 @@ function ProductsAdminContent() {
       {loading ? (
         <div className="flex justify-center items-center py-20"><Loader size="large" /></div>
       ) : products.length > 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <>
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {products.map((prod) => (
+            <div key={prod._id} className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
+                  {prod.images?.length > 0 ? (
+                    <img src={prod.images[0]} alt={prod.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <Laptop size={18} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm text-slate-800 leading-snug">{prod.name}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    <span
+                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                        prod.condition === 'new'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-amber-50 text-amber-700'
+                      }`}
+                    >
+                      {prod.condition?.toUpperCase()}
+                    </span>
+                    {prod.featured && (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
+                        <Star size={8} className="fill-current" /> Featured
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Price</p>
+                  <p className="font-bold text-slate-800 mt-0.5">
+                    {prod.price && prod.price > 0
+                      ? `₹${prod.price.toLocaleString('en-IN')}`
+                      : 'Ask for Price'}
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Stock</p>
+                  <p className="font-bold text-slate-800 mt-0.5">
+                    {prod.availability && prod.stock > 0 ? `${prod.stock} units` : 'Out of Stock'}
+                  </p>
+                </div>
+              </div>
+              {prod.category?.name && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  <LayoutGrid size={9} />
+                  {prod.category.name}
+                </span>
+              )}
+              <div className="flex gap-2 pt-1 border-t border-slate-100">
+                <button
+                  onClick={() => handleOpenEditModal(prod)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
+                >
+                  <Edit size={14} />
+                  Edit
+                </button>
+                <button
+                  onClick={() => setDeletingProduct(prod)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-rose-200 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead>
@@ -318,7 +398,7 @@ function ProductsAdminContent() {
                       )}
                     </td>
                     <td className="px-5 py-4 text-right">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleOpenEditModal(prod)}
                           className="p-1.5 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
@@ -364,6 +444,30 @@ function ProductsAdminContent() {
             </div>
           )}
         </div>
+
+        {/* Shared pagination */}
+        {totalPages > 1 && (
+          <div className="md:hidden px-1 py-2 flex justify-between items-center">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold text-slate-600 transition-colors"
+            >
+              Previous
+            </button>
+            <span className="text-xs font-bold text-slate-400">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold text-slate-600 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
+        </>
       ) : (
         <div className="py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-white">
           <PackageSearch size={32} className="mx-auto text-slate-300 mb-3" />
@@ -462,7 +566,7 @@ function ProductsAdminContent() {
           </div>
 
           {/* Toggles */}
-          <div className="flex gap-5 py-1">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 py-1">
             <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
               <input type="checkbox" checked={availability} onChange={(e) => setAvailability(e.target.checked)} className="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500" />
               Available in Stock
