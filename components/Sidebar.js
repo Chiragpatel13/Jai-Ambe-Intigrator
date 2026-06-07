@@ -8,6 +8,7 @@ import {
   FolderTree,
   MailWarning,
   Settings as SettingsIcon,
+  BarChart3,
   LogOut,
   X,
 } from 'lucide-react';
@@ -21,6 +22,7 @@ export default function Sidebar({ adminUser, isOpen = false, onClose = () => {} 
     { name: 'Products', path: '/admin/products', icon: Laptop },
     { name: 'Categories', path: '/admin/categories', icon: FolderTree },
     { name: 'Inquiries', path: '/admin/inquiries', icon: MailWarning },
+    { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
     { name: 'Settings', path: '/admin/settings', icon: SettingsIcon },
   ];
 

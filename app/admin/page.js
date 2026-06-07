@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
       icon: Eye,
       gradient: 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)',
       glow: 'rgba(14,165,233,0.25)',
-      link: '/admin',
+      link: '/admin/analytics',
       sub: 'All-time page views',
     },
     {
@@ -115,7 +115,7 @@ export default function AdminDashboardPage() {
       icon: Users,
       gradient: 'linear-gradient(135deg, #14b8a6 0%, #0891b2 100%)',
       glow: 'rgba(20,184,166,0.25)',
-      link: '/admin',
+      link: '/admin/analytics',
       sub: 'Distinct people',
     },
     {
@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
       icon: BarChart3,
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
       glow: 'rgba(139,92,246,0.25)',
-      link: '/admin',
+      link: '/admin/analytics',
       sub: `${stats?.todayUniqueVisitors || 0} unique today`,
     },
   ];
@@ -136,6 +136,7 @@ export default function AdminDashboardPage() {
     { label: 'Manage Categories', icon: Layers, href: '/admin/categories', color: '#10b981', bg: 'rgba(16,185,129,0.08)', hover: 'rgba(16,185,129,0.15)' },
     { label: 'Store Settings', icon: Settings, href: '/admin/settings', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', hover: 'rgba(245,158,11,0.15)' },
     { label: 'View Inquiries', icon: Mail, href: '/admin/inquiries', color: '#ec4899', bg: 'rgba(236,72,153,0.08)', hover: 'rgba(236,72,153,0.15)' },
+    { label: 'Live Analytics', icon: BarChart3, href: '/admin/analytics', color: '#0ea5e9', bg: 'rgba(14,165,233,0.08)', hover: 'rgba(14,165,233,0.15)' },
   ];
 
   return (
@@ -244,19 +245,22 @@ export default function AdminDashboardPage() {
         })}
       </div>
 
-      {/* Visitor Analytics — last 7 days */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+      {/* Analytics preview */}
+      <Link
+        href="/admin/analytics"
+        className="block bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 hover:border-indigo-300 hover:shadow-md transition-all group"
+      >
         <div className="flex items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Visitor Analytics</h2>
-            <p className="text-[11px] text-slate-400 mt-1 font-medium">Page views over the last 7 days</p>
+            <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Real-Time Analytics</h2>
+            <p className="text-[11px] text-slate-400 mt-1 font-medium">Live graphs, product visits & activity feed</p>
           </div>
-          <div className="text-right shrink-0">
-            <p className="text-lg font-black text-slate-900">{stats?.todayPageViews || 0}</p>
-            <p className="text-[10px] text-slate-400 font-semibold">views today</p>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            LIVE
+          </span>
         </div>
-        <div className="grid grid-cols-7 gap-1.5 sm:gap-2 items-end h-28 sm:h-32">
+        <div className="grid grid-cols-7 gap-1.5 sm:gap-2 items-end h-24 sm:h-28">
           {dailyStats.map((day) => {
             const height = Math.max(12, Math.round(((day.pageViews || 0) / maxDailyViews) * 100));
             const label = new Date(day.date).toLocaleDateString('en-IN', { weekday: 'short' });
@@ -266,14 +270,14 @@ export default function AdminDashboardPage() {
                 <div
                   className="w-full rounded-lg bg-gradient-to-t from-sky-500 to-indigo-400 transition-all"
                   style={{ height: `${height}%`, minHeight: '12px' }}
-                  title={`${day.pageViews || 0} views · ${day.uniqueVisitors || 0} unique`}
                 />
                 <span className="text-[8px] sm:text-[9px] text-slate-400 font-semibold truncate w-full text-center">{label}</span>
               </div>
             );
           })}
         </div>
-      </div>
+        <p className="text-xs font-bold text-indigo-600 mt-4 group-hover:underline">Open full analytics dashboard →</p>
+      </Link>
 
       {/* Quick Controls */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">

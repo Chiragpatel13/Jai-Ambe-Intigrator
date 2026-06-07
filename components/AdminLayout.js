@@ -11,6 +11,7 @@ const ROUTE_LABELS = {
   '/admin/products': 'Products',
   '/admin/categories': 'Categories',
   '/admin/inquiries': 'Inquiries',
+  '/admin/analytics': 'Analytics',
   '/admin/settings': 'Settings',
 };
 
