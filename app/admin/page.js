@@ -7,13 +7,16 @@ import {
   Mail,
   PlusCircle,
   Settings,
-  HelpCircle,
-  FileText,
-  Calendar,
   Layers,
   ArrowRight,
   TrendingUp,
-  Image,
+  Clock,
+  CheckCircle,
+  ArrowUpRight,
+  Database,
+  Wifi,
+  WifiOff,
+  Activity,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 
@@ -22,9 +25,11 @@ export default function AdminDashboardPage() {
   const [recentInquiries, setRecentInquiries] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dbStatus, setDbStatus] = useState(null); // null = checking
 
+  // Fetch stats
   useEffect(() => {
-    fetch('/api/admin/stats')
+    fetch('/api/admin/stats', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -33,8 +38,16 @@ export default function AdminDashboardPage() {
           setRecentProducts(data.recentProducts);
         }
       })
-      .catch((err) => console.error('Error fetching dashboard stats:', err))
+      .catch((err) => console.error('Error fetching stats:', err))
       .finally(() => setLoading(false));
+  }, []);
+
+  // Fetch DB status
+  useEffect(() => {
+    fetch('/api/admin/db-status', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then(setDbStatus)
+      .catch(() => setDbStatus({ connected: false, source: 'error' }));
   }, []);
 
   if (loading) {
@@ -50,201 +63,264 @@ export default function AdminDashboardPage() {
       title: 'Total Products',
       value: stats?.totalProducts || 0,
       icon: Laptop,
-      color: 'bg-blue-500 text-white',
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+      glow: 'rgba(99,102,241,0.25)',
       link: '/admin/products',
+      sub: 'In catalog',
     },
     {
       title: 'New Hardware',
       value: stats?.newProducts || 0,
       icon: TrendingUp,
-      color: 'bg-emerald-500 text-white',
+      gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      glow: 'rgba(16,185,129,0.25)',
       link: '/admin/products?condition=new',
+      sub: 'Brand new units',
     },
     {
       title: 'Used / Refurbished',
       value: stats?.usedProducts || 0,
       icon: Layers,
-      color: 'bg-amber-500 text-white',
+      gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      glow: 'rgba(245,158,11,0.25)',
       link: '/admin/products?condition=used',
+      sub: 'Refurbished stock',
     },
     {
       title: 'Pending Inquiries',
       value: stats?.pendingInquiries || 0,
       icon: Mail,
-      color: 'bg-blue-500 text-white',
+      gradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+      glow: 'rgba(236,72,153,0.25)',
       link: '/admin/inquiries',
+      sub: 'Awaiting response',
     },
   ];
 
+  const quickControls = [
+    { label: 'Add New Product', icon: PlusCircle, href: '/admin/products?action=new', color: '#6366f1', bg: 'rgba(99,102,241,0.08)', hover: 'rgba(99,102,241,0.15)' },
+    { label: 'Manage Categories', icon: Layers, href: '/admin/categories', color: '#10b981', bg: 'rgba(16,185,129,0.08)', hover: 'rgba(16,185,129,0.15)' },
+    { label: 'Store Settings', icon: Settings, href: '/admin/settings', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', hover: 'rgba(245,158,11,0.15)' },
+    { label: 'View Inquiries', icon: Mail, href: '/admin/inquiries', color: '#ec4899', bg: 'rgba(236,72,153,0.08)', hover: 'rgba(236,72,153,0.15)' },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Welcome Title */}
-      <div>
-        <h1 className="text-2xl font-black text-gray-900">Dashboard Overview</h1>
-        <p className="text-xs text-gray-450 mt-1">Real-time status of your store inventory and visitor inquiries.</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((card, idx) => (
-          <Link
-            key={idx}
-            href={card.link}
-            className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between"
-          >
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-gray-450 uppercase tracking-wide">
-                {card.title}
-              </span>
-              <p className="text-2xl font-black text-gray-900">{card.value}</p>
-            </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.color}`}>
-              <card.icon size={22} />
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {/* Quick Launch Panel */}
-      <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-4">
-        <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Quick Controls</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-          <Link
-            href="/admin/products?action=new"
-            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
-          >
-            <PlusCircle size={16} className="text-blue-600" />
-            <span>Add New Product</span>
-          </Link>
-          <Link
-            href="/admin/categories"
-            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
-          >
-            <Layers size={16} className="text-blue-600" />
-            <span>Manage Categories</span>
-          </Link>
-          <Link
-            href="/admin/gallery"
-            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
-          >
-            <Image size={16} className="text-blue-600" />
-            <span>Manage Gallery</span>
-          </Link>
-          <Link
-            href="/admin/settings"
-            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
-          >
-            <Settings size={16} className="text-blue-600" />
-            <span>Update Store Settings</span>
-          </Link>
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2.5 p-4 rounded-xl border border-gray-150 hover:bg-gray-50 text-xs font-bold text-gray-700 transition-colors"
-          >
-            <ArrowRight size={16} className="text-blue-600" />
-            <span>View Public Site</span>
-          </a>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900">Dashboard Overview</h1>
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Real-time status of your store inventory and visitor inquiries.
+          </p>
         </div>
       </div>
 
-      {/* Recent Activity Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Firebase DB Status Banner */}
+      <div
+        className={`flex items-center justify-between px-5 py-3.5 rounded-2xl border ${
+          dbStatus === null
+            ? 'bg-slate-50 border-slate-200'
+            : dbStatus.connected
+            ? 'bg-emerald-50 border-emerald-200'
+            : 'bg-amber-50 border-amber-200'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+              dbStatus === null
+                ? 'bg-slate-200'
+                : dbStatus.connected
+                ? 'bg-emerald-500'
+                : 'bg-amber-500'
+            }`}
+          >
+            {dbStatus === null ? (
+              <Activity size={15} className="text-slate-500 animate-pulse" />
+            ) : dbStatus.connected ? (
+              <Wifi size={15} className="text-white" />
+            ) : (
+              <WifiOff size={15} className="text-white" />
+            )}
+          </div>
+          <div>
+            <p className={`text-xs font-bold ${
+              dbStatus === null ? 'text-slate-600' : dbStatus.connected ? 'text-emerald-700' : 'text-amber-700'
+            }`}>
+              {dbStatus === null
+                ? 'Checking Firebase connection...'
+                : dbStatus.connected
+                ? '✓ Firebase Firestore — Connected'
+                : '⚠ Firebase Firestore — Unavailable (using mock data)'}
+            </p>
+            <p className={`text-[10px] font-medium mt-0.5 ${
+              dbStatus === null ? 'text-slate-400' : dbStatus.connected ? 'text-emerald-600' : 'text-amber-600'
+            }`}>
+              {dbStatus === null
+                ? 'Please wait...'
+                : dbStatus.connected
+                ? `Project: ${dbStatus.projectId} · Latency: ${dbStatus.latency}ms`
+                : `Project: ${dbStatus.projectId} · ${dbStatus.error || 'Connection failed'}`}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Database size={14} className={dbStatus?.connected ? 'text-emerald-500' : 'text-amber-400'} />
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+            dbStatus === null
+              ? 'bg-slate-200 text-slate-500'
+              : dbStatus.connected
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-amber-100 text-amber-700'
+          }`}>
+            {dbStatus === null ? 'CHECKING' : dbStatus.connected ? 'LIVE' : 'FALLBACK'}
+          </span>
+        </div>
+      </div>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {statCards.map((card, idx) => {
+          const Icon = card.icon;
+          return (
+            <Link
+              key={idx}
+              href={card.link}
+              className="group relative p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+            >
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: `radial-gradient(circle at 80% 20%, ${card.glow} 0%, transparent 60%)` }}
+              />
+              <div className="relative">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: card.gradient }}
+                >
+                  <Icon size={18} className="text-white" />
+                </div>
+                <p className="text-3xl font-black text-slate-900">{card.value}</p>
+                <p className="text-xs font-bold text-slate-700 mt-1">{card.title}</p>
+                <p className="text-[10px] text-slate-400 font-medium mt-0.5">{card.sub}</p>
+                <ArrowUpRight size={14} className="absolute top-0 right-0 text-slate-300 group-hover:text-slate-500 transition-colors" />
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Quick Controls */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Quick Controls</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {quickControls.map((ctrl, idx) => {
+            const Icon = ctrl.icon;
+            return (
+              <Link
+                key={idx}
+                href={ctrl.href}
+                className="group flex items-center gap-2.5 p-4 rounded-xl border border-slate-100 transition-all duration-200 hover:border-slate-200 hover:shadow-sm"
+                style={{ background: ctrl.bg }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = ctrl.hover; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = ctrl.bg; }}
+              >
+                <Icon size={16} style={{ color: ctrl.color }} />
+                <span className="text-xs font-bold text-slate-700 leading-tight">{ctrl.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Inquiries */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-            <h3 className="font-extrabold text-gray-900 text-sm flex items-center gap-2">
-              <Mail size={16} className="text-blue-500" />
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+              <Mail size={15} className="text-pink-500" />
               Recent Inquiries
             </h3>
-            <Link
-              href="/admin/inquiries"
-              className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-0.5"
-            >
-              <span>View All</span>
-              <ArrowRight size={12} />
+            <Link href="/admin/inquiries" className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-0.5">
+              View All <ArrowRight size={12} />
             </Link>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-50">
             {recentInquiries.length > 0 ? (
               recentInquiries.map((inq) => (
-                <div key={inq._id} className="p-5 hover:bg-gray-50 transition-colors space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-bold text-xs text-gray-900">{inq.customerName}</h4>
-                      <p className="text-[10px] text-gray-400 font-semibold">{inq.phone}</p>
-                    </div>
-                    <span
-                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                        inq.status === 'pending'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-100'
-                          : 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                      }`}
+                <div key={inq._id} className="px-5 py-4 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
                     >
-                      {inq.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 line-clamp-1 italic">"{inq.message}"</p>
-                  {inq.productId && (
-                    <div className="text-[10px] text-blue-600 font-bold flex items-center gap-1">
-                      <span>Item:</span>
-                      <span className="underline">{inq.productId.name}</span>
+                      {inq.customerName?.substring(0, 2).toUpperCase()}
                     </div>
-                  )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs font-bold text-slate-800 truncate">{inq.customerName}</p>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                          inq.status === 'pending'
+                            ? 'bg-amber-50 text-amber-700 border-amber-200'
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        }`}>
+                          {inq.status === 'pending'
+                            ? <span className="flex items-center gap-1"><Clock size={8} /> PENDING</span>
+                            : <span className="flex items-center gap-1"><CheckCircle size={8} /> DONE</span>}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-medium mt-0.5">{inq.phone}</p>
+                      <p className="text-[10px] text-slate-500 italic mt-1 line-clamp-1">"{inq.message}"</p>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="p-10 text-center text-xs text-gray-400">No recent inquiries.</div>
+              <div className="py-12 text-center text-xs text-slate-400">No recent inquiries.</div>
             )}
           </div>
         </div>
 
         {/* Recent Products */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-            <h3 className="font-extrabold text-gray-900 text-sm flex items-center gap-2">
-              <Laptop size={16} className="text-blue-500" />
-              Recently Added Products
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+              <Laptop size={15} className="text-indigo-500" />
+              Recent Products
             </h3>
-            <Link
-              href="/admin/products"
-              className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-0.5"
-            >
-              <span>View All</span>
-              <ArrowRight size={12} />
+            <Link href="/admin/products" className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-0.5">
+              View All <ArrowRight size={12} />
             </Link>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-50">
             {recentProducts.length > 0 ? (
               recentProducts.map((prod) => (
-                <div key={prod._id} className="p-5 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-                  <div className="w-12 h-12 bg-gray-55 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                    {prod.images.length > 0 ? (
+                <div key={prod._id} className="px-5 py-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+                  <div className="w-11 h-11 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                    {prod.images?.length > 0 ? (
                       <img src={prod.images[0]} alt={prod.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-300 text-[10px]">No Pic</div>
+                      <div className="w-full h-full flex items-center justify-center text-slate-300 text-[9px] font-bold">IMG</div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-xs text-gray-800 truncate">{prod.name}</h4>
+                    <p className="text-xs font-bold text-slate-800 truncate">{prod.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.25 rounded ${
-                          prod.condition === 'new' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
-                        }`}
-                      >
-                        {prod.condition.toUpperCase()}
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                        prod.condition === 'new' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                      }`}>
+                        {prod.condition?.toUpperCase()}
                       </span>
-                      <span className="text-[10px] text-gray-400 font-semibold">
-                        ₹{prod.price.toLocaleString('en-IN')}
+                      <span className="text-[10px] text-slate-400 font-semibold">
+                        {prod.price && prod.price > 0 ? `₹${prod.price.toLocaleString('en-IN')}` : 'Ask for Price'}
                       </span>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="p-10 text-center text-xs text-gray-400">No products in catalog.</div>
+              <div className="py-12 text-center text-xs text-slate-400">No products in catalog.</div>
             )}
           </div>
         </div>

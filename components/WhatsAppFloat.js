@@ -10,8 +10,8 @@ export default function WhatsAppFloat() {
   // Hide on admin panel routes
   const isAdmin = pathname?.startsWith('/admin');
 
-  useEffect(() => {
-    fetch('/api/settings')
+  const fetchSettings = () => {
+    fetch('/api/settings', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings?.whatsapp) {
@@ -19,6 +19,18 @@ export default function WhatsAppFloat() {
         }
       })
       .catch((err) => console.error('Error fetching settings in WhatsAppFloat:', err));
+  };
+
+  useEffect(() => {
+    fetchSettings();
+    let ch;
+    try {
+      ch = new BroadcastChannel('settings_channel');
+      ch.addEventListener('message', (e) => {
+        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
+      });
+    } catch (e) {}
+    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
 
   if (isAdmin || !whatsapp) return null;

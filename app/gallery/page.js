@@ -20,7 +20,7 @@ export default function GalleryPage() {
   const [activeIdx, setActiveIdx] = useState(-1);
 
   useEffect(() => {
-    fetch('/api/gallery')
+    fetch('/api/gallery', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

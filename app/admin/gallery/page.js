@@ -40,7 +40,7 @@ export default function AdminGalleryPage() {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/gallery');
+      const res = await fetch('/api/gallery', { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
         setItems(data.items);

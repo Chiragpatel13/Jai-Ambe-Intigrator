@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit, Layers, RefreshCw, X, Check } from 'lucide-react';
+import { Plus, Trash2, Edit, Layers, RefreshCw, X, Check, Tag } from 'lucide-react';
 import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
 
@@ -10,7 +10,6 @@ export default function AdminCategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
-  // Form states
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -23,13 +22,10 @@ export default function AdminCategoriesPage() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/categories');
+      const res = await fetch('/api/categories', { cache: 'no-store' });
       const data = await res.json();
-      if (data.success) {
-        setCategories(data.categories);
-      }
-    } catch (err) {
-      console.error('Error fetching categories:', err);
+      if (data.success) setCategories(data.categories);
+    } catch {
       triggerToast('Failed to load categories.', 'error');
     } finally {
       setLoading(false);
@@ -40,16 +36,16 @@ export default function AdminCategoriesPage() {
     fetchCategories();
   }, []);
 
-  // Auto-generate slug from name during creation/editing
   const handleNameChange = (e) => {
     const val = e.target.value;
     setName(val);
     if (!editingId) {
-      const autoSlug = val
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-      setSlug(autoSlug);
+      setSlug(
+        val
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)+/g, '')
+      );
     }
   };
 
@@ -59,33 +55,24 @@ export default function AdminCategoriesPage() {
       triggerToast('Name and slug are required.', 'error');
       return;
     }
-
     setSubmitting(true);
     try {
       const url = editingId ? `/api/categories/${editingId}` : '/api/categories';
       const method = editingId ? 'PUT' : 'POST';
-
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, slug }),
       });
-
       const data = await res.json();
       if (data.success) {
-        triggerToast(
-          editingId
-            ? 'Category updated successfully!'
-            : 'Category created successfully!',
-          'success'
-        );
+        triggerToast(editingId ? 'Category updated!' : 'Category created!', 'success');
         handleResetForm();
         fetchCategories();
       } else {
         triggerToast(data.error || 'Operation failed.', 'error');
       }
-    } catch (err) {
-      console.error('Category form error:', err);
+    } catch {
       triggerToast('Something went wrong.', 'error');
     } finally {
       setSubmitting(false);
@@ -99,13 +86,12 @@ export default function AdminCategoriesPage() {
   };
 
   const handleDeleteClick = async (id, catName) => {
-    if (
-      confirm(
-        `Are you sure you want to delete category "${catName}"? This will unlink it from any products.`
-      )
-    ) {
+    if (confirm(`Delete category "${catName}"?\n\nProducts using this category will be unlinked (set to Uncategorized).`)) {
       try {
-        const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/categories/${id}`, {
+          method: 'DELETE',
+          credentials: 'same-origin',
+        });
         const data = await res.json();
         if (data.success) {
           triggerToast('Category deleted successfully!', 'success');
@@ -113,9 +99,8 @@ export default function AdminCategoriesPage() {
         } else {
           triggerToast(data.error || 'Failed to delete category.', 'error');
         }
-      } catch (err) {
-        console.error('Delete category error:', err);
-        triggerToast('Failed to delete category.', 'error');
+      } catch {
+        triggerToast('Network error. Failed to delete.', 'error');
       }
     }
   };
@@ -126,9 +111,18 @@ export default function AdminCategoriesPage() {
     setEditingId(null);
   };
 
+  // Color palette for category chips
+  const chipColors = [
+    { bg: 'rgba(99,102,241,0.1)', text: '#6366f1', border: 'rgba(99,102,241,0.2)' },
+    { bg: 'rgba(16,185,129,0.1)', text: '#10b981', border: 'rgba(16,185,129,0.2)' },
+    { bg: 'rgba(245,158,11,0.1)', text: '#f59e0b', border: 'rgba(245,158,11,0.2)' },
+    { bg: 'rgba(236,72,153,0.1)', text: '#ec4899', border: 'rgba(236,72,153,0.2)' },
+    { bg: 'rgba(59,130,246,0.1)', text: '#3b82f6', border: 'rgba(59,130,246,0.2)' },
+    { bg: 'rgba(239,68,68,0.1)', text: '#ef4444', border: 'rgba(239,68,68,0.2)' },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Toast notifications */}
+    <div className="space-y-6">
       {toast.show && (
         <Toast
           message={toast.message}
@@ -137,73 +131,91 @@ export default function AdminCategoriesPage() {
         />
       )}
 
-      {/* Title */}
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Category Management</h1>
-          <p className="text-xs text-gray-450 mt-1">Organize products into distinct groupings.</p>
+          <h1 className="text-2xl font-black text-slate-900">Category Management</h1>
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Organize products into distinct groupings.
+          </p>
         </div>
         <button
           onClick={fetchCategories}
-          className="p-2 rounded-lg border border-gray-200 hover:bg-gray-55 transition-colors"
-          title="Refresh Categories"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-600 transition-colors shadow-sm"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={13} />
+          Refresh
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Form: Add/Edit */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-            <Layers size={16} className="text-blue-500" />
-            {editingId ? 'Edit Category' : 'Create Category'}
-          </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Form */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 space-y-5">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+            >
+              <Layers size={15} className="text-white" />
+            </div>
+            <h2 className="text-sm font-bold text-slate-800">
+              {editingId ? 'Edit Category' : 'Create Category'}
+            </h2>
+          </div>
 
           <form onSubmit={handleFormSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 Category Name
               </label>
-              <input
-                type="text"
-                placeholder="e.g. Laptops & Computers"
-                value={name}
-                onChange={handleNameChange}
-                required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="e.g. Laptops & Computers"
+                  value={name}
+                  onChange={handleNameChange}
+                  required
+                  className="w-full pl-9 pr-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all"
+                />
+                <Tag size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 URL Slug
               </label>
-              <input
-                type="text"
-                placeholder="e.g. laptops-computers"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-              <p className="text-[10px] text-gray-400 mt-1 font-medium">Used in URL paths for filtering.</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="e.g. laptops-computers"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  required
+                  className="w-full pl-9 pr-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all font-mono"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">/</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
+                Auto-generated from name. Used in URL filters.
+              </p>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-1"
+                className="flex-1 py-2.5 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md disabled:opacity-60"
+                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
               >
-                {editingId ? <Check size={14} /> : <Plus size={14} />}
-                <span>{editingId ? 'Update' : 'Create'}</span>
+                {editingId ? <Check size={13} /> : <Plus size={13} />}
+                {submitting ? 'Saving...' : editingId ? 'Update' : 'Create Category'}
               </button>
               {editingId && (
                 <button
                   type="button"
                   onClick={handleResetForm}
-                  className="px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition-colors"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors"
                 >
                   Cancel
                 </button>
@@ -212,10 +224,15 @@ export default function AdminCategoriesPage() {
           </form>
         </div>
 
-        {/* Right List */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="p-5 border-b border-gray-100 bg-gray-50/50">
-            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Categories List</h2>
+        {/* Category List */}
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+              All Categories
+            </h2>
+            <span className="text-[10px] font-bold text-slate-400">
+              {categories.length} total
+            </span>
           </div>
 
           {loading ? (
@@ -223,36 +240,56 @@ export default function AdminCategoriesPage() {
               <Loader size="medium" />
             </div>
           ) : categories.length > 0 ? (
-            <div className="divide-y divide-gray-150">
-              {categories.map((cat) => (
-                <div key={cat._id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                  <div>
-                    <h3 className="font-bold text-sm text-gray-850">{cat.name}</h3>
-                    <p className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md inline-block mt-1">
-                      slug: {cat.slug}
-                    </p>
+            <div className="divide-y divide-slate-50">
+              {categories.map((cat, idx) => {
+                const chip = chipColors[idx % chipColors.length];
+                return (
+                  <div
+                    key={cat._id}
+                    className="px-5 py-4 flex items-center justify-between hover:bg-slate-50/70 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Color chip icon */}
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: chip.bg, border: `1px solid ${chip.border}` }}
+                      >
+                        <Layers size={15} style={{ color: chip.text }} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-800">{cat.name}</p>
+                        <p
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-md inline-block mt-0.5 font-mono"
+                          style={{ background: chip.bg, color: chip.text }}
+                        >
+                          /{cat.slug}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditClick(cat)}
+                        className="p-2 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                        title="Edit"
+                      >
+                        <Edit size={15} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(cat._id, cat.name)}
+                        className="p-2 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditClick(cat)}
-                      className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors"
-                      title="Edit Category"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(cat._id, cat.name)}
-                      className="p-2 rounded-lg text-gray-500 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                      title="Delete Category"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <div className="p-16 text-center text-xs text-gray-450">No categories found. Build one using the form.</div>
+            <div className="py-16 text-center text-xs text-slate-400">
+              No categories yet. Create one using the form.
+            </div>
           )}
         </div>
       </div>

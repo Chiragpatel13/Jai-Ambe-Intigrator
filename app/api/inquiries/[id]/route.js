@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Inquiry from '@/models/Inquiry';
+import { updateInquiry, deleteInquiry } from '@/lib/dbFirebase';
 import { verifyAdminSession } from '@/utils/auth';
 
 export async function PUT(req, { params }) {
@@ -11,7 +10,6 @@ export async function PUT(req, { params }) {
     }
 
     const { id } = await params;
-    await connectDB();
     const { status } = await req.json();
 
     if (!status || (status !== 'pending' && status !== 'completed')) {
@@ -21,11 +19,7 @@ export async function PUT(req, { params }) {
       );
     }
 
-    const updated = await Inquiry.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+    const updated = await updateInquiry(id, { status });
 
     if (!updated) {
       return NextResponse.json({ error: 'Inquiry not found.' }, { status: 404 });
@@ -49,10 +43,9 @@ export async function DELETE(req, { params }) {
     }
 
     const { id } = await params;
-    await connectDB();
 
-    const deleted = await Inquiry.findByIdAndDelete(id);
-    if (!deleted) {
+    const success = await deleteInquiry(id);
+    if (!success) {
       return NextResponse.json({ error: 'Inquiry not found.' }, { status: 404 });
     }
 

@@ -1,33 +1,58 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * Next.js 16 uses proxy.js instead of middleware.js.
+ * DO NOT create middleware.js alongside this file.
+ *
+ * Responsibilities:
+ *  1. Protect all /admin/* routes — redirect to /admin/login if no session cookie.
+ *  2. If already logged in, redirect /admin/login → /admin dashboard.
+ *  3. Inject HTTP security headers on every matched response.
+ */
 export function proxy(request) {
   const token = request.cookies.get('admin_token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Protect all routes starting with /admin
+  // ─── Admin Route Guard ────────────────────────────────────────────────────
   if (pathname.startsWith('/admin')) {
-    // Exclude the login page from authentication check
+
     if (pathname === '/admin/login') {
-      // If already authenticated, redirect to admin home page
-      if (token) {
-        return NextResponse.redirect(new URL('/admin', request.url));
-      }
-      return NextResponse.next();
+      // Do NOT redirect even if cookie exists — the token may be invalid/expired.
+      // Let the login page handle "already authenticated" via /api/auth/me.
+      return applySecurityHeaders(NextResponse.next());
     }
 
-    // If no admin token cookie is present, redirect to the login page
+    // Protected admin page without any token cookie → redirect to login
     if (!token) {
       const loginUrl = new URL('/admin/login', request.url);
-      // Optional: keep track of redirect origin
       loginUrl.searchParams.set('from', pathname);
-      return NextResponse.redirect(loginUrl);
+      const res = NextResponse.redirect(loginUrl);
+      return applySecurityHeaders(res);
     }
   }
 
-  return NextResponse.next();
+  // ─── All other routes: just pass through with security headers ───────────
+  return applySecurityHeaders(NextResponse.next());
 }
 
-// Apply proxy to all admin routes
+/**
+ * Mutates a NextResponse to add standard HTTP security headers.
+ * @param {NextResponse} res
+ * @returns {NextResponse}
+ */
+function applySecurityHeaders(res) {
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-XSS-Protection', '1; mode=block');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  return res;
+}
+
+// Apply to all routes (not just /admin) so security headers are universal
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
+  ],
 };

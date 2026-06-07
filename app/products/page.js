@@ -32,14 +32,14 @@ function ProductsContent() {
 
   // Fetch initial categories and settings
   useEffect(() => {
-    fetch('/api/categories')
+    fetch('/api/categories', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setCategories(data.categories);
       })
       .catch((err) => console.error('Error fetching categories:', err));
 
-    fetch('/api/settings')
+    fetch('/api/settings', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) setSettings(data.settings);
@@ -48,36 +48,65 @@ function ProductsContent() {
   }, []);
 
   // Fetch products whenever search params change
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const query = new URLSearchParams({
-          search,
-          category,
-          condition,
-          minPrice,
-          maxPrice,
-          sort,
-          page: page.toString(),
-          limit: '12',
-        });
+  const fetchProducts = async (showLoader = true) => {
+    if (showLoader) setLoading(true);
+    try {
+      const query = new URLSearchParams({
+        search,
+        category,
+        condition,
+        minPrice,
+        maxPrice,
+        sort,
+        page: page.toString(),
+        limit: '12',
+      });
 
-        const res = await fetch(`/api/products?${query.toString()}`);
-        const data = await res.json();
-        if (data.success) {
-          setProducts(data.products);
-          setTotalPages(data.totalPages);
-          setTotalProducts(data.total);
-        }
-      } catch (err) {
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
+      const res = await fetch(`/api/products?${query.toString()}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success) {
+        setProducts(data.products);
+        setTotalPages(data.totalPages);
+        setTotalProducts(data.total);
       }
-    };
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    } finally {
+      if (showLoader) setLoading(false);
+    }
+  };
 
-    fetchProducts();
+  // Fetch products whenever search params change
+  useEffect(() => {
+    fetchProducts(true);
+  }, [search, category, condition, minPrice, maxPrice, sort, page]);
+
+  // Real-time synchronization across open tabs and periodic polling in background
+  useEffect(() => {
+    // 1. BroadcastChannel for instant cross-tab sync in the same browser session
+    let channel;
+    try {
+      channel = new BroadcastChannel('products_channel');
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'PRODUCTS_UPDATED') {
+          fetchProducts(false); // Fetch silently in background
+        }
+      };
+    } catch (e) {
+      console.warn('BroadcastChannel not supported or failed to initialize:', e);
+    }
+
+    // 2. Poll the API every 10 seconds for multi-device sync
+    const interval = setInterval(() => {
+      fetchProducts(false);
+    }, 10000);
+
+    return () => {
+      if (channel) {
+        channel.close();
+      }
+      clearInterval(interval);
+    };
   }, [search, category, condition, minPrice, maxPrice, sort, page]);
 
   // Update query params in URL

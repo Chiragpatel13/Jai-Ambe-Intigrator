@@ -1,52 +1,29 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Product from '@/models/Product';
-import Inquiry from '@/models/Inquiry';
 import { verifyAdminSession } from '@/utils/auth';
-import { mockProducts } from '@/lib/mockData';
+import { getProducts, getInquiries } from '@/lib/dbFirebase';
 
 export async function GET() {
-  if (!process.env.MONGODB_URI) {
-    return NextResponse.json({
-      success: true,
-      stats: {
-        totalProducts: mockProducts.length,
-        newProducts: mockProducts.filter((p) => p.condition === 'new').length,
-        usedProducts: mockProducts.filter((p) => p.condition === 'used').length,
-        totalInquiries: 0,
-        pendingInquiries: 0,
-      },
-      recentInquiries: [],
-      recentProducts: mockProducts.slice(0, 5),
-    });
-  }
-
   try {
     const session = await verifyAdminSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
     }
 
-    await connectDB();
+    // Fetch products and inquiries using Firestore database helpers
+    const productsRes = await getProducts({ limit: 1000 });
+    const inquiriesRes = await getInquiries();
 
-    // Aggregate counts
-    const totalProducts = await Product.countDocuments();
-    const newProducts = await Product.countDocuments({ condition: 'new' });
-    const usedProducts = await Product.countDocuments({ condition: 'used' });
-    const totalInquiries = await Inquiry.countDocuments();
-    const pendingInquiries = await Inquiry.countDocuments({ status: 'pending' });
+    const totalProducts = productsRes.total;
+    const newProducts = productsRes.products.filter(p => p.condition === 'new').length;
+    const usedProducts = productsRes.products.filter(p => p.condition === 'used').length;
+    
+    const totalInquiries = inquiriesRes.length;
+    const pendingInquiries = inquiriesRes.filter(i => i.status === 'pending').length;
 
-    // Fetch 5 most recent inquiries
-    const recentInquiries = await Inquiry.find({})
-      .populate('productId')
-      .sort({ createdAt: -1 })
-      .limit(5);
-
-    // Fetch 5 most recent products
-    const recentProducts = await Product.find({})
-      .populate('category')
-      .sort({ createdAt: -1 })
-      .limit(5);
+    const recentInquiries = inquiriesRes.slice(0, 5);
+    const recentProducts = productsRes.products.slice(0, 5);
 
     return NextResponse.json({
       success: true,

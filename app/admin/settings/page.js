@@ -1,17 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Settings, Save, Upload, Trash2, Plus, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Settings,
+  Save,
+  Loader2,
+  Phone,
+  User,
+  Store,
+  Upload,
+} from 'lucide-react';
 import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
+
+const inputCls =
+  'w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all';
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
-  // Settings states
   const [shopName, setShopName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -20,16 +29,17 @@ export default function AdminSettingsPage() {
   const [workingHours, setWorkingHours] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [designation, setDesignation] = useState('');
-  const [banners, setBanners] = useState([]);
-  const [newBannerUrl, setNewBannerUrl] = useState('');
+  const [ownerPhoto, setOwnerPhoto] = useState('');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const triggerToast = (msg, type = 'success') => {
     setToast({ show: true, message: msg, type });
   };
 
-  useEffect(() => {
-    fetch('/api/settings')
-      .then((res) => res.json())
+  const loadSettings = useCallback(() => {
+    setLoading(true);
+    fetch('/api/settings', { cache: 'no-store', credentials: 'same-origin' })
+      .then((r) => r.json())
       .then((data) => {
         if (data.success && data.settings) {
           const s = data.settings;
@@ -41,91 +51,78 @@ export default function AdminSettingsPage() {
           setWorkingHours(s.workingHours || '');
           setOwnerName(s.ownerName || '');
           setDesignation(s.designation || '');
-          setBanners(s.banners || []);
+          setOwnerPhoto(s.ownerPhoto || '');
         }
       })
-      .catch((err) => {
-        console.error('Settings fetch error:', err);
-        triggerToast('Failed to load settings.', 'error');
-      })
+      .catch(() => triggerToast('Failed to load settings.', 'error'))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleFileUpload = async (e) => {
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  const handleOwnerPhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setUploadingImage(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
+    setUploadingPhoto(true);
     try {
+      const formData = new FormData();
+      formData.append('files', file);
+
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        credentials: 'same-origin',
       });
 
       const data = await res.json();
-      if (data.success && data.url) {
-        setBanners((prev) => [...prev, data.url]);
-        triggerToast('Banner image uploaded successfully!', 'success');
+      if (data.success && data.urls && data.urls.length > 0) {
+        setOwnerPhoto(data.urls[0]);
+        triggerToast('Owner photo uploaded successfully!', 'success');
       } else {
-        triggerToast(data.error || 'Failed to upload image.', 'error');
+        triggerToast(data.error || 'Failed to upload photo.', 'error');
       }
     } catch (err) {
-      console.error('Upload banner error:', err);
-      triggerToast('Error uploading banner file.', 'error');
+      console.error('Owner photo upload error:', err);
+      triggerToast('Error uploading photo.', 'error');
     } finally {
-      setUploadingImage(false);
+      setUploadingPhoto(false);
     }
   };
 
-  const handleAddBannerUrl = () => {
-    if (!newBannerUrl) return;
-    setBanners((prev) => [...prev, newBannerUrl]);
-    setNewBannerUrl('');
-    triggerToast('Added banner URL successfully!', 'success');
-  };
-
-  const handleRemoveBanner = (indexToRemove) => {
-    setBanners((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-    triggerToast('Banner removed. Remember to save changes.', 'info');
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (!shopName || !phone || !whatsapp) {
-      triggerToast('Shop Name, Phone and WhatsApp are required fields.', 'error');
+      triggerToast('Shop Name, Phone and WhatsApp are required.', 'error');
       return;
     }
-
     setSubmitting(true);
     try {
       const res = await fetch('/api/settings', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({
-          shopName,
-          email,
-          phone,
-          whatsapp,
-          address,
-          workingHours,
-          banners,
-          ownerName,
-          designation,
+          shopName, email, phone, whatsapp,
+          address, workingHours, ownerName, designation, ownerPhoto,
         }),
       });
-
       const data = await res.json();
       if (data.success) {
-        triggerToast('Shop settings updated successfully!', 'success');
+        triggerToast('Settings saved successfully!', 'success');
+        loadSettings();
+        // Broadcast to all open public tabs
+        try {
+          const ch = new BroadcastChannel('settings_channel');
+          ch.postMessage({ type: 'SETTINGS_UPDATED' });
+          ch.close();
+        } catch (e) {}
       } else {
-        triggerToast(data.error || 'Failed to save settings.', 'error');
+        triggerToast(data.error || 'Save failed.', 'error');
       }
-    } catch (err) {
-      console.error('Save settings error:', err);
-      triggerToast('Failed to save settings.', 'error');
+    } catch {
+      triggerToast('Failed to save.', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -140,207 +137,161 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Toast Alert */}
+    <div className="space-y-6">
       {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ ...toast, show: false })}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast({ ...toast, show: false })} />
       )}
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
+      {/* Header with Save */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Shop Settings</h1>
-          <p className="text-xs text-gray-450 mt-1">Configure global store details, branding, contacts, and homepage slide images.</p>
+          <h1 className="text-2xl font-black text-slate-900">Shop Settings</h1>
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Configure store details and contact information.
+          </p>
         </div>
+        <button
+          onClick={handleSave}
+          disabled={submitting}
+          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-md transition-all disabled:opacity-60"
+          style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+        >
+          {submitting ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+          {submitting ? 'Saving...' : 'Save Settings'}
+        </button>
       </div>
 
-      <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Column: Form Details */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-3">
-            <Settings size={16} className="text-blue-500" />
-            General Information
-          </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Shop Name</label>
-              <input
-                type="text"
-                value={shopName}
-                onChange={(e) => setShopName(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
+        {/* General */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+              <Store size={13} className="text-white" />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Email Address</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Contact Phone</label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">WhatsApp Number (e.g. 919890254321)</label>
-              <input
-                type="text"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-                required
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Owner Name</label>
-              <input
-                type="text"
-                value={ownerName}
-                onChange={(e) => setOwnerName(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Designation</label>
-              <input
-                type="text"
-                value={designation}
-                onChange={(e) => setDesignation(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
+            <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest">General Information</h2>
           </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Store Physical Address</label>
-            <textarea
-              rows={3}
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Working Hours Timings</label>
-            <input
-              type="text"
-              value={workingHours}
-              onChange={(e) => setWorkingHours(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-gray-255 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="pt-4 border-t border-gray-100 flex justify-end">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-colors disabled:opacity-50"
-            >
-              <Save size={14} />
-              <span>{submitting ? 'Saving...' : 'Save Settings'}</span>
-            </button>
+          <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Shop Name *</label>
+              <input type="text" value={shopName} onChange={(e) => setShopName(e.target.value)} className={inputCls} placeholder="e.g. JayAmbe Integrators" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} placeholder="contact@example.com" />
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Banners Panel */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-4">
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-3">
-            <ImageIcon size={16} className="text-blue-500" />
-            Homepage Banners
-          </h2>
-
-          {/* Banner list */}
-          <div className="space-y-3">
-            {banners.length > 0 ? (
-              banners.map((url, idx) => (
-                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-gray-200 group bg-gray-50">
-                  <img src={url} alt={`Banner ${idx + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveBanner(idx)}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 hover:bg-rose-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Remove Banner"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div className="p-10 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl">
-                No custom banners added. Add one below.
+        {/* Owner */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>
+              <User size={13} className="text-white" />
+            </div>
+            <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest">Owner Details</h2>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Owner Name</label>
+                <input type="text" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} className={inputCls} placeholder="e.g. Er. Anand" />
               </div>
-            )}
-          </div>
-
-          {/* Add banner controls */}
-          <div className="space-y-3 pt-3 border-t border-gray-100">
-            {/* Direct URL */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Paste Image URL"
-                value={newBannerUrl}
-                onChange={(e) => setNewBannerUrl(e.target.value)}
-                className="flex-1 px-3 py-2 text-xs rounded-xl border border-gray-250 bg-white text-gray-800 focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={handleAddBannerUrl}
-                className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
-                title="Add URL"
-              >
-                <Plus size={16} />
-              </button>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Designation</label>
+                <input type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className={inputCls} placeholder="e.g. EXTC Engineer" />
+              </div>
             </div>
 
-            {/* File Upload */}
-            <div className="relative">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                id="banner-file"
-                className="hidden"
-                disabled={uploadingImage}
-              />
-              <label
-                htmlFor="banner-file"
-                className={`w-full flex items-center justify-center gap-1.5 py-3 rounded-xl border border-dashed border-gray-300 hover:bg-gray-50 text-xs font-bold text-gray-600 cursor-pointer transition-colors ${
-                  uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                {uploadingImage ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin text-blue-600" />
-                    <span>Uploading...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload size={14} className="text-gray-500" />
-                    <span>Upload Image File</span>
-                  </>
-                )}
-              </label>
+            {/* Owner Photo */}
+            <div className="pt-2 border-t border-slate-100">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Owner Photo</label>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border border-slate-200 bg-slate-50 shrink-0">
+                  <img
+                    src={ownerPhoto || '/Anand.jpeg'}
+                    alt="Owner Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleOwnerPhotoUpload}
+                    disabled={uploadingPhoto}
+                    id="owner-photo-upload"
+                    className="hidden"
+                  />
+                  <div className="flex gap-2">
+                    <label
+                      htmlFor="owner-photo-upload"
+                      className={`cursor-pointer px-3.5 py-2 rounded-xl border border-slate-200 text-[10px] font-bold text-slate-700 bg-white hover:bg-slate-50 transition-all flex items-center gap-1.5 ${
+                        uploadingPhoto ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {uploadingPhoto ? (
+                        <>
+                          <Loader2 size={11} className="animate-spin text-indigo-500" />
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={11} />
+                          <span>Choose Photo</span>
+                        </>
+                      )}
+                    </label>
+                    {ownerPhoto && ownerPhoto !== '/Anand.jpeg' && (
+                      <button
+                        type="button"
+                        onClick={() => setOwnerPhoto('')}
+                        className="px-3.5 py-2 rounded-xl border border-rose-200 text-[10px] font-bold text-rose-600 bg-white hover:bg-rose-50 transition-all"
+                      >
+                        Reset to Default
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1.5 font-medium">
+                    Allowed formats: JPG, PNG, WEBP.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </form>
+
+        {/* Contact — full width */}
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>
+              <Phone size={13} className="text-white" />
+            </div>
+            <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest">Contact Details</h2>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Contact Phone *</label>
+                <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} placeholder="+91 98765 43210" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">WhatsApp Number *</label>
+                <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className={inputCls} placeholder="919890254321" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Working Hours</label>
+                <input type="text" value={workingHours} onChange={(e) => setWorkingHours(e.target.value)} className={inputCls} placeholder="Mon–Sat, 10am–7pm" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Store Address</label>
+              <textarea rows={3} value={address} onChange={(e) => setAddress(e.target.value)} className={`${inputCls} resize-none`} placeholder="Shop No. 1, XYZ Complex, Boisar (W)" />
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

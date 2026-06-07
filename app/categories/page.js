@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Layers, ChevronRight, Video, Cpu, Target } from 'lucide-react';
@@ -7,18 +9,50 @@ import Loader from '@/components/Loader';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
+  const [settings, setSettings] = useState({ ownerName: 'Er. Anand', designation: 'Owner', ownerPhoto: '/Anand.jpeg' });
   const [loading, setLoading] = useState(true);
+
+  const fetchSettings = () => {
+    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((settingsData) => {
+        if (settingsData.success && settingsData.settings) {
+          setSettings({
+            ownerName: settingsData.settings.ownerName || 'Er. Anand',
+            designation: settingsData.settings.designation || 'Owner',
+            ownerPhoto: settingsData.settings.ownerPhoto || '/Anand.jpeg',
+          });
+        }
+      })
+      .catch((err) => console.error('Error fetching settings for categories page:', err));
+  };
 
   useEffect(() => {
     fetch('/api/categories')
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setCategories(data.categories);
+      .then((categoriesData) => {
+        if (categoriesData.success) {
+          setCategories(categoriesData.categories);
         }
       })
       .catch((err) => console.error('Error fetching categories:', err))
       .finally(() => setLoading(false));
+
+    fetchSettings();
+
+    let ch;
+    try {
+      ch = new BroadcastChannel('settings_channel');
+      ch.addEventListener('message', (e) => {
+        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
+      });
+    } catch (e) {}
+
+    return () => {
+      try {
+        ch?.close();
+      } catch (e) {}
+    };
   }, []);
 
   const getCategoryIcon = (slug) => {
@@ -44,9 +78,9 @@ export default function CategoriesPage() {
 
   const teamMembers = [
     {
-      name: 'Er. Anand',
-      role: 'Owner & Chief EXTC Engineer',
-      img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face',
+      name: settings.ownerName,
+      role: settings.designation,
+      img: settings.ownerPhoto || '/Anand.jpeg',
     },
   ];
 
@@ -163,7 +197,7 @@ export default function CategoriesPage() {
           Our Vision & Future Outlook
         </h3>
         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto">
-          At JAYAMBE INTEGRATORS, our vision is to lead Boisar and Palghar district's electrical and electronic services market by providing unbeatable quality-to-price ratios on automation and security installations. We are committed to extending technical assistance and after-sales support, ensuring that local businesses, factories, and homeowners can implement premium technology configurations with minimal effort and expense.
+          At JAYAMBE INTEGRATORS, our vision is to lead the electrical and electronic services market from Virar (Mumbai) to Vapi (Gujarat) by providing unbeatable quality-to-price ratios on automation and security installations. With our shop based in Boisar, we are committed to extending technical assistance and after-sales support, ensuring that local businesses, factories, and homeowners can implement premium technology configurations with minimal effort and expense.
         </p>
       </section>
 

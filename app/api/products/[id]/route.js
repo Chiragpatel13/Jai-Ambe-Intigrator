@@ -1,22 +1,13 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Product from '@/models/Product';
+import { getProductById, updateProduct, deleteProduct } from '@/lib/dbFirebase';
 import { verifyAdminSession } from '@/utils/auth';
-import { mockProducts } from '@/lib/mockData';
 
 export async function GET(req, { params }) {
-  if (!process.env.MONGODB_URI) {
-    const { id } = await params;
-    const product = mockProducts.find((p) => p._id === id);
-    if (!product) {
-      return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
-    }
-    return NextResponse.json({ success: true, product });
-  }
   try {
     const { id } = await params;
-    await connectDB();
-    const product = await Product.findById(id).populate('category');
+    const product = await getProductById(id);
 
     if (!product) {
       return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
@@ -40,17 +31,9 @@ export async function PUT(req, { params }) {
     }
 
     const { id } = await params;
-    await connectDB();
     const body = await req.json();
 
-    // Clean up fields to avoid accidental mongoose cast errors
-    if (body.price) body.price = parseFloat(body.price);
-    if (body.stock) body.stock = parseInt(body.stock, 10);
-
-    const updated = await Product.findByIdAndUpdate(id, body, {
-      new: true,
-      runValidators: true,
-    }).populate('category');
+    const updated = await updateProduct(id, body);
 
     if (!updated) {
       return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
@@ -74,10 +57,9 @@ export async function DELETE(req, { params }) {
     }
 
     const { id } = await params;
-    await connectDB();
 
-    const deleted = await Product.findByIdAndDelete(id);
-    if (!deleted) {
+    const success = await deleteProduct(id);
+    if (!success) {
       return NextResponse.json({ error: 'Product not found.' }, { status: 404 });
     }
 

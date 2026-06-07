@@ -126,11 +126,11 @@ export default function ProductDetailsPage({ params }) {
       }
     } catch (err) {}
 
-    const formattedPrice = new Intl.NumberFormat('en-IN', {
+    const formattedPrice = product.price && product.price > 0 ? new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(product.price);
+    }).format(product.price) : 'Ask for Price';
 
     const text = `Hello JAYAMBE INTEGRATORS, I am interested in inquiring about:
 *Product:* ${product.name}
@@ -182,11 +182,11 @@ Please let me know if it is available.`;
 
         // Construct prefilled WhatsApp link and redirect
         setTimeout(() => {
-          const formattedPrice = new Intl.NumberFormat('en-IN', {
+          const formattedPrice = product.price && product.price > 0 ? new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
             maximumFractionDigits: 0,
-          }).format(product.price);
+          }).format(product.price) : 'Ask for Price';
 
           const waText = `Hello JAYAMBE INTEGRATORS,
 
@@ -242,20 +242,21 @@ Please let me know how to proceed.`;
     );
   }
 
-  const formattedPrice = new Intl.NumberFormat('en-IN', {
+  const hasPrice = !!(product.price && product.price > 0);
+  const formattedPrice = hasPrice ? new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(product.price);
+  }).format(product.price) : 'Ask for Price';
 
-  const originalPrice = product.originalPrice || Math.round(product.price * 1.25);
+  const originalPrice = product.originalPrice || Math.round((product.price || 0) * 1.25);
   const formattedOriginalPrice = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
   }).format(originalPrice);
 
-  const discountPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+  const discountPercent = Math.round(((originalPrice - (product.price || 0)) / originalPrice) * 100);
 
   return (
     <div className="w-full bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 transition-colors duration-300">
@@ -297,7 +298,7 @@ Please let me know how to proceed.`;
                 <img
                   src={product.images[activeImageIdx]}
                   alt={product.name}
-                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain w-full h-full p-4 transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (
                 <div className="text-zinc-400 dark:text-zinc-500 text-sm">
@@ -329,7 +330,7 @@ Please let me know how to proceed.`;
                     <img
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
-                      className="object-cover w-full h-full"
+                      className="object-contain w-full h-full p-1"
                     />
                   </button>
                 ))}
@@ -373,12 +374,16 @@ Please let me know how to proceed.`;
                 <span className="font-bold text-[#2b7fff] text-3xl leading-9">
                   {formattedPrice}
                 </span>
-                <span className="line-through text-zinc-500 dark:text-zinc-400 text-lg leading-7 mb-1">
-                  {formattedOriginalPrice}
-                </span>
-                <span className="rounded-full bg-orange-500/10 text-orange-500 text-xs font-bold px-2.5 py-1 mb-1">
-                  {discountPercent}% OFF
-                </span>
+                {hasPrice && (
+                  <>
+                    <span className="line-through text-zinc-500 dark:text-zinc-400 text-lg leading-7 mb-1">
+                      {formattedOriginalPrice}
+                    </span>
+                    <span className="rounded-full bg-orange-500/10 text-orange-500 text-xs font-bold px-2.5 py-1 mb-1">
+                      {discountPercent}% OFF
+                    </span>
+                  </>
+                )}
               </div>
               <p className="leading-relaxed text-zinc-600 dark:text-zinc-400 text-sm">
                 {product.description}

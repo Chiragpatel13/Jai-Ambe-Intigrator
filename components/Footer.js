@@ -21,8 +21,8 @@ export default function Footer() {
   // Hide footer on admin dashboard paths
   const isAdmin = pathname?.startsWith('/admin');
 
-  useEffect(() => {
-    fetch('/api/settings')
+  const fetchSettings = () => {
+    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) {
@@ -30,6 +30,18 @@ export default function Footer() {
         }
       })
       .catch((err) => console.error('Error fetching settings in footer:', err));
+  };
+
+  useEffect(() => {
+    fetchSettings();
+    let ch;
+    try {
+      ch = new BroadcastChannel('settings_channel');
+      ch.addEventListener('message', (e) => {
+        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
+      });
+    } catch (e) {}
+    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
 
   if (isAdmin) return null;

@@ -14,6 +14,10 @@ const SettingSchema = new mongoose.Schema(
       type: String,
       default: 'EXTC ENGINEER',
     },
+    ownerPhoto: {
+      type: String,
+      default: '/Anand.jpeg',
+    },
     email: {
       type: String,
       default: 'anandp4994@gmail.com',

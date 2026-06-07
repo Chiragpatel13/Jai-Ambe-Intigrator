@@ -19,11 +19,11 @@ export default function ProductCard({ product, whatsappNumber = '918879430925' }
   } = product;
 
   // Formatting price to Indian Rupees (INR)
-  const formattedPrice = new Intl.NumberFormat('en-IN', {
+  const formattedPrice = price && price > 0 ? new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price) : 'Ask for Price';
 
   const handleWhatsAppInquiry = (e) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ Please let me know if it is available.`;
           <img
             src={images[0]}
             alt={name}
-            className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105"
+            className="h-full w-full object-contain p-2 transition-transform duration-300 hover:scale-105"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-650 bg-zinc-100 dark:bg-zinc-900 text-xs">

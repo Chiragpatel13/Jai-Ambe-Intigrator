@@ -52,6 +52,7 @@ export default function FilterPanel({
         </div>
         <button
           onClick={handleReset}
+          suppressHydrationWarning
           className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
         >
           <RefreshCw size={12} />
@@ -67,6 +68,7 @@ export default function FilterPanel({
         <select
           value={sort}
           onChange={(e) => handleSelectSort(e.target.value)}
+          suppressHydrationWarning
           className="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="newest">Newest Additions</option>
@@ -90,6 +92,7 @@ export default function FilterPanel({
             <button
               key={item.value}
               onClick={() => handleSelectCondition(item.value)}
+              suppressHydrationWarning
               className={`py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 condition === item.value
                   ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
@@ -110,6 +113,7 @@ export default function FilterPanel({
         <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
           <button
             onClick={() => handleSelectCategory('')}
+            suppressHydrationWarning
             className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition-colors ${
               category === ''
                 ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
@@ -122,6 +126,7 @@ export default function FilterPanel({
             <button
               key={cat._id}
               onClick={() => handleSelectCategory(cat.slug)}
+              suppressHydrationWarning
               className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition-colors ${
                 category === cat.slug
                   ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
@@ -145,6 +150,7 @@ export default function FilterPanel({
             placeholder="Min"
             value={minPrice}
             onChange={(e) => handlePriceChange('minPrice', e.target.value)}
+            suppressHydrationWarning
             className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
           <span className="text-gray-400 text-xs">to</span>
@@ -153,6 +159,7 @@ export default function FilterPanel({
             placeholder="Max"
             value={maxPrice}
             onChange={(e) => handlePriceChange('maxPrice', e.target.value)}
+            suppressHydrationWarning
             className="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>

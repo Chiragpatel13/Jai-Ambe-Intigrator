@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -41,21 +41,49 @@ export default function HomePage() {
     phone: '+91 8879430925',
     whatsapp: '918879430925',
     address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
+    banners: [],
   });
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [usedProducts, setUsedProducts] = useState([]);
 
+  // Banner slider state
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const bannerTimerRef = useRef(null);
+
+  const startBannerTimer = (banners) => {
+    if (bannerTimerRef.current) clearInterval(bannerTimerRef.current);
+    if (banners.length > 1) {
+      bannerTimerRef.current = setInterval(() => {
+        setBannerIndex((i) => (i + 1) % banners.length);
+      }, 4000);
+    }
+  };
+
+  useEffect(() => {
+    return () => { if (bannerTimerRef.current) clearInterval(bannerTimerRef.current); };
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings', { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && data.settings) {
+        setSettings(data.settings);
+        const banners = data.settings.banners || [];
+        setBannerIndex(0);
+        startBannerTimer(banners);
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Settings
-        const settingsRes = await fetch('/api/settings');
-        const settingsData = await settingsRes.json();
-        if (settingsData.success && settingsData.settings) {
-          setSettings(settingsData.settings);
-        }
+        await fetchSettings();
 
         // Fetch Categories
         const categoriesRes = await fetch('/api/categories');
@@ -92,6 +120,16 @@ export default function HomePage() {
     };
 
     fetchData();
+
+    // Live-update banners when admin saves settings
+    let ch;
+    try {
+      ch = new BroadcastChannel('settings_channel');
+      ch.addEventListener('message', (e) => {
+        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
+      });
+    } catch (e) {}
+    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
 
   const getCategoryIcon = (slug) => {
@@ -339,11 +377,11 @@ export default function HomePage() {
                     key={prod._id}
                     className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
                   >
-                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer">
+                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
                       <img
                         src={prod.images?.[0] || 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
                         alt={prod.name}
-                        className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                        className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
                       />
                       <span className="font-bold rounded-full bg-[#2b7fff] text-blue-50 text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
                         New
@@ -358,11 +396,15 @@ export default function HomePage() {
                             </p>
                           </Link>
                           <p className="font-bold text-[#2b7fff] text-base leading-6">
-                            {new Intl.NumberFormat('en-IN', {
-                              style: 'currency',
-                              currency: 'INR',
-                              maximumFractionDigits: 0,
-                            }).format(prod.price)}
+                            {prod.price && prod.price > 0 ? (
+                              new Intl.NumberFormat('en-IN', {
+                                style: 'currency',
+                                currency: 'INR',
+                                maximumFractionDigits: 0,
+                              }).format(prod.price)
+                            ) : (
+                              'Ask for Price'
+                            )}
                           </p>
                         </div>
                         <Link
@@ -405,11 +447,11 @@ export default function HomePage() {
                     key={prod._id}
                     className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
                   >
-                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer">
+                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
                       <img
                         src={prod.images?.[0] || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
                         alt={prod.name}
-                        className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                        className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
                       />
                       <span className="font-bold rounded-full bg-orange-500 text-white text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
                         Used
@@ -424,11 +466,15 @@ export default function HomePage() {
                             </p>
                           </Link>
                           <p className="font-bold text-[#2b7fff] text-base leading-6">
-                            {new Intl.NumberFormat('en-IN', {
-                              style: 'currency',
-                              currency: 'INR',
-                              maximumFractionDigits: 0,
-                            }).format(prod.price)}
+                            {prod.price && prod.price > 0 ? (
+                              new Intl.NumberFormat('en-IN', {
+                                style: 'currency',
+                                currency: 'INR',
+                                maximumFractionDigits: 0,
+                              }).format(prod.price)
+                            ) : (
+                              'Ask for Price'
+                            )}
                           </p>
                         </div>
                         <Link

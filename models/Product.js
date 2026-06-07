@@ -9,8 +9,9 @@ const ProductSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: [true, 'Please provide a product price.'],
+      required: false,
       min: [0, 'Price cannot be negative.'],
+      default: 0,
     },
     condition: {
       type: String,

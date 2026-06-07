@@ -26,8 +26,8 @@ export default function ContactPage() {
     setToast({ show: true, message: msg, type });
   };
 
-  useEffect(() => {
-    fetch('/api/settings')
+  const fetchSettings = () => {
+    fetch('/api/settings', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) {
@@ -35,6 +35,18 @@ export default function ContactPage() {
         }
       })
       .catch((err) => console.error('Error loading settings in contact:', err));
+  };
+
+  useEffect(() => {
+    fetchSettings();
+    let ch;
+    try {
+      ch = new BroadcastChannel('settings_channel');
+      ch.addEventListener('message', (e) => {
+        if (e.data?.type === 'SETTINGS_UPDATED') fetchSettings();
+      });
+    } catch (e) {}
+    return () => { try { ch?.close(); } catch (e) {} };
   }, []);
 
   const handleInquirySubmit = async (e) => {

@@ -1,12 +1,12 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/utils/jwt';
-import connectDB from '@/lib/db';
-import Admin from '@/models/Admin';
+import { getAdminByUsername } from '@/lib/dbFirebase';
 
 export async function GET() {
   try {
-    await connectDB();
     const cookieStore = await cookies();
     const token = cookieStore.get('admin_token')?.value;
 
@@ -15,11 +15,14 @@ export async function GET() {
     }
 
     const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json({ authenticated: false }, { status: 401 });
+    if (!decoded || !decoded.username) {
+      // Clear the stale/invalid cookie so the proxy doesn't block login
+      const res = NextResponse.json({ authenticated: false }, { status: 401 });
+      res.cookies.set('admin_token', '', { maxAge: 0, path: '/' });
+      return res;
     }
 
-    const admin = await Admin.findById(decoded.id).select('-password');
+    const admin = await getAdminByUsername(decoded.username);
     if (!admin) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }

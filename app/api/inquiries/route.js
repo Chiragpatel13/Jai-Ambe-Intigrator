@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Inquiry from '@/models/Inquiry';
+import { getInquiries, createInquiry } from '@/lib/dbFirebase';
 import { verifyAdminSession } from '@/utils/auth';
 
 export async function GET() {
@@ -10,11 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
     }
 
-    await connectDB();
-    const inquiries = await Inquiry.find({})
-      .populate('productId')
-      .sort({ createdAt: -1 });
-
+    const inquiries = await getInquiries();
     return NextResponse.json({ success: true, inquiries });
   } catch (error) {
     console.error('GET inquiries error:', error);
@@ -27,7 +24,6 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    await connectDB();
     const body = await req.json();
     const { customerName, phone, message, productId } = body;
 
@@ -38,12 +34,11 @@ export async function POST(req) {
       );
     }
 
-    const inquiry = await Inquiry.create({
+    const inquiry = await createInquiry({
       customerName: customerName.trim(),
       phone: phone.trim(),
       message: message.trim(),
-      productId: productId || undefined,
-      status: 'pending',
+      productId: productId || '',
     });
 
     return NextResponse.json({ success: true, inquiry }, { status: 201 });
