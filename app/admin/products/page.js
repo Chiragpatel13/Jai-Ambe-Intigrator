@@ -17,6 +17,8 @@ import {
   PackageSearch,
   Tag,
   LayoutGrid,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 import { notifyLiveSync } from '@/lib/liveSync';
@@ -40,6 +42,7 @@ function ProductsAdminContent() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [productReviews, setProductReviews] = useState([]);
   const [deletingProduct, setDeletingProduct] = useState(null);
 
   const [name, setName] = useState('');
@@ -51,6 +54,10 @@ function ProductsAdminContent() {
   const [availability, setAvailability] = useState(true);
   const [featured, setFeatured] = useState(false);
   const [images, setImages] = useState([]);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [brand, setBrand] = useState('');
+  const [warranty, setWarranty] = useState('');
+  const [location, setLocation] = useState('Boisar');
 
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -100,14 +107,17 @@ function ProductsAdminContent() {
 
   const handleOpenCreateModal = () => {
     setEditingProduct(null);
+    setProductReviews([]);
     setName(''); setPrice(''); setCategory(categories[0]?._id || '');
     setCondition('new'); setDescription(''); setStock(1);
     setAvailability(true); setFeatured(false); setImages([]);
+    setBrand(''); setWarranty(''); setLocation('Boisar');
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (prod) => {
     setEditingProduct(prod);
+    setProductReviews(prod.reviews || []);
     setName(prod.name);
     setPrice(prod.price.toString());
     setCategory(prod.category?._id || prod.category || '');
@@ -117,11 +127,13 @@ function ProductsAdminContent() {
     setAvailability(prod.availability);
     setFeatured(prod.featured || false);
     setImages(prod.images || []);
+    setBrand(prod.brand || '');
+    setWarranty(prod.warranty || '');
+    setLocation(prod.location || 'Boisar');
     setIsModalOpen(true);
   };
 
-  const handleImageUpload = async (e) => {
-    const files = Array.from(e.target.files);
+  const uploadFiles = async (files) => {
     if (!files.length) return;
     setUploadingImage(true);
     try {
@@ -142,6 +154,55 @@ function ProductsAdminContent() {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    await uploadFiles(files);
+  };
+
+  const handlePaste = async (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    }
+    if (files.length > 0) {
+      e.preventDefault();
+      await uploadFiles(files);
+    }
+  };
+
+  const handleDragStart = (e, index) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, targetIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === targetIdx) return;
+    setImages((prev) => {
+      const next = [...prev];
+      const draggedItem = next[draggedIdx];
+      next.splice(draggedIdx, 1);
+      next.splice(targetIdx, 0, draggedItem);
+      return next;
+    });
+    setDraggedIdx(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
+  };
+
   const handleRemoveImage = (idx) => setImages((prev) => prev.filter((_, i) => i !== idx));
 
   const handleFormSubmit = async (e) => {
@@ -154,7 +215,7 @@ function ProductsAdminContent() {
     try {
       const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
       const method = editingProduct ? 'PUT' : 'POST';
-      const payload = { name, price: price ? parseFloat(price) : 0, category, condition, description, stock: parseInt(stock, 10), availability, featured, images };
+      const payload = { name, price: price ? parseFloat(price) : 0, category, condition, description, stock: parseInt(stock, 10), availability, featured, images, brand, warranty, location };
       const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const data = await res.json();
       if (data.success) {
@@ -186,6 +247,55 @@ function ProductsAdminContent() {
       }
     } catch {
       triggerToast('Failed to delete.', 'error');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!editingProduct) return;
+    if (confirm('Are you sure you want to delete this review?')) {
+      try {
+        const res = await fetch(`/api/products/${editingProduct._id}/reviews?reviewId=${reviewId}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (data.success) {
+          triggerToast('Review deleted successfully!', 'success');
+          setProductReviews(data.reviews || []);
+          setProducts((prev) =>
+            prev.map((p) => (p._id === editingProduct._id ? { ...p, reviews: data.reviews } : p))
+          );
+        } else {
+          triggerToast(data.error || 'Failed to delete review.', 'error');
+        }
+      } catch (err) {
+        console.error('Delete review error:', err);
+        triggerToast('Failed to delete review.', 'error');
+      }
+    }
+  };
+
+  const handleToggleFeaturedReview = async (reviewId, featuredVal) => {
+    if (!editingProduct) return;
+    try {
+      const res = await fetch(`/api/products/${editingProduct._id}/reviews`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId, featured: featuredVal }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        triggerToast(featuredVal ? 'Review pinned to homepage!' : 'Review unpinned from homepage!', 'success');
+        setProductReviews(data.reviews || []);
+        setProducts((prev) =>
+          prev.map((p) => (p._id === editingProduct._id ? { ...p, reviews: data.reviews } : p))
+        );
+        notifyLiveSync('products');
+      } else {
+        triggerToast(data.error || 'Failed to update review status.', 'error');
+      }
+    } catch (err) {
+      console.error('Toggle review featured error:', err);
+      triggerToast('Failed to update review status.', 'error');
     }
   };
 
@@ -268,6 +378,12 @@ function ProductsAdminContent() {
                         <Star size={8} className="fill-current" /> Featured
                       </span>
                     )}
+                    {(prod.reviews || []).length > 0 && (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-100">
+                        <Star size={8} className="fill-current text-orange-500" />
+                        {(prod.reviews || []).length} reviews
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -343,15 +459,23 @@ function ProductsAdminContent() {
                         </div>
                         <div className="min-w-0">
                           <p className="font-bold text-slate-800 truncate max-w-[200px]">{prod.name}</p>
-                          <span
-                            className={`inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
-                              prod.condition === 'new'
-                                ? 'bg-emerald-50 text-emerald-700'
-                                : 'bg-amber-50 text-amber-700'
-                            }`}
-                          >
-                            {prod.condition?.toUpperCase()}
-                          </span>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span
+                              className={`inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-md ${
+                                prod.condition === 'new'
+                                  ? 'bg-emerald-50 text-emerald-700'
+                                  : 'bg-amber-50 text-amber-700'
+                              }`}
+                            >
+                              {prod.condition?.toUpperCase()}
+                            </span>
+                            {(prod.reviews || []).length > 0 && (
+                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-100">
+                                <Star size={8} className="fill-current text-orange-500" />
+                                {(prod.reviews || []).length} reviews
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -502,7 +626,7 @@ function ProductsAdminContent() {
         onClose={() => setIsModalOpen(false)}
         title={editingProduct ? 'Edit Product' : 'Add New Product'}
       >
-        <form onSubmit={handleFormSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} onPaste={handlePaste} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Name */}
             <div className="sm:col-span-2">
@@ -543,6 +667,24 @@ function ProductsAdminContent() {
               <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Stock Count</label>
               <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className={inputCls} />
             </div>
+
+            {/* Brand */}
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Brand</label>
+              <input type="text" placeholder="e.g. JAYAMBE, Lenovo, Microtek" value={brand} onChange={(e) => setBrand(e.target.value)} className={inputCls} />
+            </div>
+
+            {/* Warranty */}
+            <div>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Warranty</label>
+              <input type="text" placeholder="e.g. 1 Year, 6 Months" value={warranty} onChange={(e) => setWarranty(e.target.value)} className={inputCls} />
+            </div>
+
+            {/* Location */}
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Location</label>
+              <input type="text" placeholder="e.g. Boisar, Maharashtra" value={location} onChange={(e) => setLocation(e.target.value)} className={inputCls} />
+            </div>
           </div>
 
           {/* Description */}
@@ -572,17 +714,35 @@ function ProductsAdminContent() {
 
           {/* Images */}
           <div className="space-y-2 pt-2 border-t border-slate-100">
-            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Product Images</label>
+            <div className="flex justify-between items-center">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">Product Images</label>
+              <span className="text-[9px] text-slate-400 font-medium">Tip: Drag images to reorder. You can paste (Ctrl+V) directly!</span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {images.map((url, idx) => (
-                <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 group shrink-0">
-                  <img src={url} alt={`Upload ${idx}`} className="w-full h-full object-cover" />
+                <div
+                  key={idx}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, idx)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, idx)}
+                  onDragEnd={handleDragEnd}
+                  className={`relative w-20 h-20 rounded-xl overflow-hidden border bg-slate-50 group shrink-0 cursor-move transition-all ${
+                    draggedIdx === idx
+                      ? 'border-indigo-500 opacity-40 scale-95 shadow-inner'
+                      : 'border-slate-200 hover:border-indigo-300 hover:shadow-md'
+                  }`}
+                >
+                  <img src={url} alt={`Upload ${idx}`} className="w-full h-full object-cover pointer-events-none" />
+                  
+                  {/* Delete button top right */}
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(idx)}
-                    className="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1 right-1 z-10 p-1 bg-rose-500 hover:bg-rose-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm cursor-pointer"
+                    title="Remove Image"
                   >
-                    <X size={14} />
+                    <X size={10} />
                   </button>
                 </div>
               ))}
@@ -592,7 +752,7 @@ function ProductsAdminContent() {
                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} id="prod-image-upload" className="hidden" />
                 <label
                   htmlFor="prod-image-upload"
-                  className={`w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50 flex flex-col items-center justify-center text-slate-400 hover:text-indigo-500 cursor-pointer transition-all ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-20 h-20 rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50 flex flex-col items-center justify-center text-slate-400 hover:text-indigo-500 cursor-pointer transition-all ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {uploadingImage ? (
                     <Loader2 size={16} className="animate-spin text-indigo-500" />
@@ -606,6 +766,70 @@ function ProductsAdminContent() {
               </div>
             </div>
           </div>
+
+          {/* Admin Reviews Moderation */}
+          {editingProduct && (
+            <div className="space-y-2 pt-3 border-t border-slate-100">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                Manage Reviews ({(productReviews || []).length})
+              </label>
+              {(productReviews || []).length > 0 ? (
+                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 border border-slate-100 rounded-xl p-2 bg-slate-50/50">
+                  {productReviews.map((rev) => (
+                    <div key={rev._id || rev.id} className="flex items-start justify-between gap-3 p-2 bg-white rounded-lg border border-slate-100 text-[11px] shadow-xs">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-slate-700">{rev.name}</span>
+                          <span className="text-[9px] text-slate-400 font-medium">
+                            {new Date(rev.createdAt || rev.date).toLocaleDateString('en-IN', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex text-amber-500 gap-0.5 my-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`size-2.5 ${
+                                star <= rev.rating ? 'fill-current' : 'text-slate-200'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-slate-500 line-clamp-2 italic">"{rev.comment}"</p>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleFeaturedReview(rev._id || rev.id, !rev.featured)}
+                          className={`p-1 rounded-lg transition-colors cursor-pointer ${
+                            rev.featured
+                              ? 'text-amber-500 hover:bg-amber-50'
+                              : 'text-slate-350 hover:bg-slate-50 hover:text-slate-500'
+                          }`}
+                          title={rev.featured ? 'Remove from Homepage testimonials' : 'Pin as Homepage testimonial'}
+                        >
+                          <Star size={13} className={rev.featured ? 'fill-current' : ''} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReview(rev._id || rev.id)}
+                          className="p-1 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
+                          title="Delete Review"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 italic">No reviews for this product yet.</p>
+              )}
+            </div>
+          )}
 
           {/* Submit */}
           <div className="pt-3 border-t border-slate-100 flex justify-end gap-2">

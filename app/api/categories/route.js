@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { getCategories, createCategory } from '@/lib/dbFirebase';
+import { getCategories, createCategory, getProducts } from '@/lib/dbFirebase';
 import { verifyAdminSession } from '@/utils/auth';
 
 const generateSlug = (text) => {
@@ -14,9 +14,23 @@ const generateSlug = (text) => {
     .replace(/\-\-+/g, '-'); // Replace multiple - with single -
 };
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const categories = await getCategories();
+    const { searchParams } = new URL(req.url);
+    const hasProductsOnly = searchParams.get('hasProducts') === 'true';
+
+    let categories = await getCategories();
+
+    if (hasProductsOnly) {
+      const { products } = await getProducts({ limit: 10000 });
+      const categoryIdsWithProducts = new Set(
+        products.map((p) => p.categoryId || p.category?._id || p.category?.id)
+      );
+      categories = categories.filter(
+        (c) => categoryIdsWithProducts.has(c._id) || categoryIdsWithProducts.has(c.id)
+      );
+    }
+
     return NextResponse.json({ success: true, categories });
   } catch (error) {
     console.error('GET categories error:', error);

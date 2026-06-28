@@ -45,6 +45,34 @@ const ProductSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    brand: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    warranty: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    location: {
+      type: String,
+      trim: true,
+      default: 'Boisar',
+    },
+    reviews: {
+      type: [
+        new mongoose.Schema(
+          {
+            name: { type: String, required: true },
+            rating: { type: Number, required: true, min: 1, max: 5 },
+            comment: { type: String, required: true },
+          },
+          { timestamps: true }
+        )
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

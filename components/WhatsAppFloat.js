@@ -19,7 +19,7 @@ export default function WhatsAppFloat() {
           setWhatsapp(data.settings.whatsapp);
         }
       })
-      .catch((err) => console.error('Error fetching settings in WhatsAppFloat:', err));
+      .catch((err) => console.warn('Error fetching settings in WhatsAppFloat:', err.message));
   };
 
   useEffect(() => {

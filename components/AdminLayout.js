@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from './Sidebar';
 import Loader from './Loader';
 import { Bell, ChevronRight, Menu, Search, X } from 'lucide-react';
@@ -19,6 +20,7 @@ export default function AdminLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const [adminUser, setAdminUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -47,6 +49,29 @@ export default function AdminLayout({ children }) {
     };
     checkSession();
   }, []);
+
+  useEffect(() => {
+    if (!adminUser) return;
+
+    const fetchPendingCount = async () => {
+      try {
+        const res = await fetch('/api/inquiries', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.inquiries) {
+            const pending = data.inquiries.filter((inq) => inq.status === 'pending');
+            setPendingCount(pending.length);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching pending inquiries count:', err);
+      }
+    };
+
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, [adminUser, pathname]);
 
   if (loading) {
     return (
@@ -105,13 +130,18 @@ export default function AdminLayout({ children }) {
               <span className="text-xs font-medium">Search admin…</span>
             </div>
 
-            <button
-              type="button"
+            <Link
+              href="/admin/inquiries"
               className="relative w-9 h-9 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors shadow-sm"
+              title={`${pendingCount} pending inquiries`}
             >
               <Bell size={16} />
-              <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-500 ring-2 ring-white" />
-            </button>
+              {pendingCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 min-w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                  {pendingCount}
+                </span>
+              )}
+            </Link>
 
             <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-slate-200/90">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-bold text-white bg-gradient-to-br from-slate-800 to-slate-950 border border-slate-700/50 shadow-sm">

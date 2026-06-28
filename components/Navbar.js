@@ -43,7 +43,7 @@ export default function Navbar() {
           setSettings(data.settings);
         }
       })
-      .catch((err) => console.error('Error fetching settings in navbar:', err));
+      .catch((err) => console.warn('Error fetching settings in navbar:', err.message));
   };
 
   useEffect(() => {

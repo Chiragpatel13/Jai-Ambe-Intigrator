@@ -30,7 +30,7 @@ export default function Footer() {
           setSettings(data.settings);
         }
       })
-      .catch((err) => console.error('Error fetching settings in footer:', err));
+      .catch((err) => console.warn('Error fetching settings in footer:', err.message));
   };
 
   useEffect(() => {

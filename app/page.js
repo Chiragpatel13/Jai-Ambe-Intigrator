@@ -22,6 +22,7 @@ import {
   Network,
   ChevronRight,
   Zap,
+  User,
 } from 'lucide-react';
 import {
   Accordion,
@@ -43,11 +44,35 @@ export default function HomePage() {
     whatsapp: '918879430925',
     address: 'Office: Mahavir Nagar, Shop No. 28, Navapur Road, Near to UCO Bank, Boisar (W).',
     banners: [],
+    enableReviews: true,
   });
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [usedProducts, setUsedProducts] = useState([]);
+  const [testimonials, setTestimonials] = useState([
+    {
+      _id: 't1',
+      name: 'Rohit Patil',
+      rating: 5,
+      comment: 'Bought a laptop here, great price and genuine product. Very trustworthy shop in Boisar!',
+      avatar: 'https://images.unsplash.com/photo-1625241152315-4a698f74ceb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMG1hbiUyMGluZGlhbiUyMHNtaWxpbmd8ZW58MXwyfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=400',
+    },
+    {
+      _id: 't2',
+      name: 'Sneha Joshi',
+      rating: 5,
+      comment: 'Excellent service and friendly staff. Got my home appliance at the best price. Highly recommend!',
+      avatar: 'https://images.unsplash.com/photo-1732888878731-7e52999af144?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHdvbWFuJTIwaW5kaWFuJTIwc21pbGluZ3xlbnwxfDJ8fHwxNzgwNDc2NTI2fDA&ixlib=rb-4.1.0&q=80&w=400',
+    },
+    {
+      _id: 't3',
+      name: 'Amit Sharma',
+      rating: 5,
+      comment: 'Reliable used products at fair prices. The team is honest and helpful. Will visit again soon.',
+      avatar: 'https://images.unsplash.com/photo-1718209881007-c0ecdfc00f9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHByb2Zlc3Npb25hbCUyMGJ1c2luZXNzbWFufGVufDF8Mnx8fDE3ODQ0NzY1MjZ8MA&ixlib=rb-4.1.0&q=80&w=400',
+    },
+  ]);
 
   // Banner slider state
   const [bannerIndex, setBannerIndex] = useState(0);
@@ -77,13 +102,70 @@ export default function HomePage() {
         startBannerTimer(banners);
       }
     } catch (err) {
-      console.error('Error fetching settings:', err);
+      console.warn('Error fetching settings:', err.message);
+    }
+  };
+
+  const fetchTestimonials = async () => {
+    try {
+      const res = await fetch(`/api/reviews/featured?t=${Date.now()}`, { cache: 'no-store' });
+      const data = await res.json();
+      const defaults = [
+        {
+          _id: 't1',
+          name: 'Rohit Patil',
+          rating: 5,
+          comment: 'Bought a laptop here, great price and genuine product. Very trustworthy shop in Boisar!',
+          avatar: 'https://images.unsplash.com/photo-1625241152315-4a698f74ceb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMG1hbiUyMGluZGlhbiUyMHNtaWxpbmd8ZW58MXwyfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=400',
+        },
+        {
+          _id: 't2',
+          name: 'Sneha Joshi',
+          rating: 5,
+          comment: 'Excellent service and friendly staff. Got my home appliance at the best price. Highly recommend!',
+          avatar: 'https://images.unsplash.com/photo-1732888878731-7e52999af144?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHdvbWFuJTIwaW5kaWFuJTIwc21pbGluZ3xlbnwxfDJ8fHwxNzgwNDc2NTI2fDA&ixlib=rb-4.1.0&q=80&w=400',
+        },
+        {
+          _id: 't3',
+          name: 'Amit Sharma',
+          rating: 5,
+          comment: 'Reliable used products at fair prices. The team is honest and helpful. Will visit again soon.',
+          avatar: 'https://images.unsplash.com/photo-1718209881007-c0ecdfc00f9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHByb2Zlc3Npb25hbCUyMGJ1c2luZXNzbWFufGVufDF8Mnx8fDE3ODQ0NzY1MjZ8MA&ixlib=rb-4.1.0&q=80&w=400',
+        },
+      ];
+
+      if (data.success && data.reviews && data.reviews.length > 0) {
+        const mapped = data.reviews.map((rev, idx) => ({
+          _id: rev._id || rev.id,
+          name: rev.name,
+          rating: rev.rating,
+          comment: rev.comment,
+          productName: rev.productName,
+          productId: rev.productId,
+          avatar: [
+            'https://images.unsplash.com/photo-1625241152315-4a698f74ceb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+            'https://images.unsplash.com/photo-1732888878731-7e52999af144?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
+            'https://images.unsplash.com/photo-1718209881007-c0ecdfc00f9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400'
+          ][idx % 3],
+        }));
+
+        if (mapped.length >= 3) {
+          setTestimonials(mapped.slice(0, 3));
+        } else {
+          setTestimonials([...mapped, ...defaults.slice(mapped.length)]);
+        }
+      } else {
+        setTestimonials(defaults);
+      }
+    } catch (err) {
+      console.warn('Error fetching testimonials:', err.message);
     }
   };
 
   const fetchHomeData = async (showLoader = true) => {
     try {
       await fetchSettings();
+      await fetchTestimonials();
 
       const categoriesRes = await fetch('/api/categories', { cache: 'no-store' });
       const categoriesData = await categoriesRes.json();
@@ -97,7 +179,7 @@ export default function HomePage() {
         setFeaturedProducts(featuredData.products);
       }
 
-      const newRes = await fetch('/api/products?condition=new&limit=4', { cache: 'no-store' });
+      const newRes = await fetch('/api/products?condition=new&limit=4&daysLimit=30', { cache: 'no-store' });
       const newData = await newRes.json();
       if (newData.success) {
         setNewProducts(newData.products);
@@ -109,7 +191,7 @@ export default function HomePage() {
         setUsedProducts(usedData.products);
       }
     } catch (err) {
-      console.error('Error fetching home page data:', err);
+      console.warn('Error fetching home page data:', err.message);
     } finally {
       if (showLoader) setLoading(false);
     }
@@ -262,224 +344,232 @@ export default function HomePage() {
         </section>
 
         {/* 3. CATEGORY GRID SECTION (w-full) */}
-        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="w-full px-4 sm:px-10 lg:px-16">
-            <div className="text-center flex mb-12 flex-col items-center gap-1">
-              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
-                Shop by Category
-              </h2>
-              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-                Find exactly what you need
-              </p>
-            </div>
-
-            {loading ? (
-              <div className="flex flex-wrap justify-center gap-4">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="w-[calc(50%-8px)] sm:w-[180px] h-[140px] rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap justify-center gap-4">
-                {categories.map((cat) => (
-                  <Link
-                    key={cat._id}
-                    href={`/products?category=${cat.slug}`}
-                    className="flex flex-col items-center justify-center group cursor-pointer shadow-xs transition-all text-center rounded-2xl p-4 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-[#2b7fff] dark:hover:border-[#2b7fff] hover:scale-[1.02] w-[calc(50%-8px)] sm:w-[180px] min-h-[140px]"
-                  >
-                    <div className="size-12 transition-colors rounded-xl bg-zinc-100 dark:bg-zinc-900 text-[#2b7fff] flex justify-center items-center group-hover:bg-[#2b7fff]/10 shrink-0">
-                      {getCategoryIcon(cat.slug)}
-                    </div>
-                    <p className="font-semibold text-xs sm:text-sm leading-snug mt-3 text-zinc-900 dark:text-zinc-50 break-words w-full">
-                      {cat.name}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* 4. FEATURED PRODUCTS (w-full) */}
-        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="w-full px-4 sm:px-10 lg:px-16">
-            <div className="flex mb-10 justify-between items-end">
-              <div className="flex flex-col gap-1">
+        {(!loading && categories.length === 0) ? null : (
+          <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="w-full px-4 sm:px-10 lg:px-16">
+              <div className="text-center flex mb-12 flex-col items-center gap-1">
                 <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
-                  Featured Products
+                  Shop by Category
                 </h2>
                 <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-                  Hand-picked deals for you
+                  Find exactly what you need
                 </p>
               </div>
-              <Link
-                href="/products"
-                className="flex items-center gap-1 text-xs font-bold text-[#2b7fff] hover:underline"
-              >
-                <span>View All</span>
-                <ChevronRight className="size-4" />
-              </Link>
-            </div>
 
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map((i) => (
-                  <ProductCardSkeleton key={i} />
-                ))}
+              {loading ? (
+                <div className="flex flex-wrap justify-center gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="w-[calc(50%-8px)] sm:w-[180px] h-[140px] rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap justify-center gap-4">
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat._id}
+                      href={`/products?category=${cat.slug}`}
+                      className="flex flex-col items-center justify-center group cursor-pointer shadow-xs transition-all text-center rounded-2xl p-4 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-[#2b7fff] dark:hover:border-[#2b7fff] hover:scale-[1.02] w-[calc(50%-8px)] sm:w-[180px] min-h-[140px]"
+                    >
+                      <div className="size-12 transition-colors rounded-xl bg-zinc-100 dark:bg-zinc-900 text-[#2b7fff] flex justify-center items-center group-hover:bg-[#2b7fff]/10 shrink-0">
+                        {getCategoryIcon(cat.slug)}
+                      </div>
+                      <p className="font-semibold text-xs sm:text-sm leading-snug mt-3 text-zinc-900 dark:text-zinc-50 break-words w-full">
+                        {cat.name}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* 4. FEATURED PRODUCTS (w-full) */}
+        {(!loading && featuredProducts.length === 0) ? null : (
+          <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="w-full px-4 sm:px-10 lg:px-16">
+              <div className="flex mb-10 justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                    Featured Products
+                  </h2>
+                  <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                    Hand-picked deals for you
+                  </p>
+                </div>
+                <Link
+                  href="/products"
+                  className="flex items-center gap-1 text-xs font-bold text-[#2b7fff] hover:underline"
+                >
+                  <span>View All</span>
+                  <ChevronRight className="size-4" />
+                </Link>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {featuredProducts.slice(0, 8).map((prod) => (
-                  <ProductCard
-                    key={prod._id}
-                    product={prod}
-                    whatsappNumber={settings.whatsapp}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+
+              {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <ProductCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                  {featuredProducts.slice(0, 8).map((prod) => (
+                    <ProductCard
+                      key={prod._id}
+                      product={prod}
+                      whatsappNumber={settings.whatsapp}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* 5. NEW ARRIVALS (w-full) */}
-        <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="w-full px-4 sm:px-10 lg:px-16">
-            <div className="space-y-1 mb-10">
-              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
-                New Arrivals
-              </h2>
-              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-                Direct distributor brand new components and systems.
-              </p>
-            </div>
+        {(!loading && newProducts.length === 0) ? null : (
+          <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="w-full px-4 sm:px-10 lg:px-16">
+              <div className="space-y-1 mb-10">
+                <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                  New Arrivals
+                </h2>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                  Direct distributor brand new components and systems.
+                </p>
+              </div>
 
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {newProducts.slice(0, 3).map((prod) => (
-                  <Card
-                    key={prod._id}
-                    className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
-                  >
-                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
-                        alt={prod.name}
-                        className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
-                      />
-                      <span className="font-bold rounded-full bg-[#2b7fff] text-blue-50 text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
-                        New
-                      </span>
-                    </Link>
-                    <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="min-w-0 flex-1 space-y-2">
-                          <Link href={`/products/${prod._id}`} className="hover:underline">
-                            <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-[#2b7fff] transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
-                              {prod.name}
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {newProducts.slice(0, 3).map((prod) => (
+                    <Card
+                      key={prod._id}
+                      className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
+                    >
+                      <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
+                        <img
+                          src={prod.images?.[0] || 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                          alt={prod.name}
+                          className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
+                        />
+                        <span className="font-bold rounded-full bg-[#2b7fff] text-blue-50 text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
+                          New
+                        </span>
+                      </Link>
+                      <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <Link href={`/products/${prod._id}`} className="hover:underline">
+                              <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-[#2b7fff] transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
+                                {prod.name}
+                              </p>
+                            </Link>
+                            <p className="font-bold text-[#2b7fff] text-base leading-6">
+                              {prod.price && prod.price > 0 ? (
+                                new Intl.NumberFormat('en-IN', {
+                                  style: 'currency',
+                                  currency: 'INR',
+                                  maximumFractionDigits: 0,
+                                }).format(prod.price)
+                              ) : (
+                                'Ask for Price'
+                              )}
                             </p>
+                          </div>
+                          <Link
+                            href={`/products/${prod._id}`}
+                            className="inline-flex items-center justify-center size-9 rounded-full text-[#2b7fff] border border-[#2b7fff] shrink-0 cursor-pointer hover:bg-[#2b7fff] hover:text-white transition-colors mt-0.5"
+                          >
+                            <ArrowRight className="size-4" />
                           </Link>
-                          <p className="font-bold text-[#2b7fff] text-base leading-6">
-                            {prod.price && prod.price > 0 ? (
-                              new Intl.NumberFormat('en-IN', {
-                                style: 'currency',
-                                currency: 'INR',
-                                maximumFractionDigits: 0,
-                              }).format(prod.price)
-                            ) : (
-                              'Ask for Price'
-                            )}
-                          </p>
                         </div>
-                        <Link
-                          href={`/products/${prod._id}`}
-                          className="inline-flex items-center justify-center size-9 rounded-full text-[#2b7fff] border border-[#2b7fff] shrink-0 cursor-pointer hover:bg-[#2b7fff] hover:text-white transition-colors mt-0.5"
-                        >
-                          <ArrowRight className="size-4" />
-                        </Link>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* 6. USED PRODUCTS (w-full) */}
-        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="w-full px-4 sm:px-10 lg:px-16">
-            <div className="space-y-1 mb-10">
-              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
-                Used Products
-              </h2>
-              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-                Inspected, benchmarked, and warrantied local pre-owned stock.
-              </p>
-            </div>
+        {(!loading && usedProducts.length === 0) ? null : (
+          <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="w-full px-4 sm:px-10 lg:px-16">
+              <div className="space-y-1 mb-10">
+                <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                  Used Products
+                </h2>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                  Inspected, benchmarked, and warrantied local pre-owned stock.
+                </p>
+              </div>
 
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {usedProducts.slice(0, 3).map((prod) => (
-                  <Card
-                    key={prod._id}
-                    className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
-                  >
-                    <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
-                        alt={prod.name}
-                        className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
-                      />
-                      <span className="font-bold rounded-full bg-orange-500 text-white text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
-                        Used
-                      </span>
-                    </Link>
-                    <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="min-w-0 flex-1 space-y-2">
-                          <Link href={`/products/${prod._id}`} className="hover:underline">
-                            <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-orange-500 transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
-                              {prod.name}
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-64 rounded-2xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {usedProducts.slice(0, 3).map((prod) => (
+                    <Card
+                      key={prod._id}
+                      className="shadow-xs hover:shadow-md transition-all rounded-2xl p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full justify-between"
+                    >
+                      <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
+                        <img
+                          src={prod.images?.[0] || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                          alt={prod.name}
+                          className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
+                        />
+                        <span className="font-bold rounded-full bg-orange-500 text-white text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
+                          Used
+                        </span>
+                      </Link>
+                      <div className="p-6 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-900/50">
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <Link href={`/products/${prod._id}`} className="hover:underline">
+                              <p className="font-semibold text-sm leading-snug text-zinc-900 dark:text-zinc-50 hover:text-orange-500 transition-colors whitespace-normal line-clamp-2 min-h-[40px]">
+                                {prod.name}
+                              </p>
+                            </Link>
+                            <p className="font-bold text-[#2b7fff] text-base leading-6">
+                              {prod.price && prod.price > 0 ? (
+                                new Intl.NumberFormat('en-IN', {
+                                  style: 'currency',
+                                  currency: 'INR',
+                                  maximumFractionDigits: 0,
+                                }).format(prod.price)
+                              ) : (
+                                'Ask for Price'
+                              )}
                             </p>
+                          </div>
+                          <Link
+                            href={`/products/${prod._id}`}
+                            className="inline-flex items-center justify-center size-9 rounded-full text-orange-500 border border-orange-500 shrink-0 cursor-pointer hover:bg-orange-500 hover:text-white transition-colors mt-0.5"
+                          >
+                            <ArrowRight className="size-4" />
                           </Link>
-                          <p className="font-bold text-[#2b7fff] text-base leading-6">
-                            {prod.price && prod.price > 0 ? (
-                              new Intl.NumberFormat('en-IN', {
-                                style: 'currency',
-                                currency: 'INR',
-                                maximumFractionDigits: 0,
-                              }).format(prod.price)
-                            ) : (
-                              'Ask for Price'
-                            )}
-                          </p>
                         </div>
-                        <Link
-                          href={`/products/${prod._id}`}
-                          className="inline-flex items-center justify-center size-9 rounded-full text-orange-500 border border-orange-500 shrink-0 cursor-pointer hover:bg-orange-500 hover:text-white transition-colors mt-0.5"
-                        >
-                          <ArrowRight className="size-4" />
-                        </Link>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* 7. WHY CHOOSE US (w-full) */}
         <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">
@@ -580,95 +670,62 @@ export default function HomePage() {
         </section>
 
         {/* 8. CUSTOMER REVIEWS (w-full) */}
-        <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="w-full px-4 sm:px-10 lg:px-16">
-            <div className="text-center flex mb-12 flex-col items-center gap-1">
-              <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
-                Customer Reviews
-              </h2>
-              <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
-                What our happy customers say
-              </p>
+        {settings.enableReviews !== false && (
+          <section className="w-full py-16 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="w-full px-4 sm:px-10 lg:px-16">
+              <div className="text-center flex mb-12 flex-col items-center gap-1">
+                <h2 className="font-bold text-3xl leading-9 tracking-tight text-zinc-900 dark:text-white">
+                  Customer Reviews
+                </h2>
+                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5">
+                  What our happy customers say
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {testimonials.map((rev) => (
+                  <Card key={rev._id || rev.id} className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="size-11 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 shrink-0">
+                        <User className="size-5" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
+                          {rev.name}
+                        </p>
+                        <div className="text-orange-500 flex mt-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`size-3.5 ${
+                                star <= rev.rating ? 'fill-current text-orange-500' : 'text-zinc-200 dark:text-zinc-800'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-between gap-3">
+                      <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-relaxed italic">
+                        "{rev.comment}"
+                      </p>
+                      {rev.productName && (
+                        <div className="pt-2 border-t border-zinc-100 dark:border-zinc-900 flex justify-between items-center text-[10px]">
+                          <span className="text-zinc-400 dark:text-zinc-500">Reviewed for:</span>
+                          <Link
+                            href={`/products/${rev.productId}`}
+                            className="font-bold text-indigo-500 hover:text-indigo-600 transition-colors truncate max-w-[150px]"
+                          >
+                            {rev.productName}
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1625241152315-4a698f74ceb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMG1hbiUyMGluZGlhbiUyMHNtaWxpbmd8ZW58MXwyfHx8MTc4MDQ3NjUyNnww&ixlib=rb-4.1.0&q=80&w=400"
-                    alt="Rohit"
-                    className="size-11 object-cover rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                      Rohit Patil
-                    </p>
-                    <div className="text-orange-500 flex mt-0.5">
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
-                  Bought a laptop here, great price and genuine product. Very
-                  trustworthy shop in Boisar!
-                </p>
-              </Card>
-              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1732888878731-7e52999af144?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHdvbWFuJTIwaW5kaWFuJTIwc21pbGluZ3xlbnwxfDJ8fHwxNzgwNDc2NTI2fDA&ixlib=rb-4.1.0&q=80&w=400"
-                    alt="Sneha"
-                    className="size-11 object-cover rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                      Sneha Joshi
-                    </p>
-                    <div className="text-orange-500 flex mt-0.5">
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
-                  Excellent service and friendly staff. Got my home appliance
-                  at the best price. Highly recommend!
-                </p>
-              </Card>
-              <Card className="shadow-xs rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1718209881007-c0ecdfc00f9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3ODc2NDd8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHByb2Zlc3Npb25hbCUyMGJ1c2luZXNzbWFufGVufDF8Mnx8fDE3ODQ0NzY1MjZ8MA&ixlib=rb-4.1.0&q=80&w=400"
-                    alt="Amit"
-                    className="size-11 object-cover rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold text-sm leading-5 text-zinc-900 dark:text-zinc-50">
-                      Amit Sharma
-                    </p>
-                    <div className="text-orange-500 flex mt-0.5">
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                      <Star className="size-3.5 fill-current" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-[#71717b] dark:text-zinc-400 text-sm leading-5 leading-relaxed">
-                  Reliable used products at fair prices. The team is honest
-                  and helpful. Will visit again soon.
-                </p>
-              </Card>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* 9. FAQs SECTION (w-full) */}
         <section className="w-full py-16 bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900">

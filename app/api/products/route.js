@@ -17,6 +17,7 @@ export async function GET(req) {
     const sort = searchParams.get('sort') || 'newest';
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '12', 10);
+    const daysLimit = searchParams.get('daysLimit') || '';
 
     const result = await getProducts({
       search,
@@ -28,6 +29,7 @@ export async function GET(req) {
       sort,
       page,
       limit,
+      daysLimit,
     });
 
     return NextResponse.json({
@@ -54,7 +56,7 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { name, price, condition, description, images, category, stock, availability, featured } = body;
+    const { name, price, condition, description, images, category, stock, availability, featured, brand, warranty, location } = body;
 
     // Validate required fields
     if (!name || !condition || !description || !category) {
@@ -83,6 +85,9 @@ export async function POST(req) {
       stock: stock !== undefined ? parseInt(stock, 10) : 1,
       availability: availability !== undefined ? availability : true,
       featured: featured !== undefined ? featured : false,
+      brand: brand || '',
+      warranty: warranty || '',
+      location: location || '',
     });
 
     return NextResponse.json({ success: true, product }, { status: 201 });

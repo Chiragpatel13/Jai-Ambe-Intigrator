@@ -42,6 +42,10 @@ const SettingSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    enableReviews: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );

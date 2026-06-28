@@ -55,6 +55,12 @@ export default function ProductDetailsPage({ params }) {
   const [message, setMessage] = useState('');
   const [submittingInquiry, setSubmittingInquiry] = useState(false);
 
+  // Review form states
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
   // Toast state
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
@@ -104,6 +110,35 @@ export default function ProductDetailsPage({ params }) {
 
     fetchProductData();
   }, [id]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!product || !product.images || product.images.length <= 1) return;
+
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === 'INPUT' ||
+          activeEl.tagName === 'TEXTAREA' ||
+          activeEl.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setActiveImageIdx((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setActiveImageIdx((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [product]);
 
   const handleShare = async () => {
     if (typeof window !== 'undefined') {
@@ -217,6 +252,43 @@ Please let me know how to proceed.`;
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewName || !reviewComment) {
+      triggerToast('Please fill in all review fields.', 'error');
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const res = await fetch(`/api/products/${id}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: reviewName,
+          rating: reviewRating,
+          comment: reviewComment,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        triggerToast('Review submitted successfully!', 'success');
+        setReviewName('');
+        setReviewRating(5);
+        setReviewComment('');
+        setProduct((prev) => ({ ...prev, reviews: data.reviews }));
+      } else {
+        triggerToast(data.error || 'Failed to submit review.', 'error');
+      }
+    } catch (err) {
+      console.error('Review submission error:', err);
+      triggerToast('Something went wrong. Please try again.', 'error');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-white dark:bg-zinc-950">
@@ -305,6 +377,27 @@ Please let me know how to proceed.`;
                   No Image Available
                 </div>
               )}
+
+              {/* Left/Right navigation chevrons */}
+              {product.images && product.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActiveImageIdx((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
+                    className="absolute left-4 z-10 size-10 rounded-full bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800 text-zinc-800 dark:text-white flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                    title="Previous Image (Left Arrow)"
+                  >
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveImageIdx((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 z-10 size-10 rounded-full bg-white/80 dark:bg-zinc-800/80 hover:bg-white dark:hover:bg-zinc-800 text-zinc-800 dark:text-white flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md cursor-pointer"
+                    title="Next Image (Right Arrow)"
+                  >
+                    <ChevronRight className="size-5" />
+                  </button>
+                </>
+              )}
+
               <div className="size-10 backdrop-blur-md rounded-full bg-zinc-950/40 text-white flex absolute right-4 top-4 justify-center items-center cursor-pointer hover:bg-zinc-950/60 transition-colors">
                 <ZoomIn className="size-5" />
               </div>
@@ -316,14 +409,14 @@ Please let me know how to proceed.`;
 
             {/* Thumbnails */}
             {product.images && product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="flex flex-wrap gap-2.5">
                 {product.images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIdx(idx)}
-                    className={`shadow-xs transition-all rounded-xl border-2 overflow-hidden aspect-[4/3] bg-zinc-50 dark:bg-zinc-900 ${
+                    className={`size-14 sm:size-16 shadow-xs transition-all rounded-xl border-2 overflow-hidden bg-zinc-50 dark:bg-zinc-900 flex-shrink-0 cursor-pointer ${
                       activeImageIdx === idx
-                        ? 'border-[#2b7fff]'
+                        ? 'border-[#2b7fff] scale-95'
                         : 'border-transparent hover:border-zinc-300 dark:hover:border-zinc-700'
                     }`}
                   >
@@ -493,19 +586,21 @@ Please let me know how to proceed.`;
         <div className="mt-16 space-y-6">
           <div className="border-b border-zinc-200 dark:border-zinc-800">
             <nav className="flex gap-8" aria-label="Tabs">
-              {['description', 'specifications', 'reviews'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-4 text-sm font-semibold capitalize border-b-2 transition-all cursor-pointer ${
-                    activeTab === tab
-                      ? 'border-[#2b7fff] text-[#2b7fff]'
-                      : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+              {['description', 'specifications', 'reviews']
+                .filter((tab) => tab !== 'reviews' || settings.enableReviews !== false)
+                .map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`pb-4 text-sm font-semibold capitalize border-b-2 transition-all cursor-pointer ${
+                      activeTab === tab
+                        ? 'border-[#2b7fff] text-[#2b7fff]'
+                        : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
             </nav>
           </div>
 
@@ -566,69 +661,124 @@ Please let me know how to proceed.`;
               </div>
             )}
 
-            {activeTab === 'reviews' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-9 font-semibold rounded-full bg-[#2b7fff] text-white text-sm flex justify-center items-center">
-                      RP
+            {activeTab === 'reviews' && settings.enableReviews !== false && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left side: reviews list */}
+                <div className="lg:col-span-2 space-y-4">
+                  <h3 className="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
+                    <span>Customer Reviews</span>
+                    <span className="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 px-2 py-0.5 rounded-full">
+                      {(product.reviews || []).length}
+                    </span>
+                  </h3>
+
+                  {(product.reviews && product.reviews.length > 0) ? (
+                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
+                      {product.reviews.map((rev) => (
+                        <div key={rev._id || rev.id} className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 space-y-3 shadow-xs">
+                          <div className="flex items-center gap-3">
+                            <div className="size-9 font-black rounded-full bg-gradient-to-br from-indigo-500 to-[#2b7fff] text-white text-xs flex justify-center items-center">
+                              {rev.name?.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-sm text-zinc-900 dark:text-white">{rev.name}</span>
+                              <div className="flex items-center gap-2">
+                                <div className="text-orange-500 flex gap-0.5">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`size-3 ${
+                                        star <= rev.rating ? 'fill-orange-500' : 'text-zinc-200 dark:text-zinc-800'
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-[10px] text-zinc-400 font-medium">
+                                  {new Date(rev.createdAt || rev.date).toLocaleDateString('en-IN', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                  })}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed whitespace-pre-line italic">
+                            "{rev.comment}"
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-sm">Rahul Patel</span>
-                      <div className="text-orange-500 flex">
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                      </div>
+                  ) : (
+                    <div className="py-12 text-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-950">
+                      <Star className="mx-auto size-8 text-zinc-300 dark:text-zinc-700 mb-3" />
+                      <p className="text-sm font-semibold text-zinc-400 dark:text-zinc-500">No reviews yet. Be the first to share your experience!</p>
                     </div>
-                  </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-                    Excellent build quality and runs my entire home setup flawlessly. Highly recommended!
-                  </p>
+                  )}
                 </div>
 
-                <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-9 font-semibold rounded-full bg-[#2b7fff] text-white text-sm flex justify-center items-center">
-                      SM
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-sm">Sneha Mehta</span>
-                      <div className="text-orange-500 flex">
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <StarHalf className="size-3 fill-current" />
-                      </div>
-                    </div>
+                {/* Right side: submission form */}
+                <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 space-y-4 shadow-sm self-start">
+                  <div>
+                    <h3 className="font-black text-lg text-zinc-900 dark:text-white">Write a Review</h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Share your feedback about this product.</p>
                   </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-                    Great value for money. Delivery was quick and the warranty support is reassuring.
-                  </p>
-                </div>
 
-                <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-9 font-semibold rounded-full bg-[#2b7fff] text-white text-sm flex justify-center items-center">
-                      AK
+                  <form onSubmit={handleReviewSubmit} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Your Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={reviewName}
+                        onChange={(e) => setReviewName(e.target.value)}
+                        placeholder="e.g. Rahul Patel"
+                        className="w-full text-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#2b7fff] text-zinc-900 dark:text-white"
+                      />
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-sm">Amit Kumar</span>
-                      <div className="text-orange-500 flex">
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 fill-current" />
-                        <Star className="size-3 text-zinc-300 dark:text-zinc-700" />
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">Rating</label>
+                      <div className="flex gap-1.5 items-center py-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setReviewRating(star)}
+                            className="focus:outline-none transition-transform active:scale-95 cursor-pointer"
+                          >
+                            <Star
+                              className={`size-6 ${
+                                star <= reviewRating
+                                  ? 'fill-orange-500 text-orange-550'
+                                  : 'text-zinc-200 dark:text-zinc-805'
+                              }`}
+                            />
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                  <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-                    Performs well under load. The LCD display is a nice touch for monitoring status.
-                  </p>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Comments</label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={reviewComment}
+                        onChange={(e) => setReviewComment(e.target.value)}
+                        placeholder="What did you like or dislike about this product?"
+                        className="w-full text-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#2b7fff] text-zinc-900 dark:text-white resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submittingReview}
+                      className="w-full rounded-xl bg-[#2b7fff] hover:bg-[#1a6eeb] disabled:opacity-50 text-white font-bold text-sm py-3 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-blue-500/10 transition-colors"
+                    >
+                      {submittingReview ? 'Submitting…' : 'Submit Review'}
+                    </button>
+                  </form>
                 </div>
               </div>
             )}

@@ -201,7 +201,11 @@ export default function AdminInquiriesPage() {
         {/* Mobile cards */}
         <div className="md:hidden space-y-3">
           {inquiries.map((inq) => (
-            <div key={inq._id} className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 space-y-3">
+            <div
+              key={inq._id}
+              onClick={() => setSelectedInquiry(inq)}
+              className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 space-y-3 cursor-pointer hover:border-indigo-200 transition-colors"
+            >
               <div className="flex items-start gap-3">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0"
@@ -216,7 +220,10 @@ export default function AdminInquiriesPage() {
                       <p className="text-[11px] text-slate-400 font-medium mt-0.5">{inq.phone}</p>
                     </div>
                     <button
-                      onClick={() => handleUpdateStatus(inq._id, inq.status)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUpdateStatus(inq._id, inq.status);
+                      }}
                       className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold border ${
                         inq.status === 'pending'
                           ? 'bg-amber-50 text-amber-700 border-amber-200'
@@ -249,14 +256,20 @@ export default function AdminInquiriesPage() {
               </div>
               <div className="flex gap-2 pt-1 border-t border-slate-100">
                 <button
-                  onClick={() => setSelectedInquiry(inq)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedInquiry(inq);
+                  }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
                 >
                   <Eye size={14} />
                   View
                 </button>
                 <button
-                  onClick={() => handleDelete(inq._id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(inq._id);
+                  }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-rose-200 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors"
                 >
                   <Trash2 size={14} />
@@ -282,7 +295,11 @@ export default function AdminInquiriesPage() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {inquiries.map((inq) => (
-                  <tr key={inq._id} className="hover:bg-slate-50/60 transition-colors">
+                  <tr
+                    key={inq._id}
+                    onClick={() => setSelectedInquiry(inq)}
+                    className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                  >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5">
                         <div
@@ -315,7 +332,10 @@ export default function AdminInquiriesPage() {
                     </td>
                     <td className="px-5 py-4 text-center">
                       <button
-                        onClick={() => handleUpdateStatus(inq._id, inq.status)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateStatus(inq._id, inq.status);
+                        }}
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-bold border transition-all ${
                           inq.status === 'pending'
                             ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
@@ -332,14 +352,20 @@ export default function AdminInquiriesPage() {
                     <td className="px-5 py-4 text-right">
                       <div className="flex justify-end gap-1">
                         <button
-                          onClick={() => setSelectedInquiry(inq)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedInquiry(inq);
+                          }}
                           className="p-1.5 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
                           title="View details"
                         >
                           <Eye size={15} />
                         </button>
                         <button
-                          onClick={() => handleDelete(inq._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(inq._id);
+                          }}
                           className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                           title="Delete"
                         >

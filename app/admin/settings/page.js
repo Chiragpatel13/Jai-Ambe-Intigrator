@@ -32,6 +32,7 @@ export default function AdminSettingsPage() {
   const [designation, setDesignation] = useState('');
   const [ownerPhoto, setOwnerPhoto] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [enableReviews, setEnableReviews] = useState(true);
 
   const triggerToast = (msg, type = 'success') => {
     setToast({ show: true, message: msg, type });
@@ -53,6 +54,7 @@ export default function AdminSettingsPage() {
           setOwnerName(s.ownerName || '');
           setDesignation(s.designation || '');
           setOwnerPhoto(s.ownerPhoto || '');
+          setEnableReviews(s.enableReviews !== false);
         }
       })
       .catch(() => triggerToast('Failed to load settings.', 'error'))
@@ -107,6 +109,7 @@ export default function AdminSettingsPage() {
         body: JSON.stringify({
           shopName, email, phone, whatsapp,
           address, workingHours, ownerName, designation, ownerPhoto,
+          enableReviews,
         }),
       });
       const data = await res.json();
@@ -175,6 +178,20 @@ export default function AdminSettingsPage() {
             <div>
               <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} placeholder="contact@example.com" />
+            </div>
+            <div className="sm:col-span-2 pt-2 border-t border-slate-100 mt-2">
+              <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={enableReviews}
+                  onChange={(e) => setEnableReviews(e.target.checked)}
+                  className="w-4 h-4 rounded text-indigo-600 border-slate-350 focus:ring-indigo-500"
+                />
+                Enable Customer Product Reviews on Website
+              </label>
+              <p className="text-[10px] text-slate-400 mt-1 font-medium pl-6">
+                When unchecked, the reviews tab and writing form will be completely hidden from the public product pages.
+              </p>
             </div>
           </div>
         </div>

@@ -35,7 +35,7 @@ export default function ContactPage() {
           setSettings(data.settings);
         }
       })
-      .catch((err) => console.error('Error loading settings in contact:', err));
+      .catch((err) => console.warn('Error loading settings in contact:', err.message));
   };
 
   useEffect(() => {
