@@ -188,7 +188,7 @@ Please get back to me. Thank you.`;
                   <Mail size={20} className="text-[#2b7fff] shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-0.5">Email Us</h4>
-                    <p className="text-xs sm:text-sm text-gray-500 font-semibold truncate max-w-[150px]">{settings.email}</p>
+                    <p className="text-xs sm:text-sm text-gray-500 font-semibold break-all">{settings.email}</p>
                   </div>
                 </a>
               )}
