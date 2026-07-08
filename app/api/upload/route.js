@@ -30,6 +30,9 @@ export async function POST(req) {
       const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const filename = `${Date.now()}-${cleanFileName}`;
 
+      let lastCloudinaryError = null;
+      let lastFirebaseError = null;
+
       // Check if Cloudinary is configured
       const isCloudinaryConfigured = 
         process.env.CLOUDINARY_CLOUD_NAME && 
@@ -46,11 +49,12 @@ export async function POST(req) {
           return cloudinaryUrl;
         } catch (cloudinaryErr) {
           console.warn('[UPLOAD WARNING] Cloudinary upload failed. Falling back to Firebase Storage:', cloudinaryErr.message);
+          lastCloudinaryError = cloudinaryErr.message;
         }
       }
 
       try {
-        // Try uploading to Firebase Storage first
+        // Try uploading to Firebase Storage next
         const fileRef = ref(storage, `products/${filename}`);
         await uploadBytes(fileRef, bytesPayload, {
           contentType: file.type || 'image/jpeg',
@@ -59,15 +63,31 @@ export async function POST(req) {
         return downloadUrl;
       } catch (fbErr) {
         console.warn('[UPLOAD WARNING] Firebase Storage failed. Falling back to local disk storage:', fbErr.message);
+        lastFirebaseError = fbErr.message;
         
-        // Local Disk Storage fallback (perfect for local development without billing plan)
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-        await fs.mkdir(uploadDir, { recursive: true });
-        
-        const filePath = path.join(uploadDir, filename);
-        await fs.writeFile(filePath, Buffer.from(arrayBuffer));
-        
-        return `/uploads/${filename}`;
+        try {
+          // Local Disk Storage fallback (perfect for local development without billing plan)
+          const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+          await fs.mkdir(uploadDir, { recursive: true });
+          
+          const filePath = path.join(uploadDir, filename);
+          await fs.writeFile(filePath, Buffer.from(arrayBuffer));
+          
+          return `/uploads/${filename}`;
+        } catch (localDiskErr) {
+          console.error('[UPLOAD ERROR] Local disk storage fallback failed:', localDiskErr.message);
+          
+          let errMsg = `Upload failed for ${file.name}.`;
+          if (isCloudinaryConfigured && lastCloudinaryError) {
+            errMsg += ` Cloudinary error: ${lastCloudinaryError}.`;
+          } else if (!isCloudinaryConfigured) {
+            errMsg += ` Cloudinary is not configured in environment variables.`;
+          }
+          errMsg += ` Firebase Storage error: ${lastFirebaseError}.`;
+          errMsg += ` Local disk fallback error: ${localDiskErr.message} (this fallback fails on read-only serverless hosts like Vercel).`;
+          
+          throw new Error(errMsg);
+        }
       }
     });
 
@@ -80,7 +100,7 @@ export async function POST(req) {
   } catch (error) {
     console.error('Upload API error:', error);
     return NextResponse.json(
-      { error: 'Failed to upload images.' },
+      { error: error.message || 'Failed to upload images.' },
       { status: 500 }
     );
   }
