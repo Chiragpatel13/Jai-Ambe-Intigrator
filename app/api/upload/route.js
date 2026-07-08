@@ -4,6 +4,7 @@ import { storage } from '@/lib/firebase';
 import { verifyAdminSession } from '@/utils/auth';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 
 export async function POST(req) {
   try {
@@ -28,6 +29,25 @@ export async function POST(req) {
       
       const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const filename = `${Date.now()}-${cleanFileName}`;
+
+      // Check if Cloudinary is configured
+      const isCloudinaryConfigured = 
+        process.env.CLOUDINARY_CLOUD_NAME && 
+        process.env.CLOUDINARY_CLOUD_NAME !== 'placeholder' &&
+        process.env.CLOUDINARY_API_KEY && 
+        process.env.CLOUDINARY_API_KEY !== 'placeholder' &&
+        process.env.CLOUDINARY_API_SECRET && 
+        process.env.CLOUDINARY_API_SECRET !== 'placeholder';
+
+      if (isCloudinaryConfigured) {
+        try {
+          const fileBuffer = Buffer.from(arrayBuffer);
+          const cloudinaryUrl = await uploadToCloudinary(fileBuffer);
+          return cloudinaryUrl;
+        } catch (cloudinaryErr) {
+          console.warn('[UPLOAD WARNING] Cloudinary upload failed. Falling back to Firebase Storage:', cloudinaryErr.message);
+        }
+      }
 
       try {
         // Try uploading to Firebase Storage first
