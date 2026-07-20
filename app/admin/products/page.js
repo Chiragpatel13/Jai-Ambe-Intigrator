@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Plus,
@@ -54,6 +54,7 @@ function ProductsAdminContent() {
   const [availability, setAvailability] = useState(true);
   const [featured, setFeatured] = useState(false);
   const [images, setImages] = useState([]);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [draggedIdx, setDraggedIdx] = useState(null);
   const [brand, setBrand] = useState('');
   const [warranty, setWarranty] = useState('');
@@ -63,11 +64,49 @@ function ProductsAdminContent() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
-  const triggerToast = (msg, type = 'success') => {
+  const triggerToast = useCallback((msg, type = 'success') => {
     setToast({ show: true, message: msg, type });
-  };
+  }, []);
 
-  const fetchProducts = async () => {
+  const handleAddImageUrl = useCallback((e) => {
+    if (e) e.preventDefault();
+    if (!imageUrlInput || !imageUrlInput.trim()) return;
+    setImages((prev) => [...prev, imageUrlInput.trim()]);
+    setImageUrlInput('');
+    triggerToast('Image URL added!');
+  }, [imageUrlInput, triggerToast]);
+
+  const handleOpenCreateModal = useCallback(() => {
+    setEditingProduct(null);
+    setProductReviews([]);
+    setName(''); setPrice(''); setCategory(categories[0]?._id || '');
+    setCondition('new'); setDescription(''); setStock(1);
+    setAvailability(true); setFeatured(false); setImages([]);
+    setImageUrlInput('');
+    setBrand(''); setWarranty(''); setLocation('Boisar');
+    setIsModalOpen(true);
+  }, [categories]);
+
+  const handleOpenEditModal = useCallback((prod) => {
+    setEditingProduct(prod);
+    setProductReviews(prod.reviews || []);
+    setName(prod.name);
+    setPrice(prod.price.toString());
+    setCategory(prod.category?._id || prod.category || '');
+    setCondition(prod.condition || 'new');
+    setDescription(prod.description || '');
+    setStock(prod.stock || 0);
+    setAvailability(prod.availability);
+    setFeatured(prod.featured || false);
+    setImages(prod.images || []);
+    setImageUrlInput('');
+    setBrand(prod.brand || '');
+    setWarranty(prod.warranty || '');
+    setLocation(prod.location || 'Boisar');
+    setIsModalOpen(true);
+  }, []);
+
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const query = new URLSearchParams({ search: searchTerm, page: currentPage.toString(), limit: '10' });
@@ -82,7 +121,7 @@ function ProductsAdminContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, currentPage, triggerToast]);
 
   useEffect(() => {
     fetch('/api/categories', { cache: 'no-store' })
@@ -90,50 +129,33 @@ function ProductsAdminContent() {
       .then((d) => { if (d.success) setCategories(d.categories); });
   }, []);
 
-  useEffect(() => { fetchProducts(); }, [currentPage]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchProducts]);
 
   useEffect(() => {
     if (actionParam === 'new') {
-      handleOpenCreateModal();
-      router.replace('/admin/products');
+      const timer = setTimeout(() => {
+        handleOpenCreateModal();
+        router.replace('/admin/products');
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [actionParam]);
+  }, [actionParam, handleOpenCreateModal, router]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    setCurrentPage(1);
-    fetchProducts();
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchProducts();
+    }
   };
 
-  const handleOpenCreateModal = () => {
-    setEditingProduct(null);
-    setProductReviews([]);
-    setName(''); setPrice(''); setCategory(categories[0]?._id || '');
-    setCondition('new'); setDescription(''); setStock(1);
-    setAvailability(true); setFeatured(false); setImages([]);
-    setBrand(''); setWarranty(''); setLocation('Boisar');
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEditModal = (prod) => {
-    setEditingProduct(prod);
-    setProductReviews(prod.reviews || []);
-    setName(prod.name);
-    setPrice(prod.price.toString());
-    setCategory(prod.category?._id || prod.category || '');
-    setCondition(prod.condition || 'new');
-    setDescription(prod.description || '');
-    setStock(prod.stock || 0);
-    setAvailability(prod.availability);
-    setFeatured(prod.featured || false);
-    setImages(prod.images || []);
-    setBrand(prod.brand || '');
-    setWarranty(prod.warranty || '');
-    setLocation(prod.location || 'Boisar');
-    setIsModalOpen(true);
-  };
-
-  const uploadFiles = async (files) => {
+  const uploadFiles = useCallback(async (files) => {
     if (!files.length) return;
     setUploadingImage(true);
     try {
@@ -152,30 +174,52 @@ function ProductsAdminContent() {
     } finally {
       setUploadingImage(false);
     }
-  };
+  }, [triggerToast]);
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     await uploadFiles(files);
   };
 
-  const handlePaste = async (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-    const files = [];
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const file = items[i].getAsFile();
-        if (file) {
-          files.push(file);
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    const handleWindowPaste = async (e) => {
+      const files = [];
+      // 1. Try clipboardData.files (e.g. copied files)
+      if (e.clipboardData?.files && e.clipboardData.files.length > 0) {
+        for (let i = 0; i < e.clipboardData.files.length; i++) {
+          const file = e.clipboardData.files[i];
+          if (file.type.startsWith('image/')) {
+            files.push(file);
+          }
         }
       }
-    }
-    if (files.length > 0) {
-      e.preventDefault();
-      await uploadFiles(files);
-    }
-  };
+      
+      // 2. Try clipboardData.items (e.g. screenshot/copied image bytes)
+      if (files.length === 0 && e.clipboardData?.items) {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            if (file) {
+              files.push(file);
+            }
+          }
+        }
+      }
+
+      if (files.length > 0) {
+        e.preventDefault();
+        await uploadFiles(files);
+      }
+    };
+
+    window.addEventListener('paste', handleWindowPaste);
+    return () => {
+      window.removeEventListener('paste', handleWindowPaste);
+    };
+  }, [isModalOpen, uploadFiles]);
 
   const handleDragStart = (e, index) => {
     setDraggedIdx(index);
@@ -599,7 +643,7 @@ function ProductsAdminContent() {
           <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl">
             <p className="text-sm text-slate-700 leading-relaxed">
               Are you sure you want to permanently delete{' '}
-              <span className="font-bold text-slate-900">"{deletingProduct?.name}"</span>?
+              <span className="font-bold text-slate-900">&quot;{deletingProduct?.name}&quot;</span>?
               This cannot be undone.
             </p>
           </div>
@@ -626,7 +670,7 @@ function ProductsAdminContent() {
         onClose={() => setIsModalOpen(false)}
         title={editingProduct ? 'Edit Product' : 'Add New Product'}
       >
-        <form onSubmit={handleFormSubmit} onPaste={handlePaste} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Name */}
             <div className="sm:col-span-2">
@@ -765,6 +809,30 @@ function ProductsAdminContent() {
                 </label>
               </div>
             </div>
+
+            {/* Direct Image URL input option */}
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="url"
+                placeholder="Or paste direct image URL (e.g. https://...)"
+                value={imageUrlInput}
+                onChange={(e) => setImageUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddImageUrl(e);
+                  }
+                }}
+                className="flex-1 text-xs border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-50 text-slate-800"
+              />
+              <button
+                type="button"
+                onClick={handleAddImageUrl}
+                className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shrink-0 cursor-pointer shadow-xs transition-colors"
+              >
+                Add Image URL
+              </button>
+            </div>
           </div>
 
           {/* Admin Reviews Moderation */}
@@ -798,7 +866,7 @@ function ProductsAdminContent() {
                             />
                           ))}
                         </div>
-                        <p className="text-slate-500 line-clamp-2 italic">"{rev.comment}"</p>
+                        <p className="text-slate-500 line-clamp-2 italic">&quot;{rev.comment}&quot;</p>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         <button

@@ -45,3 +45,13 @@ next-env.d.ts
 
 # local uploads fallback
 /public/uploads/
+
+# Firebase Admin service account key — NEVER commit this
+serviceAccountKey.json
+jayambe-integrators-firebase-adminsdk-*.json
+
+# Temporary/scratch files
+scratch/
+*.jar
+*.class
+CloudinaryOnboarding.java
