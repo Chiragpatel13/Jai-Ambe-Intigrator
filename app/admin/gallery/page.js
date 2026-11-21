@@ -15,6 +15,7 @@ import Loader from '@/components/Loader';
 import Toast from '@/components/Toast';
 import { notifyLiveSync } from '@/lib/liveSync';
 import Modal from '@/components/Modal';
+import { normalizeGalleryItem, PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function AdminGalleryPage() {
   const [items, setItems] = useState([]);
@@ -44,7 +45,7 @@ export default function AdminGalleryPage() {
       const res = await fetch('/api/gallery', { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
-        setItems(data.items);
+        setItems((data.items || []).map(normalizeGalleryItem));
       } else {
         triggerToast(data.error || 'Failed to load gallery items.', 'error');
       }
@@ -211,6 +212,7 @@ export default function AdminGalleryPage() {
                     src={item.mediaUrl}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                   />
                 )}
 

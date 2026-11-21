@@ -23,7 +23,7 @@ export async function POST(req) {
 
     const uploadPromises = files.map(async (file) => {
       // Reject obvious placeholder / corrupt files
-      if (file.size < 500) {
+      if (file.size < 50) {
         throw new Error(
           `File "${file.name}" is too small (${file.size} bytes). ` +
           `It may be corrupted or not a valid image.`
@@ -37,7 +37,21 @@ export async function POST(req) {
       const filename = `${Date.now()}-${cleanFileName}`;
       const mimeType = file.type || 'image/jpeg';
 
-      // ── 1. Try Cloudinary (fastest CDN, ideal for production) ──────────────
+      // ── 1. Local Disk (fastest for development) ────────────────────────────
+      if (process.env.VERCEL !== '1' && process.env.NODE_ENV !== 'production') {
+        try {
+          const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+          await fs.mkdir(uploadDir, { recursive: true });
+          const filePath = path.join(uploadDir, filename);
+          await fs.writeFile(filePath, fileBuffer);
+          console.log(`[UPLOAD] ✅ Local disk: /uploads/${filename}`);
+          return `/uploads/${filename}`;
+        } catch (localErr) {
+          console.warn('[UPLOAD] Local disk failed, trying cloud storage:', localErr.message);
+        }
+      }
+
+      // ── 2. Cloudinary (fastest CDN, ideal for production) ──────────────────
       const isCloudinaryConfigured =
         process.env.CLOUDINARY_CLOUD_NAME &&
         process.env.CLOUDINARY_CLOUD_NAME !== 'placeholder' &&
@@ -56,7 +70,7 @@ export async function POST(req) {
         }
       }
 
-      // ── 2. Try Firebase Admin SDK (works on Vercel, bypasses security rules) ──
+      // ── 3. Firebase Admin SDK Storage (server-side) ────────────────────────
       const isAdminConfigured =
         (!!process.env.FIREBASE_ADMIN_PROJECT_ID && !!process.env.FIREBASE_ADMIN_PRIVATE_KEY && !!process.env.FIREBASE_ADMIN_CLIENT_EMAIL) ||
         !!process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
@@ -65,23 +79,23 @@ export async function POST(req) {
         try {
           const { getAdminStorageBucket } = await import('@/lib/firebaseAdmin');
           const bucket = getAdminStorageBucket();
+          const crypto = await import('crypto');
+          const token = crypto.randomUUID();
 
           const fileRef = bucket.file(`products/${filename}`);
 
           await fileRef.save(fileBuffer, {
-            metadata: { contentType: mimeType },
+            metadata: {
+              contentType: mimeType,
+              metadata: {
+                firebaseStorageDownloadTokens: token,
+              },
+            },
             resumable: false,
           });
 
-          // Attempt to make file public (ignore error if uniform bucket policy is enabled)
-          try {
-            await fileRef.makePublic();
-          } catch (pubErr) {
-            console.warn('[UPLOAD] makePublic warning (using public URL):', pubErr.message);
-          }
-
           const bucketName = bucket.name || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'jayambe-integrators.firebasestorage.app';
-          const publicUrl = `https://storage.googleapis.com/${bucketName}/products/${filename}`;
+          const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(`products/${filename}`)}?alt=media&token=${token}`;
 
           console.log(`[UPLOAD] ✅ Firebase Admin Storage: ${publicUrl}`);
           return publicUrl;
@@ -90,24 +104,8 @@ export async function POST(req) {
         }
       }
 
-      // ── 3. Try Local Disk (development environment only) ───────────────────
-      if (process.env.VERCEL !== '1' && process.env.NODE_ENV !== 'production') {
-        try {
-          const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-          await fs.mkdir(uploadDir, { recursive: true });
-          const filePath = path.join(uploadDir, filename);
-          await fs.writeFile(filePath, fileBuffer);
-          console.log(`[UPLOAD] ✅ Local disk: /uploads/${filename}`);
-          return `/uploads/${filename}`;
-        } catch (localErr) {
-          console.warn('[UPLOAD] Local disk failed, falling back to base64 Data URL:', localErr.message);
-        }
-      }
-
       // ── 4. Bulletproof Live Fallback: Base64 Data URL ──────────────────────
-      // Ensures uploads in live Vercel/serverless environments NEVER throw 500 errors
-      // even if Cloudinary & Firebase credentials are not provided.
-      console.log(`[UPLOAD] ✅ Serverless Live Base64 Data URL created for "${file.name}"`);
+      console.log(`[UPLOAD] ✅ Fallback Base64 Data URL created for "${file.name}"`);
       const base64String = fileBuffer.toString('base64');
       return `data:${mimeType};base64,${base64String}`;
     });

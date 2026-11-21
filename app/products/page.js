@@ -21,8 +21,9 @@ function ProductsContent() {
   const minPrice = searchParams.get('minPrice') || '';
   const maxPrice = searchParams.get('maxPrice') || '';
   const sort = searchParams.get('sort') || 'newest';
-  const page = parseInt(searchParams.get('page') || '1', 10);
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
 
+  const [currentPage, setCurrentPage] = useState(pageParam || 1);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -30,6 +31,11 @@ function ProductsContent() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Sync currentPage if URL param changes (e.g. browser back/forward)
+  useEffect(() => {
+    setCurrentPage(pageParam || 1);
+  }, [pageParam]);
 
   const fetchMeta = () => {
     fetch('/api/categories', { cache: 'no-store' })
@@ -51,8 +57,8 @@ function ProductsContent() {
     fetchMeta();
   }, []);
 
-  // Fetch products whenever search params change
-  const fetchProducts = async (showLoader = true) => {
+  // Fetch products whenever search params or page change
+  const fetchProducts = async (targetPage = currentPage, showLoader = true) => {
     if (showLoader) setLoading(true);
     try {
       const query = new URLSearchParams({
@@ -62,16 +68,16 @@ function ProductsContent() {
         minPrice,
         maxPrice,
         sort,
-        page: page.toString(),
+        page: (targetPage || 1).toString(),
         limit: '12',
       });
 
       const res = await fetch(`/api/products?${query.toString()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
-        setProducts(data.products);
-        setTotalPages(data.totalPages);
-        setTotalProducts(data.total);
+        setProducts(data.products || []);
+        setTotalPages(data.totalPages || 1);
+        setTotalProducts(data.total || 0);
       }
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -80,13 +86,13 @@ function ProductsContent() {
     }
   };
 
-  // Fetch products whenever search params change
+  // Fetch products whenever filters change
   useEffect(() => {
-    fetchProducts(true);
-  }, [search, category, condition, minPrice, maxPrice, sort, page]);
+    fetchProducts(currentPage, true);
+  }, [search, category, condition, minPrice, maxPrice, sort, currentPage]);
 
   useLiveSync(() => {
-    fetchProducts(false);
+    fetchProducts(currentPage, false);
     fetchMeta();
   }, ['products', 'categories', 'settings'], 12000);
 
@@ -101,12 +107,13 @@ function ProductsContent() {
     if (newFilters.minPrice) params.set('minPrice', newFilters.minPrice);
     if (newFilters.maxPrice) params.set('maxPrice', newFilters.maxPrice);
     if (newFilters.sort) params.set('sort', newFilters.sort);
-    if (newFilters.page) params.set('page', newFilters.page.toString());
+    if (newFilters.page && newFilters.page > 1) params.set('page', newFilters.page.toString());
 
     router.push(`/products?${params.toString()}`);
   };
 
   const handleSearch = (searchValue) => {
+    setCurrentPage(1);
     updateFilters({
       search: searchValue,
       category,
@@ -114,19 +121,28 @@ function ProductsContent() {
       minPrice,
       maxPrice,
       sort,
-      page: 1, // reset page on search
+      page: 1,
     });
   };
 
   const handleFilterChange = (filters) => {
+    setCurrentPage(1);
     updateFilters({
       search,
       ...filters,
+      page: 1,
     });
   };
 
   const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) return;
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
+    setCurrentPage(newPage);
+    fetchProducts(newPage, true);
+
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     updateFilters({
       search,
       category,
@@ -234,21 +250,35 @@ function ProductsContent() {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 pt-6 border-t border-gray-100 dark:border-gray-900">
+                <div className="flex flex-wrap justify-center items-center gap-2 pt-8 border-t border-gray-100 dark:border-gray-900">
                   <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1}
-                    className="px-3.5 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-gray-700 dark:text-gray-300 shadow-xs cursor-pointer"
                   >
                     Previous
                   </button>
-                  <span className="text-xs font-bold text-gray-500 px-3">
-                    Page {page} of {totalPages}
-                  </span>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`size-9 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                          currentPage === pageNum
+                            ? 'bg-[#2b7fff] text-white shadow-sm scale-105'
+                            : 'border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </div>
+
                   <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page === totalPages}
-                    className="px-3.5 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-gray-700 dark:text-gray-300 shadow-xs cursor-pointer"
                   >
                     Next
                   </button>

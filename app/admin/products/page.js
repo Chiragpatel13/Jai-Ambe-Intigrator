@@ -24,6 +24,7 @@ import Loader from '@/components/Loader';
 import { notifyLiveSync } from '@/lib/liveSync';
 import Toast from '@/components/Toast';
 import Modal from '@/components/Modal';
+import { normalizeImages, PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 const inputCls =
   'w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all';
@@ -98,7 +99,7 @@ function ProductsAdminContent() {
     setStock(prod.stock || 0);
     setAvailability(prod.availability);
     setFeatured(prod.featured || false);
-    setImages(prod.images || []);
+    setImages(normalizeImages(prod));
     setImageUrlInput('');
     setBrand(prod.brand || '');
     setWarranty(prod.warranty || '');
@@ -113,7 +114,7 @@ function ProductsAdminContent() {
       const res = await fetch(`/api/products?${query}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
-        setProducts(data.products);
+        setProducts((data.products || []).map(p => ({ ...p, images: normalizeImages(p) })));
         setTotalPages(data.totalPages);
       }
     } catch {
@@ -398,7 +399,7 @@ function ProductsAdminContent() {
               <div className="flex items-start gap-3">
                 <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
                   {prod.images?.length > 0 ? (
-                    <img src={prod.images[0]} alt={prod.name} className="w-full h-full object-cover" />
+                    <img src={prod.images[0]} alt={prod.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-300">
                       <Laptop size={18} />
@@ -777,7 +778,7 @@ function ProductsAdminContent() {
                       : 'border-slate-200 hover:border-indigo-300 hover:shadow-md'
                   }`}
                 >
-                  <img src={url} alt={`Upload ${idx}`} className="w-full h-full object-cover pointer-events-none" />
+                  <img src={url} alt={`Upload ${idx}`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }} className="w-full h-full object-cover pointer-events-none" />
                   
                   {/* Delete button top right */}
                   <button

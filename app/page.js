@@ -35,6 +35,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import ProductCard from '@/components/ProductCard';
 import { ProductCardSkeleton } from '@/components/Loader';
 import { useLiveSync } from '@/hooks/useLiveSync';
+import { PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -455,8 +456,9 @@ export default function HomePage() {
                     >
                       <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
                         <img
-                          src={prod.images?.[0] || 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                          src={prod.images?.[0] || PLACEHOLDER_SVG}
                           alt={prod.name}
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                           className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
                         />
                         <span className="font-bold rounded-full bg-[#2b7fff] text-blue-50 text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">
@@ -527,8 +529,9 @@ export default function HomePage() {
                     >
                       <Link href={`/products/${prod._id}`} className="relative overflow-hidden aspect-[16/10] w-full block cursor-pointer bg-zinc-50 dark:bg-zinc-900/30">
                         <img
-                          src={prod.images?.[0] || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400'}
+                          src={prod.images?.[0] || PLACEHOLDER_SVG}
                           alt={prod.name}
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                           className="object-contain w-full h-full p-3 transition-transform duration-300 hover:scale-105"
                         />
                         <span className="font-bold rounded-full bg-orange-500 text-white text-[10px] absolute left-2 top-2 px-2 py-0.5 shadow-sm">

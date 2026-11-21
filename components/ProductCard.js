@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { MessageSquare, ChevronRight } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { MessageSquare } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { normalizeImages, PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function ProductCard({ product, whatsappNumber = '918879430925' }) {
   const {
@@ -13,10 +14,19 @@ export default function ProductCard({ product, whatsappNumber = '918879430925' }
     price,
     condition,
     description,
-    images = [],
     availability,
     stock,
-  } = product;
+  } = product || {};
+
+  const images = normalizeImages(product);
+  const primaryImage = images.length > 0 ? images[0] : '';
+  const [imgSrc, setImgSrc] = useState(primaryImage || PLACEHOLDER_SVG);
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(primaryImage || PLACEHOLDER_SVG);
+    setImgError(false);
+  }, [primaryImage]);
 
   // Formatting price to Indian Rupees (INR)
   const formattedPrice = price && price > 0 ? new Intl.NumberFormat('en-IN', {
@@ -43,25 +53,39 @@ export default function ProductCard({ product, whatsappNumber = '918879430925' }
 *Product:* ${name}
 *Condition:* ${condition === 'new' ? 'Brand New' : 'Refurbished / Used'}
 *Price:* ${formattedPrice}
-*Link:* ${window.location.origin}/products/${_id}
+*Link:* ${typeof window !== 'undefined' ? window.location.origin : ''}/products/${_id}
 
 Please let me know if it is available.`;
 
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, '_blank');
+    if (typeof window !== 'undefined') {
+      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, '_blank');
+    }
+  };
+
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true);
+      setImgSrc(PLACEHOLDER_SVG);
+    }
   };
 
   return (
     <Card className="shadow-sm hover:shadow-md hover:border-[#2b7fff] transition-all duration-300 rounded-2xl p-0 gap-3 overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full">
       <Link href={`/products/${_id}`} className="relative overflow-hidden aspect-[4/3] w-full bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-900 block cursor-pointer">
-        {images.length > 0 ? (
+        {imgSrc ? (
           <img
-            src={images[0]}
-            alt={name}
+            src={imgSrc}
+            alt={name || 'Product'}
+            onError={handleImageError}
+            loading="lazy"
             className="h-full w-full object-contain p-2 transition-transform duration-300 hover:scale-105"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-zinc-400 dark:text-zinc-650 bg-zinc-100 dark:bg-zinc-900 text-xs">
-            No Image Available
+          <div className="flex flex-col items-center justify-center h-full text-zinc-400 dark:text-zinc-600 bg-zinc-100 dark:bg-zinc-900 text-xs gap-1">
+            <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>No Image Available</span>
           </div>
         )}
 
@@ -92,7 +116,7 @@ Please let me know if it is available.`;
 
       <div className="flex p-6 flex-col gap-3 flex-grow justify-between bg-white dark:bg-zinc-950">
         <div className="space-y-2">
-          {product.category && (
+          {product?.category && (
             <p className="text-[10px] font-bold tracking-wider uppercase text-zinc-400 dark:text-zinc-500">
               {product.category.name}
             </p>

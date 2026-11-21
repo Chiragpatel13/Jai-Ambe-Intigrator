@@ -36,6 +36,7 @@ import {
 import Loader, { ProductCardSkeleton } from '@/components/Loader';
 import ProductCard from '@/components/ProductCard';
 import Toast from '@/components/Toast';
+import { normalizeImages, PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function ProductDetailsPage({ params }) {
   // Await params using React's use() hook to satisfy Next.js 15+ async params
@@ -83,7 +84,8 @@ export default function ProductDetailsPage({ params }) {
         const res = await fetch(`/api/products/${id}`);
         const data = await res.json();
         if (data.success && data.product) {
-          setProduct(data.product);
+          const normalizedProduct = { ...data.product, images: normalizeImages(data.product) };
+          setProduct(normalizedProduct);
           setActiveImageIdx(0);
           setQuantity(data.product.stock > 0 ? 1 : 0);
           setMessage(`Hello, I would like to inquire about: ${data.product.name}`);
@@ -371,6 +373,7 @@ Please let me know how to proceed.`;
                   src={product.images[activeImageIdx]}
                   alt={product.name}
                   className="object-contain w-full h-full p-4 transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                 />
               ) : (
                 <div className="text-zinc-400 dark:text-zinc-500 text-sm">
@@ -424,6 +427,7 @@ Please let me know how to proceed.`;
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
                       className="object-contain w-full h-full p-1"
+                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                     />
                   </button>
                 ))}

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Loader from '@/components/Loader';
 import { useLiveSync } from '@/hooks/useLiveSync';
+import { normalizeGalleryItem, PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function GalleryPage() {
   const [items, setItems] = useState([]);
@@ -25,7 +26,7 @@ export default function GalleryPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setItems(data.items);
+          setItems((data.items || []).map(normalizeGalleryItem));
         }
       })
       .catch((err) => console.error('Error fetching gallery items:', err))
@@ -156,6 +157,7 @@ export default function GalleryPage() {
                     src={item.mediaUrl}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                   />
                 )}
 
@@ -245,6 +247,7 @@ export default function GalleryPage() {
                   src={activeMedia.mediaUrl}
                   alt={activeMedia.title}
                   className="w-full h-full object-contain"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }}
                 />
               )}
             </div>

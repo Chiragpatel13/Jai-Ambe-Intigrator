@@ -29,6 +29,7 @@ import {
   AdminBadge,
   AdminSectionLabel,
 } from '@/components/admin/AdminUI';
+import { PLACEHOLDER_SVG } from '@/utils/imageHelper';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState(null);
@@ -289,7 +290,7 @@ export default function AdminDashboardPage() {
                 <div key={prod._id} className="px-5 py-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
                   <div className="w-11 h-11 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shrink-0">
                     {prod.images?.length > 0 ? (
-                      <img src={prod.images[0]} alt={prod.name} className="w-full h-full object-cover" />
+                      <img src={prod.images[0]} alt={prod.name} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = PLACEHOLDER_SVG; }} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-300 text-[9px] font-bold">IMG</div>
                     )}
