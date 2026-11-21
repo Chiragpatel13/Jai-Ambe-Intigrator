@@ -48,6 +48,7 @@ export default function HomePage() {
     enableReviews: true,
   });
   const [categories, setCategories] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(100);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [usedProducts, setUsedProducts] = useState([]);
@@ -191,6 +192,12 @@ export default function HomePage() {
       if (usedData.success) {
         setUsedProducts(usedData.products);
       }
+
+      const totalRes = await fetch('/api/products?limit=1', { cache: 'no-store' });
+      const totalData = await totalRes.json();
+      if (totalData.success && typeof totalData.total === 'number') {
+        setTotalProducts(totalData.total);
+      }
     } catch (err) {
       console.warn('Error fetching home page data:', err.message);
     } finally {
@@ -326,7 +333,7 @@ export default function HomePage() {
         <section className="w-full py-12 bg-zinc-50/50 dark:bg-zinc-950/20 border-b border-zinc-100 dark:border-zinc-900">
           <div className="w-full px-4 sm:px-10 lg:px-16 grid grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
-              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">500+</p>
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">{totalProducts}+</p>
               <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Products</p>
             </Card>
             <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
@@ -334,12 +341,12 @@ export default function HomePage() {
               <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Happy Customers</p>
             </Card>
             <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
-              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">5+</p>
+              <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">8+</p>
               <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Years Experience</p>
             </Card>
             <Card className="shadow-xs text-center rounded-2xl bg-[#2b7fff]/5 border border-[#2b7fff]/20 dark:border-[#2b7fff]/10 p-6 flex flex-col items-center justify-center gap-2">
               <p className="font-extrabold text-[#2b7fff] text-4xl leading-10">100%</p>
-              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Trusted</p>
+              <p className="font-medium text-[#71717b] dark:text-zinc-400 text-sm leading-5">Trusted Service</p>
             </Card>
           </div>
         </section>

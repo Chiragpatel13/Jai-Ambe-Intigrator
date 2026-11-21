@@ -10,6 +10,7 @@ import { useLiveSync } from '@/hooks/useLiveSync';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(100);
   const [settings, setSettings] = useState({ ownerName: 'Er. Anand', designation: 'Owner', ownerPhoto: '/Anand.jpeg' });
   const [loading, setLoading] = useState(true);
 
@@ -40,15 +41,28 @@ export default function CategoriesPage() {
       .finally(() => setLoading(false));
   };
 
+  const fetchProductsCount = () => {
+    fetch('/api/products?limit=1', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && typeof data.total === 'number') {
+          setTotalProducts(data.total);
+        }
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
     fetchCategories();
     fetchSettings();
+    fetchProductsCount();
   }, []);
 
   useLiveSync(() => {
     fetchCategories();
     fetchSettings();
-  }, ['settings', 'categories'], 12000);
+    fetchProductsCount();
+  }, ['settings', 'categories', 'products'], 12000);
 
   const getCategoryIcon = (slug) => {
     const iconSize = 24;
@@ -65,10 +79,10 @@ export default function CategoriesPage() {
   };
 
   const statCounters = [
-    { value: '500+', label: 'Happy Clients' },
-    { value: '1,200+', label: 'Systems Configured' },
+    { value: `${totalProducts}+`, label: 'Products' },
+    { value: '1000+', label: 'Happy Customers' },
     { value: '8+', label: 'Years Experience' },
-    { value: '100%', label: 'Trust & Quality' },
+    { value: '100%', label: 'Trusted Service' },
   ];
 
   const teamMembers = [
