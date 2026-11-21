@@ -114,9 +114,6 @@ export default function Footer() {
             <Link href="/categories" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
               Categories
             </Link>
-            <Link href="/gallery" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
-              Gallery
-            </Link>
             <Link href="/about" className="transition-colors text-[#71717b] dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-sm leading-5">
               About
             </Link>

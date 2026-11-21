@@ -18,7 +18,6 @@ import {
   Grid,
   Info,
   Mail,
-  Image,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -58,7 +57,6 @@ export default function Navbar() {
     { name: 'Home', path: '/', icon: Home },
     { name: 'Products', path: '/products', icon: ShoppingBag },
     { name: 'Categories', path: '/categories', icon: Grid },
-    { name: 'Gallery', path: '/gallery', icon: Image },
     { name: 'About', path: '/about', icon: Info },
     { name: 'Contact', path: '/contact', icon: Mail },
   ];
