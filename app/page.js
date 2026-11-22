@@ -166,36 +166,61 @@ export default function HomePage() {
 
   const fetchHomeData = async (showLoader = true) => {
     try {
-      await fetchSettings();
-      await fetchTestimonials();
+      const [
+        settingsRes,
+        testimonialsRes,
+        categoriesRes,
+        featuredRes,
+        newRes,
+        usedRes,
+        totalRes
+      ] = await Promise.all([
+        fetch('/api/settings').catch(() => null),
+        fetch('/api/reviews/featured').catch(() => null),
+        fetch('/api/categories').catch(() => null),
+        fetch('/api/products?featured=true&limit=8').catch(() => null),
+        fetch('/api/products?condition=new&limit=4&daysLimit=30').catch(() => null),
+        fetch('/api/products?condition=used&limit=4').catch(() => null),
+        fetch('/api/products?limit=1').catch(() => null)
+      ]);
 
-      const categoriesRes = await fetch('/api/categories', { cache: 'no-store' });
-      const categoriesData = await categoriesRes.json();
-      if (categoriesData.success) {
+      const [
+        settingsData,
+        testimonialsData,
+        categoriesData,
+        featuredData,
+        newData,
+        usedData,
+        totalData
+      ] = await Promise.all([
+        settingsRes ? settingsRes.json().catch(() => null) : null,
+        testimonialsRes ? testimonialsRes.json().catch(() => null) : null,
+        categoriesRes ? categoriesRes.json().catch(() => null) : null,
+        featuredRes ? featuredRes.json().catch(() => null) : null,
+        newRes ? newRes.json().catch(() => null) : null,
+        usedRes ? usedRes.json().catch(() => null) : null,
+        totalRes ? totalRes.json().catch(() => null) : null
+      ]);
+
+      if (settingsData?.success && settingsData.settings) {
+        setSettings(settingsData.settings);
+      }
+      if (testimonialsData?.success && testimonialsData.reviews?.length > 0) {
+        setTestimonials(testimonialsData.reviews);
+      }
+      if (categoriesData?.success) {
         setCategories(categoriesData.categories);
       }
-
-      const featuredRes = await fetch('/api/products?featured=true&limit=8', { cache: 'no-store' });
-      const featuredData = await featuredRes.json();
-      if (featuredData.success) {
+      if (featuredData?.success) {
         setFeaturedProducts(featuredData.products);
       }
-
-      const newRes = await fetch('/api/products?condition=new&limit=4&daysLimit=30', { cache: 'no-store' });
-      const newData = await newRes.json();
-      if (newData.success) {
+      if (newData?.success) {
         setNewProducts(newData.products);
       }
-
-      const usedRes = await fetch('/api/products?condition=used&limit=4', { cache: 'no-store' });
-      const usedData = await usedRes.json();
-      if (usedData.success) {
+      if (usedData?.success) {
         setUsedProducts(usedData.products);
       }
-
-      const totalRes = await fetch('/api/products?limit=1', { cache: 'no-store' });
-      const totalData = await totalRes.json();
-      if (totalData.success && typeof totalData.total === 'number') {
+      if (totalData?.success && typeof totalData.total === 'number') {
         setTotalProducts(totalData.total);
       }
     } catch (err) {
@@ -209,7 +234,7 @@ export default function HomePage() {
     fetchHomeData(true);
   }, []);
 
-  useLiveSync(() => fetchHomeData(false), ['settings', 'products', 'categories'], 12000);
+  useLiveSync(() => fetchHomeData(false), ['settings', 'products', 'categories'], 60000);
 
   const getCategoryIcon = (slug) => {
     switch (slug) {

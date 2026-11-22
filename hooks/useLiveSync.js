@@ -9,7 +9,7 @@ import { LIVE_SYNC_EVENT, LIVE_SYNC_CHANNEL } from '@/lib/liveSync';
  * @param {string[]} scopes - which update types trigger sync ('all' catches everything)
  * @param {number} intervalMs - background poll interval (0 = disabled)
  */
-export function useLiveSync(onSync, scopes = ['all'], intervalMs = 12000) {
+export function useLiveSync(onSync, scopes = ['all'], intervalMs = 60000) {
   const callbackRef = useRef(onSync);
   callbackRef.current = onSync;
 

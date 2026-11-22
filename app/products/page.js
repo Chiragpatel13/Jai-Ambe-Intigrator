@@ -94,7 +94,7 @@ function ProductsContent() {
   useLiveSync(() => {
     fetchProducts(currentPage, false);
     fetchMeta();
-  }, ['products', 'categories', 'settings'], 12000);
+  }, ['products', 'categories', 'settings'], 60000);
 
   // Update query params in URL
   const updateFilters = (newFilters) => {

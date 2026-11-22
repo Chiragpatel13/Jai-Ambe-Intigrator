@@ -62,7 +62,7 @@ export default function CategoriesPage() {
     fetchCategories();
     fetchSettings();
     fetchProductsCount();
-  }, ['settings', 'categories', 'products'], 12000);
+  }, ['settings', 'categories', 'products'], 60000);
 
   const getCategoryIcon = (slug) => {
     const iconSize = 24;

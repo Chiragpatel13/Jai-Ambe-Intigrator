@@ -42,7 +42,7 @@ export default function ContactPage() {
     fetchSettings();
   }, []);
 
-  useLiveSync(fetchSettings, ['settings'], 12000);
+  useLiveSync(fetchSettings, ['settings'], 60000);
 
   const handleInquirySubmit = async (e) => {
     e.preventDefault();
