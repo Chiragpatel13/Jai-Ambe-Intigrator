@@ -292,17 +292,35 @@ Please get back to me. Thank you.`;
 
       {/* Google Maps Embed Section */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Shop Location Map</h2>
-        <div className="w-full h-96 rounded-3xl overflow-hidden border border-gray-150 dark:border-gray-900 shadow-sm bg-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <MapPin size={20} className="text-blue-600" />
+              Shop Location Map
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {settings.address}
+            </p>
+          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address || 'Shop No. 28, Mahavir Nagar, Navapur Road, Near to UCO Bank, Boisar (W)')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold text-xs transition-colors self-start sm:self-auto shrink-0 shadow-xs"
+          >
+            <MapPin size={14} />
+            <span>Open in Google Maps</span>
+          </a>
+        </div>
+        <div className="w-full h-96 rounded-3xl overflow-hidden border border-gray-150 dark:border-gray-900 shadow-sm bg-gray-100 relative">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3749.117!2d72.7501!3d19.7925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be71e360f7bc59b%3A0xca8c6ef028681788!2sNavapur%20Rd%2C%20Boisar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings.address || 'Mahavir Nagar, Navapur Road, Near to UCO Bank, Boisar (W)')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen=""
             loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="JAYAMBE INTEGRATORS Location"
+            title="JAYAMBE INTEGRATORS Location Map"
           />
         </div>
       </section>

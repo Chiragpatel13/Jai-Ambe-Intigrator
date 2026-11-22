@@ -12,10 +12,6 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  Database,
-  Wifi,
-  WifiOff,
-  Activity,
   Users,
   Eye,
   BarChart3,
@@ -36,7 +32,6 @@ export default function AdminDashboardPage() {
   const [recentInquiries, setRecentInquiries] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dbStatus, setDbStatus] = useState(null); // null = checking
   const [dailyStats, setDailyStats] = useState([]);
 
   // Fetch stats
@@ -53,14 +48,6 @@ export default function AdminDashboardPage() {
       })
       .catch((err) => console.error('Error fetching stats:', err))
       .finally(() => setLoading(false));
-  }, []);
-
-  // Fetch DB status
-  useEffect(() => {
-    fetch('/api/admin/db-status', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then(setDbStatus)
-      .catch(() => setDbStatus({ connected: false, source: 'error' }));
   }, []);
 
   if (loading) {
@@ -104,69 +91,7 @@ export default function AdminDashboardPage() {
         }
       />
 
-      {/* Firebase DB Status */}
-      <div
-        className={`admin-card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 !p-4 sm:!p-5 ${
-          dbStatus === null
-            ? ''
-            : dbStatus.connected
-            ? '!border-emerald-200/80 !bg-emerald-50/50'
-            : '!border-amber-200/80 !bg-amber-50/50'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-              dbStatus === null
-                ? 'bg-slate-200'
-                : dbStatus.connected
-                ? 'bg-emerald-500'
-                : 'bg-amber-500'
-            }`}
-          >
-            {dbStatus === null ? (
-              <Activity size={15} className="text-slate-500 animate-pulse" />
-            ) : dbStatus.connected ? (
-              <Wifi size={15} className="text-white" />
-            ) : (
-              <WifiOff size={15} className="text-white" />
-            )}
-          </div>
-          <div>
-            <p className={`text-xs font-bold ${
-              dbStatus === null ? 'text-slate-600' : dbStatus.connected ? 'text-emerald-700' : 'text-amber-700'
-            }`}>
-              {dbStatus === null
-                ? 'Checking Firebase connection...'
-                : dbStatus.connected
-                ? '✓ Firebase Firestore — Connected'
-                : '⚠ Firebase Firestore — Unavailable (using mock data)'}
-            </p>
-            <p className={`text-[10px] font-medium mt-0.5 ${
-              dbStatus === null ? 'text-slate-400' : dbStatus.connected ? 'text-emerald-600' : 'text-amber-600'
-            }`}>
-              {dbStatus === null
-                ? 'Please wait...'
-                : dbStatus.connected
-                ? `Project: ${dbStatus.projectId} · Latency: ${dbStatus.latency}ms`
-                : `Project: ${dbStatus.projectId} · ${dbStatus.error || 'Connection failed'}`}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-          <Database size={14} className={dbStatus?.connected ? 'text-emerald-500' : 'text-amber-400'} />
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-            dbStatus === null
-              ? 'bg-slate-200 text-slate-500'
-              : dbStatus.connected
-              ? 'bg-emerald-100 text-emerald-700'
-              : 'bg-amber-100 text-amber-700'
-          }`}>
-            {dbStatus === null ? 'CHECKING' : dbStatus.connected ? 'LIVE' : 'FALLBACK'}
-          </span>
-        </div>
-      </div>
-
+      {/* Store Metrics */}
       <AdminSectionLabel>Store metrics</AdminSectionLabel>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {statCards.map((card) => (
