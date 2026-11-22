@@ -95,7 +95,7 @@ export default function HomePage() {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch('/api/settings', { cache: 'no-store' });
+      const res = await fetch('/api/settings');
       const data = await res.json();
       if (data.success && data.settings) {
         setSettings(data.settings);
@@ -110,7 +110,7 @@ export default function HomePage() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch(`/api/reviews/featured?t=${Date.now()}`, { cache: 'no-store' });
+      const res = await fetch(`/api/reviews/featured`);
       const data = await res.json();
       const defaults = [
         {

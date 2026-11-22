@@ -35,7 +35,7 @@ export default function Navbar() {
   const isAdmin = pathname?.startsWith('/admin');
 
   const fetchSettings = () => {
-    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
+    fetch(`/api/settings`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) {

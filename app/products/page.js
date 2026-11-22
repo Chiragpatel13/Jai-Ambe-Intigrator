@@ -38,14 +38,14 @@ function ProductsContent() {
   }, [pageParam]);
 
   const fetchMeta = () => {
-    fetch('/api/categories', { cache: 'no-store' })
+    fetch('/api/categories')
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setCategories(data.categories);
       })
       .catch((err) => console.error('Error fetching categories:', err));
 
-    fetch('/api/settings', { cache: 'no-store' })
+    fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) setSettings(data.settings);
@@ -72,7 +72,7 @@ function ProductsContent() {
         limit: '12',
       });
 
-      const res = await fetch(`/api/products?${query.toString()}`, { cache: 'no-store' });
+      const res = await fetch(`/api/products?${query.toString()}`);
       const data = await res.json();
       if (data.success) {
         setProducts(data.products || []);

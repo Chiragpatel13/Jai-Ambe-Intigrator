@@ -28,7 +28,7 @@ export default function ContactPage() {
   };
 
   const fetchSettings = () => {
-    fetch('/api/settings', { cache: 'no-store' })
+    fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.settings) {

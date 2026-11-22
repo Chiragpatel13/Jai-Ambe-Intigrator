@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 import { NextResponse } from 'next/server';
 import { getProducts, createProduct, getCategoryById } from '@/lib/dbFirebase';

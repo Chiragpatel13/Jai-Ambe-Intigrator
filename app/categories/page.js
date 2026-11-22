@@ -15,7 +15,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = () => {
-    fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-store' })
+    fetch(`/api/settings`)
       .then((res) => res.json())
       .then((settingsData) => {
         if (settingsData.success && settingsData.settings) {
@@ -30,7 +30,7 @@ export default function CategoriesPage() {
   };
 
   const fetchCategories = () => {
-    fetch('/api/categories', { cache: 'no-store' })
+    fetch('/api/categories')
       .then((res) => res.json())
       .then((categoriesData) => {
         if (categoriesData.success) {
@@ -42,7 +42,7 @@ export default function CategoriesPage() {
   };
 
   const fetchProductsCount = () => {
-    fetch('/api/products?limit=1', { cache: 'no-store' })
+    fetch('/api/products?limit=1')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && typeof data.total === 'number') {
